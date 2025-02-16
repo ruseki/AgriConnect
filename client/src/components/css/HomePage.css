@@ -1,0 +1,36 @@
+.main {
+  display: flex;
+  margin-top: 1.5rem;
+  max-width: 100%;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.main-content {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+  gap: 1rem;
+  flex-grow: 1;
+}
+
+.placeholder-box {
+  width: 18rem;
+  height: 12rem;
+  background-color: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer {
+  margin-top: 1.5rem;
+  background-color: #4CAF50;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+}
+
+.footer-text {
+  font-size: 0.875rem;
+}
