@@ -1,30 +1,37 @@
-const express = require('express');
+import express from 'express';
+import auth from '../middleware/auth.js';
+import Listing, { genUniqIden } from '../models/Listing.js';
+
 const router = express.Router();
-const auth = require('../middleware/auth');
-const Listing = require('../models/Listing');
 
 router.post('/', auth, async (req, res) => {
   try {
     const { productName, quantity, unit, category, condition, details, location } = req.body;
-    const listerEmail = req.user.email; 
+    const userId = req.user._id;  // Retrieve userId from the authenticated user
 
-    const listing = new Listing({ 
-      productName, 
-      quantity, 
-      unit, 
-      category, 
-      condition, 
-      details, 
-      location, 
-      listerEmail 
+    const identifier = await genUniqIden(Listing);
+
+    const listing = new Listing({
+      identifier,
+      productName,
+      quantity,
+      unit,
+      category,
+      condition,
+      details,
+      location,
+      userId,  // Pass userId to the backend
     });
 
     await listing.save();
     res.status(201).json({ message: 'Listing created successfully', listing });
   } catch (error) {
-    console.error('Error creating listing:', error); 
-    res.status(500).json({ message: 'Error creating listing', error });
+    console.error('Error creating listing:', error);  
+    res.status(500).json({ 
+      message: 'Error creating listing', 
+      error: error.message || error 
+    });
   }
 });
 
-module.exports = router;
+export default router;

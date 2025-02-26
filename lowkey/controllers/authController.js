@@ -4,11 +4,13 @@ const crypto = require('crypto');
 const User = require('../models/User');
 const sendEmail = require('../utils/email');
 const ResetToken = require('../models/tokens/reset_token');
-
+const VerificationToken = require('../models/tokens/verification_token'); // Use correct model name
+const nodemailer = require('nodemailer');
 const Token = require('../models/tokens/login_state_token');
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
 
 const registerUser = async (req, res) => {
     const { first_name, middle_name, last_name, email, password, confirm_password } = req.body;
@@ -39,8 +41,8 @@ const registerUser = async (req, res) => {
             last_name,
             email,
             password,
-            plain_text_password: password, 
-            userType: 'user'  
+            plain_text_password: password,
+            userType: 'user'
         });
 
         const salt = await bcrypt.genSalt(10);
@@ -60,7 +62,7 @@ const registerUser = async (req, res) => {
 
     } catch (error) {
         console.error('Error registering user:', error);
-        res.status(500).json({ message: 'reg Server error', error: error.message });
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
@@ -84,14 +86,6 @@ const login = async (req, res) => {
             const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
             console.log('Login successful for user:', { email, token });
 
-            if (!user.isVerified) {
-                console.log('User not verified:', email);
-                const verificationCode = crypto.randomBytes(16).toString('hex');
-                user.verificationCode = verificationCode;
-                await user.save();
-                await sendEmail(user.email, 'Email Verification', `Please use the following code to verify your email: ${verificationCode}`);
-            }
-
             // store token in database
             const tokenDocument = new Token({ owner: user._id, token });
             await tokenDocument.save();
@@ -111,41 +105,99 @@ const login = async (req, res) => {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+// removed the verify email every log in 
 
-module.exports = { login };
-
-
-const verifyEmail = async (req, res) => {
-    const { email, verificationCode } = req.body;
-
+const sendVerificationEmail = async (req, res) => {
+    const { email } = req.user;
+    const code = crypto.randomBytes(16).toString('hex');
+  
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_APP_PASS,
+      },
+    });
+  
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Email Verification',
+      text: `Please use the following code to verify your email: ${code}`,
+    };
+  
     try {
-        console.log(`Verification request received for email: ${email}`);
-
-        const user = await User.findOne({ email });
-        console.log(`User from database: ${user}`);
-
-        if (!user) {
-            return res.status(400).json({ message: 'User not found' });
-        }
-
-        console.log(`Stored verification code: ${user.verificationCode}`);
-        console.log(`Entered verification code: ${verificationCode}`);
-
-        if (user.verificationCode !== verificationCode) {
-            return res.status(400).json({ message: 'Invalid verification code' });
-        }
-
-        user.isVerified = true;
-        user.verificationCode = undefined; 
-        await user.save();
-
-        return res.status(200).json({ message: 'Email verified successfully' });
-
+      const token = new VerificationToken({
+        owner: req.userId,
+        token: code,  // Store plain text token
+      });
+  
+      console.log('Verification Token:', token.token);
+      console.log('Verification Token Owner:', token.owner);
+  
+      await token.save();
+      await transporter.sendMail(mailOptions);
+  
+      res.json({ message: 'Email sent successfully' });
     } catch (error) {
-        console.error('Error verifying email:', error);
-        res.status(500).json({ message: 'Server error' });
+      console.error('Error sending email:', error);
+      res.status(500).json({ message: 'Error sending email' });
     }
-};
+  };
+  
+  
+  
+  exports.verifyOTP = async (req, res) => {
+    const { email, otp } = req.body;
+  
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+  
+    console.log('Received OTP:', otp);  // Add this line
+    console.log('Stored OTP:', user.otp);  // Add this line
+  
+    if (user.otp !== otp) return res.status(400).json({ message: "Invalid OTP" });
+    if (user.otpExpires < Date.now()) return res.status(400).json({ message: "OTP has expired" });
+  
+    user.isActive = true; 
+    user.otp = undefined; 
+    user.otpExpires = undefined; 
+    await user.save();
+  
+    res.status(200).json({ message: "User verified successfully!" });
+  };
+  
+
+  const verifyEmail = async (req, res) => {
+    const { email, token: inputToken } = req.body;
+  
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        console.log('User not found for email:', email);
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      const verificationToken = await VerificationToken.findOne({ owner: user._id });
+      console.log('Received Token:', inputToken);
+      console.log('Stored Token:', verificationToken ? verificationToken.token : 'No Token Found');
+  
+      if (!verificationToken || !verificationToken.compareToken(inputToken)) {
+        return res.status(400).json({ message: 'Invalid or expired verification token' });
+      }
+  
+      user.isVerified = true;
+      await user.save();
+      await VerificationToken.deleteOne({ owner: user._id });
+  
+      res.json({ message: 'Email verified successfully' });
+    } catch (error) {
+      console.error('Error verifying email:', error);
+      res.status(500).json({ message: 'Error verifying email' });
+    }
+  };
+  
+  
 
 
 const forgotPassword = async (req, res) => {
@@ -279,5 +331,26 @@ const resetPassword = async (req, res) => {
     }
 };
 
+const getUser = async (req, res) => {
+    const { userId } = req;
 
-module.exports = { login, registerUser, verifyEmail, forgotPassword, resetPassword, resendVerificationCode, }; /* idadagdag ko ung ForgotPasword */
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        return res.status(200).json({
+            email: user.email,
+            isVerified: user.isVerified,
+            userType: user.userType
+        });
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+
+
+module.exports = { login, registerUser, sendVerificationEmail, verifyEmail, forgotPassword, resetPassword, resendVerificationCode, getUser}; /* idadagdag ko ung ForgotPasword */

@@ -1,17 +1,50 @@
+/* SideBar.css */
+
 .sidebar {
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-  }
-  
-  .icon-button {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-  
-  .icon {
-    color: #4b5563;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 250px; 
+  background-color: #f3f4f6;  
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.icon-button {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.icon {
+  color: #4b5563;
+}
+
+.main {
+  display: flex;
+  margin-left: 250px; 
+  width: 100%;
+  padding: 1rem;
+}
+
+.main-content {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-grow: 1;
+}
+
+.footer {
+  margin-top: 1.5rem;
+  background-color: #4CAF50;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+}
+
+.footer-text {
+  font-size: 0.875rem;
+}

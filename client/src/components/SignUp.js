@@ -1,3 +1,5 @@
+//SignUp.js
+
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography, Modal, Backdrop, Fade } from '@mui/material';
 import axios from 'axios';
@@ -53,13 +55,15 @@ const SignUp = ({ open, handleClose }) => {
             boxShadow: 24,
             p: 4,
             borderRadius: 2,
+            textAlign: 'center', 
+            marginBottom: '1rem', 
           }}
         >
-          <Typography variant="h5" component="h2" sx={{ mb: 2, textAlign: 'center' }}>
+          <Typography variant="h5" component="h2" style={{ marginBottom: '1rem' }}>
             Sign up to AgriConnect
           </Typography>
           {error && (
-            <Typography variant="body2" color="error" sx={{ mb: 2, textAlign: 'center' }}>
+            <Typography variant="body2" color="error" style={{ marginBottom: '1rem' }}>
               {error}
             </Typography>
           )}
@@ -117,7 +121,7 @@ const SignUp = ({ open, handleClose }) => {
             fullWidth
             variant="contained"
             color="primary"
-            sx={{ mt: 2, mb: 1 }}
+            style={{ marginTop: '1rem', marginBottom: '0.5rem' }} 
             onClick={handleSignUp}
           >
             SIGN UP

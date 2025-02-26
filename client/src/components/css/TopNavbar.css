@@ -1,84 +1,74 @@
-.header {
-    background-color: #4CAF50;
-    padding: 1rem;
-  }
+/* TopNavbar.css */
+
+.top-navbar {
+  background-color: #4CAF50;
+  padding: 1rem;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 100%;
+  width: 100%;
+}
+
+.navbar-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: white;
+}
+
+.navbar-search {
+  display: flex;
+  align-items: center;
+  gap: 1rem; 
+}
+
+.search-input {
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid #ccc;
+}
+
+.icon {
+  margin-right: 0.5rem;
+}
+
+.language-toggle {
+  display: flex;
+  align-items: center;
+}
+
+.icon-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.icon-button {
+  margin-left: 0.5rem;
+}
   
-  .header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 0 auto;
-    max-width: 100%;
-    width: 100%;
-  }
-  
-  .header-title {
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: white;
-  }
-  
-  .search-bar {
-    display: flex;
-    align-items: center;
-    margin-left: auto;
-  }
-  
-  .search-input {
-    padding: 0.5rem;
-    border-radius: 0.375rem;
-    border: 1px solid #ccc;
-  }
-  
-  .sign-in-button {
-    margin-left: 0.5rem;
-    padding: 0.5rem 1rem;
-    background-color: #1e40af;
-    color: white;
-    border-radius: 0.375rem;
-    cursor: pointer;
-  }
-  
-  .sign-in-button:hover {
-    background-color: #1d4ed8;
-  }
-  
-  .language-toggle {
-    display: flex;
-    align-items: center;
-    margin-left: 1rem;
-  }
-  
-  .icon-buttons {
-    display: flex;
-    align-items: center;
-  }
-  
-  .icon-button {
-    margin-left: 0.5rem;
-  }
-  
-  .dropdown {
-    position: relative;
-  }
-  
-  .dropdown-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 0.375rem;
-    padding: 0.5rem 0;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  }
-  
-  .dropdown-item {
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-  }
-  
-  .dropdown-item:hover {
-    background-color: #f1f1f1;
-  }
-  
+.dropdown {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem;
+  padding: 0.5rem 0;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f1f1;
+}

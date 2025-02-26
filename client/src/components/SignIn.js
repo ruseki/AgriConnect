@@ -1,3 +1,5 @@
+//SignIn.js
+
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography, Modal, Backdrop, Fade } from '@mui/material';
 import axios from 'axios';
@@ -54,13 +56,15 @@ const SignIn = ({ open, handleClose, handleOpenSignUp }) => {
             boxShadow: 24,
             p: 4,
             borderRadius: 2,
+            textAlign: 'center', 
+            marginBottom: '1rem', 
           }}
         >
-          <Typography variant="h5" component="h2" sx={{ mb: 2, textAlign: 'center' }}>
+          <Typography variant="h5" component="h2" style={{ marginBottom: '1rem' }}>
             Sign in to AgriConnect
           </Typography>
           {error && (
-            <Typography variant="body2" color="error" sx={{ mb: 2, textAlign: 'center' }}>
+            <Typography variant="body2" color="error" style={{ marginBottom: '1rem' }}>
               {error}
             </Typography>
           )}
@@ -85,14 +89,14 @@ const SignIn = ({ open, handleClose, handleOpenSignUp }) => {
             fullWidth
             variant="contained"
             color="primary"
-            sx={{ mt: 2, mb: 1 }}
+            style={{ marginTop: '1rem', marginBottom: '0.5rem' }} /* mt-4 mb-2 */
             onClick={handleSignIn}
           >
             SIGN IN
           </Button>
           <Typography
             variant="body2"
-            sx={{ textAlign: 'center', cursor: 'pointer', color: 'primary.main' }}
+            style={{ textAlign: 'center', cursor: 'pointer', color: '#3f51b5' }} /* text-center cursor-pointer text-primary-main */
             onClick={() => alert('Forgot Password')}
           >
             Forgot Password?
@@ -101,7 +105,7 @@ const SignIn = ({ open, handleClose, handleOpenSignUp }) => {
             fullWidth
             variant="outlined"
             color="primary"
-            sx={{ mt: 2, mb: 1 }}
+            style={{ marginTop: '1rem', marginBottom: '0.5rem' }} /* mt-4 mb-2 */
             onClick={handleSignUpClick}
           >
             SIGN UP
@@ -110,7 +114,7 @@ const SignIn = ({ open, handleClose, handleOpenSignUp }) => {
             fullWidth
             variant="outlined"
             color="secondary"
-            sx={{ mt: 2, mb: 1 }}
+            style={{ marginTop: '1rem', marginBottom: '0.5rem' }} /* mt-4 mb-2 */
             onClick={() => alert('Sign in with Google')}
           >
             Sign in with Google

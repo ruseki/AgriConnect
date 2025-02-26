@@ -1,27 +1,41 @@
-require('dotenv').config();
-const express = require('express');
+/***const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+require('dotenv').config();
 
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
-const listingsRoute = require('./routes/listings'); 
+const listingsRoute = require('./routes/listings.js'); 
 
+const app = express();*/
+
+//server.js
+
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
+import connectDB from './config/db.js';
+import authRoutes from './routes/authRoutes.js';
+import listingsRoute from './routes/listings.js'; 
+
+dotenv.config();
 const app = express();
 
+
 const corsOptions = {
-  origin: 'http://localhost:3000', 
+  origin: 'http://localhost:3000',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   optionsSuccessStatus: 204,
 };
 
 app.use(cors(corsOptions));
-app.use(bodyParser.json()); 
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/api/auth', authRoutes); 
-app.use('/api/listings', listingsRoute); 
+app.use('/api/auth', authRoutes);
+app.use('/api/listings', listingsRoute);
 
 app.get('/testlamang', (req, res) => {
   res.send('Server is running!');

@@ -1,4 +1,6 @@
-const mongoose = require('mongoose');
+//Listing.js
+
+import mongoose from 'mongoose';
 
 function generateIdentifier() {
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -11,18 +13,6 @@ function generateIdentifier() {
 
   for (let i = 0; i < 9; i++) {
     identifier += numbers[Math.floor(Math.random() * numbers.length)];
-  }
-
-  return identifier;
-}
-
-async function genUniqIden(Listing) {
-  let identifier;
-  let exists = true;
-
-  while (exists) {
-    identifier = generateIdentifier();
-    exists = await Listing.exists({ identifier });
   }
 
   return identifier;
@@ -62,19 +52,34 @@ const listingSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  listerEmail: {  
-    type: String,
+  userId: {  
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',  
     required: true
   }
 });
 
 listingSchema.pre('save', async function (next) {
   if (!this.identifier) {
-    this.identifier = await genUniqIden(Listing);
+    this.identifier = await genUniqIden(this.constructor);  
   }
   next();
 });
 
-const Listing = mongoose.model('Listing', listingSchema);
+export async function genUniqIden(Listing) {
+  let identifier;
+  let exists = true;
 
-module.exports = Listing;
+  while (exists) {
+    identifier = generateIdentifier();
+    console.log('Generated identifier:', identifier);  
+
+    exists = await Listing.exists({ identifier });
+    console.log('Identifier already exists?:', exists !== null ? 'Yes' : 'No');
+  }
+
+  return identifier;
+}
+
+const Listing = mongoose.model('Listing', listingSchema);
+export default Listing;
