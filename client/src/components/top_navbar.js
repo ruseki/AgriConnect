@@ -1,4 +1,4 @@
-//top_navbar.js
+// top_navbar.js
 
 import React, { useState, useEffect } from 'react';
 import { Search, ShoppingCart, Bell, Globe, Menu } from 'lucide-react';
@@ -10,13 +10,22 @@ const TopNavbar = ({ handleOpenSignIn }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { isAuthenticated, logout, isLoading } = useAuth();
   const navigate = useNavigate();
+  const [cartCount, setCartCount] = useState(0);
 
   const handleDropdownToggle = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
+  const calculateCartCount = () => {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+    setCartCount(totalItems);
+  };
+
   useEffect(() => {
-    console.log('TopNavbar - isAuthenticated:', isAuthenticated);
+    if (isAuthenticated) {
+      calculateCartCount();
+    }
   }, [isAuthenticated]);
 
   if (isLoading) {
@@ -37,10 +46,13 @@ const TopNavbar = ({ handleOpenSignIn }) => {
             </button>
           ) : (
             <div className="user-options">
-              <button>
-                <ShoppingCart className="icon" />
-              </button>
-              <button>
+              <Link to="/cart">
+                <button className="icon-button">
+                  <ShoppingCart className="icon" />
+                  {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+                </button>
+              </Link>
+              <button className="icon-button">
                 <Bell className="icon" />
               </button>
               <div className="dropdown">

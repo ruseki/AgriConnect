@@ -1,4 +1,4 @@
-//Listing.js
+// Listing.js (Updated Schema)
 
 import mongoose from 'mongoose';
 
@@ -56,6 +56,19 @@ const listingSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',  
     required: true
+  },
+  price: {
+    type: Number,
+    required: true
+  },
+  status: {
+    type: String,
+    default: 'available' // Product status is 'available' by default
+  },
+  color: {
+    type: String,
+    enum: ['red', 'green', 'blue', 'yellow', 'orange', 'purple', 'pink', 'white', 'black'], // Define colors
+    default: 'white'
   }
 });
 
@@ -72,10 +85,7 @@ export async function genUniqIden(Listing) {
 
   while (exists) {
     identifier = generateIdentifier();
-    console.log('Generated identifier:', identifier);  
-
     exists = await Listing.exists({ identifier });
-    console.log('Identifier already exists?:', exists !== null ? 'Yes' : 'No');
   }
 
   return identifier;
@@ -83,3 +93,4 @@ export async function genUniqIden(Listing) {
 
 const Listing = mongoose.model('Listing', listingSchema);
 export default Listing;
+

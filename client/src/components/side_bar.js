@@ -1,4 +1,4 @@
-//side_bar.js
+// side_bar.js
 
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -24,7 +24,7 @@ const SideBar = ({ handleOpenSignIn }) => {
         <Home className="icon" />
         <span className="text-sm">Home</span>
       </Link>
-      <Link to="/buying" className="icon-button">
+      <Link to="/buy-area" className="icon-button"> {/* Update the route to /buy-area */}
         <ShoppingCart className="icon" />
         <span className="text-sm">Buying</span>
       </Link>

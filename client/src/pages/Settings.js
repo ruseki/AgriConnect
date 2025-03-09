@@ -1,4 +1,4 @@
-//Settings.js
+// Settings.js
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -79,11 +79,11 @@ const Settings = () => {
       case 'verifyEmail':
         return (
           <div className="verify-email-content">
-            <button onClick={handleSendVerificationEmail}>
+            <button onClick={handleSendVerificationEmail} className="verify-btn">
               Send Verification Email
             </button>
             {emailSent && (
-              <div>
+              <div className="status-message">
                 {verificationStatus}
               </div>
             )}
@@ -92,12 +92,13 @@ const Settings = () => {
               placeholder="Enter verification code"
               value={verificationCode}
               onChange={(e) => setVerificationCode(e.target.value)}
+              className="verify-input"
             />
-            <button onClick={handleVerifyCode}>
+            <button onClick={handleVerifyCode} className="verify-btn">
               Confirm Verification Code
             </button>
             {verificationStatus && (
-              <div>
+              <div className="status-message">
                 {verificationStatus}
               </div>
             )}
@@ -110,6 +111,7 @@ const Settings = () => {
             <input 
               type="text" 
               placeholder="Search the settings" 
+              className="search-input"
             />
           </div>
         );
@@ -125,6 +127,7 @@ const Settings = () => {
             <input 
               type="text" 
               placeholder="Search in AgriConnect..." 
+              className="search-input"
             />
           </div>
         </div>
@@ -146,24 +149,24 @@ const Settings = () => {
             <li><Link to="#password-security">Password and Security</Link></li>
             {!isVerified && (
               <li>
-                <button onClick={() => setCurrentView('verifyEmail')}>
+                <button onClick={() => setCurrentView('verifyEmail')} className="verify-email-btn">
                   Verify Email
                 </button>
               </li>
             )}
             <li><Link to="#accessibility">Accessibility</Link></li>
             <li>
-              <label>
+              <label className="theme-label">
                 Dark Theme
-                <input type="checkbox" />
+                <input type="checkbox" className="theme-checkbox" />
               </label>
             </li>
             <li><Link to="#change-language">Change Language</Link></li>
             <li><Link to="#privacy">Privacy</Link></li>
             <li>
-              <label>
+              <label className="documents-label">
                 Show Seller Government Documents
-                <input type="checkbox" />
+                <input type="checkbox" className="documents-checkbox" />
               </label>
             </li>
             <li><Link to="#activity-log">Activity Log</Link></li>
