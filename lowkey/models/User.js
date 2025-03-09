@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-// Helper function to generate a unique 20-digit user ID
 function generateUserId() {
   const digits = '0123456789';
   let userId = '';
@@ -26,18 +25,17 @@ const UserSchema = new mongoose.Schema({
     userType: { type: String, default: 'user' },
 }, { timestamps: true });
 
-// Pre-save hook to generate a unique user ID before saving a new user
 UserSchema.pre('validate', async function (next) {
     if (this.isNew) {
-        // Generate a unique userId
+
         let uniqueId = generateUserId();
         let existingUser = await this.constructor.findOne({ userId: uniqueId });
-        // Keep generating a new ID until it's unique
+
         while (existingUser) {
             uniqueId = generateUserId();
             existingUser = await this.constructor.findOne({ userId: uniqueId });
         }
-        this.userId = uniqueId; // Assign the unique userId
+        this.userId = uniqueId; 
     }
     
     if (this.isModified('password')) {
@@ -45,7 +43,7 @@ UserSchema.pre('validate', async function (next) {
         this.password = hash;
     }
 
-    next(); // Proceed with saving the document
+    next(); 
 });
 
 module.exports = mongoose.model('User', UserSchema);

@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const User = require('../models/User');
 const sendEmail = require('../utils/email');
 const ResetToken = require('../models/tokens/reset_token');
-const VerificationToken = require('../models/tokens/verification_token'); // Use correct model name
+const VerificationToken = require('../models/tokens/verification_token'); 
 const nodemailer = require('nodemailer');
 const Token = require('../models/tokens/login_state_token');
 

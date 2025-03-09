@@ -24,7 +24,7 @@ const SideBar = ({ handleOpenSignIn }) => {
         <Home className="icon" />
         <span className="text-sm">Home</span>
       </Link>
-      <Link to="/buy-area" className="icon-button"> {/* Update the route to /buy-area */}
+      <Link to="/buy-area" className="icon-button"> {}
         <ShoppingCart className="icon" />
         <span className="text-sm">Buying</span>
       </Link>

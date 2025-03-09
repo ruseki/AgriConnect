@@ -28,9 +28,8 @@ router.get('/', auth, async (req, res) => {
     const userId = req.user._id;
     console.log('Fetching listings excluding the current user:', userId);
 
-    // Fetch all listings (remove the conditions temporarily)
     const listings = await Listing.find({
-      userId: { $ne: userId },  // Exclude the current user's listings
+      userId: { $ne: userId },  
     });
 
     if (listings.length === 0) {
@@ -70,12 +69,12 @@ router.get('/', auth, async (req, res) => {
     console.log('Fetching listings excluding the current user:', userId);
 
     const listings = await Listing.find({
-      userId: { $ne: userId },  // Exclude the current user's listings
-      status: 'available',  // Only available listings
-      stocks: { $gt: 0 },    // Ensure the product has stocks available
+      userId: { $ne: userId },  
+      status: 'available',  
+      stocks: { $gt: 0 },    
     });
 
-    console.log('Fetched Listings:', listings); // Add this log to check the fetched listings
+    console.log('Fetched Listings:', listings);
 
     if (!listings || listings.length === 0) {
       console.log('No available listings found');

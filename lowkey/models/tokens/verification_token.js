@@ -20,7 +20,7 @@ const verificationTokenSchema = new mongoose.Schema(
 );
 
 verificationTokenSchema.methods.compareToken = function (token) {
-  return this.token === token;  // Plain text comparison
+  return this.token === token;  
 }
 
 module.exports = mongoose.model('VerificationToken', verificationTokenSchema);

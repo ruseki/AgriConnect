@@ -8,11 +8,11 @@ const router = express.Router();
 
 router.post('/login', login);
 router.post('/register', registerUser);
-router.post('/verify-email', verifyEmail);  // Ensure this line is correct
+router.post('/verify-email', verifyEmail);  
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 router.post('/resend-verification-code', resendVerificationCode);
 router.post('/send-verification-email', auth, sendVerificationEmail);
-router.get('/user', auth, getUser); // Add new route for fetching user data
+router.get('/user', auth, getUser); 
 
 module.exports = router;
