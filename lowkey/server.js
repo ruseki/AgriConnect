@@ -18,7 +18,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import listingsRoute from './routes/listings.js';
-import cartRoutes from './routes/cartRoutes.js'; // Import cartRoutes
+import cartRoutes from './routes/cartRoutes.js'; 
 
 dotenv.config();
 const app = express();
@@ -36,7 +36,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingsRoute);
-app.use('/api/cart', cartRoutes); // Add cart routes
+app.use('/api/cart', cartRoutes); 
 
 app.get('/testlamang', (req, res) => {
   res.send('Server is running!');
