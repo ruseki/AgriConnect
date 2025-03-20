@@ -1,3 +1,5 @@
+//verification_token.js
+
 const mongoose = require('mongoose');
 
 const verificationTokenSchema = new mongoose.Schema(
@@ -13,14 +15,15 @@ const verificationTokenSchema = new mongoose.Schema(
     },
     createdAt: {
       type: Date,
-      expire: 3060,
+      expires: 3060, // 51 minutes
       default: Date.now()
     }
   }
 );
 
 verificationTokenSchema.methods.compareToken = function (token) {
-  return this.token === token;  
-}
+  console.log('Comparing tokens:', this.token, token); 
+  return this.token === token;
+};
 
 module.exports = mongoose.model('VerificationToken', verificationTokenSchema);
