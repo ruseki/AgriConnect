@@ -6,7 +6,8 @@ import HomePage from './components/HomePage';
 import SellArea from './pages/SellArea';
 import Settings from './pages/Settings';
 import ProtectedRoute from './components/ProtectedRoutes';
-import BuyArea from './pages/BuyArea'; 
+import BuyArea from './pages/BuyArea';
+import CartArea from './pages/CartArea'; 
 import './App.css';
 import { AuthProvider } from './components/AuthProvider';
 
@@ -18,7 +19,8 @@ const App = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/sell-area" element={<ProtectedRoute element={SellArea} />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/buy-area" element={<ProtectedRoute element={BuyArea} />} /> {}
+          <Route path="/buy-area" element={<ProtectedRoute element={BuyArea} />} />
+          <Route path="/cart" element={<ProtectedRoute element={CartArea} />} /> {}
         </Routes>
       </Router>
     </AuthProvider>
