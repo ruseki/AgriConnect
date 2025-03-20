@@ -17,11 +17,11 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
-import listingsRoute from './routes/listings.js'; 
+import listingsRoute from './routes/listings.js';
+import cartRoutes from './routes/cartRoutes.js'; // Import cartRoutes
 
 dotenv.config();
 const app = express();
-
 
 const corsOptions = {
   origin: 'http://localhost:3000',
@@ -36,6 +36,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingsRoute);
+app.use('/api/cart', cartRoutes); // Add cart routes
 
 app.get('/testlamang', (req, res) => {
   res.send('Server is running!');
@@ -55,3 +56,4 @@ const start = async () => {
 };
 
 start();
+
