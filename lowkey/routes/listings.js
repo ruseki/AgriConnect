@@ -1,7 +1,8 @@
-// listings.js
+//routes/listings.js
 
 import express from 'express';
 import auth from '../middleware/auth.js';
+import { addIdentifier } from '../middleware/list.js';
 import Listing from '../models/Listing.js';
 
 const router = express.Router();
@@ -10,14 +11,18 @@ router.get('/user-listings', auth, async (req, res) => {
   try {
     const userId = req.user._id;
 
+    console.log('Fetching user listings for User ID:', userId);
+
     const listings = await Listing.find({ userId });
 
     if (listings.length === 0) {
+      console.log('No listings found for User ID:', userId);
       return res.status(200).json({ listings: [] });
     }
 
     res.status(200).json({ listings });
   } catch (error) {
+    console.error('Error fetching user listings:', error.message);
     res.status(500).json({ message: 'Error fetching listings', error: error.message });
   }
 });
@@ -28,12 +33,13 @@ router.get('/', auth, async (req, res) => {
     console.log('Logged-in User ID:', userId);
 
     const listings = await Listing.find({
-      userId: { $ne: userId }, 
-      status: 'available', 
-      quantity: { $gt: 0 }, 
+      userId: { $ne: userId },
+      status: 'available',
+      quantity: { $gt: 0 },
     });
 
     if (!listings || listings.length === 0) {
+      console.log('No available listings found.');
       return res.status(200).json({ listings: [] });
     }
 
@@ -44,7 +50,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, addIdentifier, async (req, res) => {
   try {
     console.log('Incoming POST request to create a listing');
     console.log('Incoming Payload:', req.body);
@@ -55,7 +61,7 @@ router.post('/', auth, async (req, res) => {
     console.log('Extracted user ID from auth middleware:', userId);
 
     const newListing = new Listing({
-      identifier, 
+      identifier,
       productName,
       quantity,
       unit,
@@ -85,24 +91,33 @@ router.post('/', auth, async (req, res) => {
 router.patch('/mark-as-sold/:id', auth, async (req, res) => {
   try {
     const { id } = req.params;
+
+    console.log('Marking listing as sold. Listing ID:', id);
+
     const listing = await Listing.findById(id);
 
     if (!listing) {
+      console.log('Listing not found. Listing ID:', id);
       return res.status(404).json({ message: 'Listing not found' });
     }
 
     listing.status = 'sold';
     await listing.save();
 
+    console.log('Listing successfully marked as sold:', listing);
+
     res.status(200).json({ message: 'Listing marked as sold', listing });
   } catch (error) {
-    res.status(500).json({ message: 'Error marking listing as sold' });
+    console.error('Error marking listing as sold:', error.message);
+    res.status(500).json({ message: 'Error marking listing as sold', error: error.message });
   }
 });
 
 router.put('/:id', auth, async (req, res) => {
   try {
+    console.log('Incoming PUT request to update a listing. Listing ID:', req.params.id);
     console.log('Incoming Payload:', req.body);
+
     const { productName, quantity, unit, category, condition, details, location, price, color } = req.body;
     const { id } = req.params;
 
@@ -123,12 +138,16 @@ router.put('/:id', auth, async (req, res) => {
     );
 
     if (!updatedListing) {
+      console.log('Listing not found. Listing ID:', id);
       return res.status(404).json({ message: 'Listing not found' });
     }
 
+    console.log('Listing successfully updated:', updatedListing);
+
     res.status(200).json({ message: 'Listing updated successfully', updatedListing });
   } catch (error) {
-    res.status(500).json({ message: 'Error updating listing' });
+    console.error('Error updating listing:', error.message);
+    res.status(500).json({ message: 'Error updating listing', error: error.message });
   }
 });
 

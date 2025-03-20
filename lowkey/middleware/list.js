@@ -1,4 +1,4 @@
-// list.js
+//middleware/list.js
 
 import Listing from '../models/Listing.js';
 
@@ -20,7 +20,7 @@ function generateIdentifier() {
 
 export async function addIdentifier(req, res, next) {
   try {
-    console.log('Generating identifier for new listing...');
+    console.log('Middleware: Generating identifier for new listing...');
     let identifier;
     let exists = true;
 
@@ -34,10 +34,11 @@ export async function addIdentifier(req, res, next) {
     }
 
     console.log('Generated Identifier:', identifier);
-    req.body.identifier = identifier; 
+    req.body.identifier = identifier;
+    console.log('Identifier successfully added to request body:', req.body.identifier);
     next();
   } catch (error) {
-    console.error('Error generating unique identifier:', error.message);
+    console.error('Middleware Error:', error.message);
     res.status(500).json({ message: 'Error generating unique identifier', error: error.message });
   }
 }

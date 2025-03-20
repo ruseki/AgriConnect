@@ -1,4 +1,4 @@
-// Listing.js
+// models/Listing.js
 
 import mongoose from 'mongoose';
 
@@ -51,8 +51,16 @@ const listingSchema = new mongoose.Schema({
   },
   color: {
     type: String,
-    enum: ['red', 'green', 'blue', 'yellow', 'orange', 'purple', 'pink', 'white', 'black'], //temporary
+    enum: ['red', 'green', 'blue', 'yellow', 'orange', 'purple', 'pink', 'white', 'black'], // Temporary
     default: 'white',
+  },
+  minimumOrder: {
+    type: Number,
+    required: false, // Adjusted to optional if not strictly required
+  },
+  listedDate: {
+    type: Date,
+    default: Date.now, // Automatically track when the listing is created
   },
 });
 
