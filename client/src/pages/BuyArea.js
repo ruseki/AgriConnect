@@ -1,5 +1,6 @@
 // BuyArea.js
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import TopNavbar from '../components/top_navbar';
 import SideBar from '../components/side_bar';
 import { useAuth } from '../components/AuthProvider';
@@ -14,18 +15,14 @@ const BuyArea = () => {
 
   const fetchListings = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/listings', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+      const response = await axios.get('http://localhost:5000/api/listings', {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      const result = await response.json();
-      if (response.ok) {
-        setListings(result.listings.filter(listing => listing.status !== 'sold' && listing.stocks > 0)); // filter out sold out
+      if (response.status === 200) {
+        setListings(response.data.listings.filter((listing) => listing.status !== 'sold'));
       } else {
-        console.error('Failed to fetch listings:', result);
+        console.error('Failed to fetch listings:', response.data.message);
       }
     } catch (error) {
       console.error('Error fetching listings:', error);
@@ -34,7 +31,7 @@ const BuyArea = () => {
 
   useEffect(() => {
     if (token) {
-      fetchListings(); // Fetch listings on token change
+      fetchListings(); 
     }
   }, [token]);
 
@@ -45,19 +42,38 @@ const BuyArea = () => {
 
   const handleCloseBuyModal = () => {
     setOpenBuyModal(false);
+    setQuantityToBuy(1);
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (quantityToBuy < selectedProduct.minimumOrder) {
       alert('Cannot place an order as it is under the minimum order.');
       return;
     }
-    if (quantityToBuy > selectedProduct.stocks) {
+
+    if (quantityToBuy > selectedProduct.quantity) {
       alert('Cannot place an order as it exceeds the available stocks.');
       return;
     }
-    alert('Product added to cart!');
-    handleCloseBuyModal();
+
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/api/cart/add',
+        { productId: selectedProduct._id, quantity: quantityToBuy },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 200) {
+        alert('Product added to cart!');
+        handleCloseBuyModal();
+      } else {
+        console.error('Failed to add product to cart:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error adding product to cart:', error);
+    }
   };
 
   return (
@@ -73,7 +89,7 @@ const BuyArea = () => {
                   <h3>{listing.productName}</h3>
                   <p>Category: {listing.category}</p>
                   <p>Price: ₱{listing.price}</p>
-                  <p>Available Stocks: {listing.stocks} {listing.unit}</p>
+                  <p>Available Stocks: {listing.quantity} {listing.unit}</p>
                   <button onClick={() => handleOpenBuyModal(listing)} className="buy-now-btn">
                     Buy Now
                   </button>
@@ -90,13 +106,13 @@ const BuyArea = () => {
               <div className="modal-content">
                 <h2>{selectedProduct.productName}</h2>
                 <p>Price: ₱{selectedProduct.price}</p>
-                <p>Available Stocks: {selectedProduct.stocks} {selectedProduct.unit}</p>
+                <p>Available Stocks: {selectedProduct.quantity} {selectedProduct.unit}</p>
                 <p>Minimum Order: {selectedProduct.minimumOrder} {selectedProduct.unit}</p>
                 <input
                   type="number"
                   min="1"
                   value={quantityToBuy}
-                  onChange={(e) => setQuantityToBuy(e.target.value)}
+                  onChange={(e) => setQuantityToBuy(Number(e.target.value))}
                   className="quantity-input"
                 />
                 <button onClick={handleAddToCart} className="add-to-cart-btn">
