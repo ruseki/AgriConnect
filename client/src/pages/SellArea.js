@@ -51,6 +51,24 @@ const SellArea = () => {
     'Seed Crops': ['Sunflower Seeds', 'Canola Seeds', 'Vegetable Seeds'],
   };
 
+  
+  const payload = {
+    productName,
+    quantity,
+    unit,
+    category,
+    condition,
+    details,
+    location,
+    price,
+    color,
+    minimumOrder,
+    productsSold,
+    userId,
+  };
+
+  console.log('Payload Sent to Backend:', payload);
+
   const fetchListings = async () => {
     try {
       const response = await fetch('http://localhost:5000/api/listings/user-listings', {
@@ -83,6 +101,11 @@ const SellArea = () => {
   const handlePublish = async () => {
     if (!token || !userId) {
       alert('Token or User ID is missing. Please log in again.');
+      return;
+    }
+
+    if (!productName || !location) {
+      alert('Product Name and Location are required.');
       return;
     }
 
@@ -262,22 +285,10 @@ const SellArea = () => {
                     onChange={(e) => setCategory(e.target.value)}
                     className="input-field"
                   >
-                    <option value="Cereal Crops">Cereal Crops</option>
-                    <option value="Vegetables">Vegetables</option>
-                    <option value="Fruits">Fruits</option>
-                    <option value="Legumes">Legumes</option>
-                    <option value="Root Crops">Root Crops</option>
-                    <option value="Tuber Crops">Tuber Crops</option>
-                    <option value="Oilseeds">Oilseeds</option>
-                    <option value="Fiber Crops">Fiber Crops</option>
-                    <option value="Spices">Spices</option>
-                    <option value="Forage Crops">Forage Crops</option>
-                    <option value="Medicinal Crops">Medicinal Crops</option>
-                    <option value="Timber/Forestry Crops">Timber/Forestry Crops</option>
-                    <option value="Cover Crops">Cover Crops</option>
-                    <option value="Cash Crops">Cash Crops</option>
-                    <option value="Horticultural Crops">Horticultural Crops</option>
-                    <option value="Seed Crops">Seed Crops</option>
+                    <option value="" disabled>Select a Category</option>
+                    {Object.keys(categories).map((cat) => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="input-group">
@@ -286,7 +297,9 @@ const SellArea = () => {
                     value={productName}
                     onChange={(e) => setProductName(e.target.value)}
                     className="input-field"
+                    disabled={!category}
                   >
+                    <option value="" disabled>Select a Product</option>
                     {categories[category] && categories[category].map((product) => (
                       <option key={product} value={product}>{product}</option>
                     ))}
@@ -342,6 +355,7 @@ const SellArea = () => {
                     onChange={(e) => setLocation(e.target.value)}
                     className="input-field"
                   >
+                    <option value="" disabled>Select a Location</option>
                     {locations.map((locationOption, index) => (
                       <option key={index} value={locationOption}>
                         {locationOption}
