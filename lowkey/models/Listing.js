@@ -56,11 +56,11 @@ const listingSchema = new mongoose.Schema({
   },
   minimumOrder: {
     type: Number,
-    required: false, // Adjusted to optional if not strictly required
+    required: false, 
   },
   listedDate: {
     type: Date,
-    default: Date.now, // Automatically track when the listing is created
+    default: Date.now, 
   },
 });
 

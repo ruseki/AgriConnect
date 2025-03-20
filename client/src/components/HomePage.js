@@ -5,8 +5,9 @@ import TopNavbar from './top_navbar';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
 import SideBar from './side_bar';
-import Chatbox from './Chatbox'; // Import the Chatbox
+import Chatbox from './Chatbox'; 
 import './css/HomePage.css';
+// pwede to kahit sa css na mismo nasa HomePage.css, no need import, lagay mo lang sa assets folder natin tas tawagin mo lang sa css file nya
 
 const HomePage = () => {
   const [openSignIn, setOpenSignIn] = useState(false);

@@ -36,7 +36,9 @@ router.get('/', auth, async (req, res) => {
       userId: { $ne: userId },
       status: 'available',
       quantity: { $gt: 0 },
-    }).select('productName category price quantity unit details color userId listedDate'); 
+    })
+      .populate('userId', 'first_name last_name') 
+      .select('productName category price quantity unit details color userId listedDate'); 
 
     if (!listings || listings.length === 0) {
       console.log('No available listings found.');
@@ -45,10 +47,11 @@ router.get('/', auth, async (req, res) => {
 
     const updatedListings = listings.map((listing) => ({
       ...listing.toObject(),
+      seller: `${listing.userId.first_name} ${listing.userId.last_name}`, 
       description: listing.details, 
     }));
 
-    console.log('Updated Listings Response:', updatedListings);
+    console.log('Updated Listings with Seller Information:', updatedListings);
 
     res.status(200).json({ listings: updatedListings });
   } catch (error) {
@@ -56,6 +59,7 @@ router.get('/', auth, async (req, res) => {
     res.status(500).json({ message: 'Error fetching listings', error: error.message });
   }
 });
+
 
 
 router.post('/', auth, addIdentifier, async (req, res) => {

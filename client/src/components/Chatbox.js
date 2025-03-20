@@ -8,8 +8,8 @@ const Chatbox = () => {
   const [isOpen, setIsOpen] = useState(false); 
   const [selectedUser, setSelectedUser] = useState(null); 
   const [conversations, setConversations] = useState([
-    { id: 1, name: 'Seller John', messages: ['Hello, how can I help you?'] },
-    { id: 2, name: 'Buyer Mary', messages: ['I’m interested in your product.'] },
+    { id: 1, name: 'Seller Ronalie', messages: ['Hi po! Send me your credit card details right now!'] },
+    { id: 2, name: 'Buyer Dyana', messages: ['Bibilhin ko ang product mo kung ibbigay mo sakin facebook account details mo'] },
   ]); // example lamang
 
   const toggleChatbox = () => {

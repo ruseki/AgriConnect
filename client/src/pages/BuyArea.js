@@ -90,13 +90,17 @@ const BuyArea = () => {
                   style={{ backgroundColor: selectedProduct.color || '#f1f1f1' }}
                 ></div>
                 <h2>{selectedProduct.productName}</h2>
-                <p><strong>Seller:</strong> {selectedProduct.seller || 'Unknown'}</p>
-                <p><strong>Listed on:</strong> {selectedProduct.listedDate || 'N/A'}</p>
-                <p><strong>Category:</strong> {selectedProduct.category}</p>
+                <p className="seller-info">
+  <span className="seller-icon">S</span> {}
+  {selectedProduct.seller || 'Unknown'}
+</p>
+                
+                
                 <p><strong>Price:</strong> ₱{selectedProduct.price}</p>
                 <p><strong>Available Stocks:</strong> {selectedProduct.quantity} {selectedProduct.unit}</p>
                 <p><strong>Minimum Order:</strong> {selectedProduct.minimumOrder} {selectedProduct.unit}</p>
                 <p><strong>Description:</strong> {selectedProduct.description}</p>
+                <p><strong>Listed on:</strong> {selectedProduct.listedDate || 'N/A'}</p>
                 <button className="buy-now-btn" onClick={handleBuyNow}>
                   Buy Now
                 </button>
