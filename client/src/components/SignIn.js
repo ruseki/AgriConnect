@@ -18,9 +18,11 @@ const SignIn = ({ open, handleClose, handleOpenSignUp }) => {
         password
       });
 
-      if (response.data.token) {
+      if (response.status === 200) {
+        console.log(response)
         console.log('Token received:', response.data.token); 
         login(response.data.token); 
+        localStorage.setItem('userId', response.data.userId)
         alert('Login successful');
         handleClose();
       }
