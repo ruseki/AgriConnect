@@ -1,3 +1,4 @@
+//BuyArea.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import TopNavbar from '../components/top_navbar';
@@ -95,7 +96,7 @@ const BuyArea = () => {
                 <p><strong>Price:</strong> ₱{selectedProduct.price}</p>
                 <p><strong>Available Stocks:</strong> {selectedProduct.quantity} {selectedProduct.unit}</p>
                 <p><strong>Minimum Order:</strong> {selectedProduct.minimumOrder} {selectedProduct.unit}</p>
-                <p><strong>Description:</strong> {selectedProduct.description || 'No description available.'}</p>
+                <p><strong>Description:</strong> {selectedProduct.description}</p>
                 <button className="buy-now-btn" onClick={handleBuyNow}>
                   Buy Now
                 </button>

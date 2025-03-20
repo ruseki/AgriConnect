@@ -36,19 +36,27 @@ router.get('/', auth, async (req, res) => {
       userId: { $ne: userId },
       status: 'available',
       quantity: { $gt: 0 },
-    });
+    }).select('productName category price quantity unit details color userId listedDate'); 
 
     if (!listings || listings.length === 0) {
       console.log('No available listings found.');
       return res.status(200).json({ listings: [] });
     }
 
-    res.status(200).json({ listings });
+    const updatedListings = listings.map((listing) => ({
+      ...listing.toObject(),
+      description: listing.details, 
+    }));
+
+    console.log('Updated Listings Response:', updatedListings);
+
+    res.status(200).json({ listings: updatedListings });
   } catch (error) {
     console.error('Error fetching listings:', error.message);
     res.status(500).json({ message: 'Error fetching listings', error: error.message });
   }
 });
+
 
 router.post('/', auth, addIdentifier, async (req, res) => {
   try {
