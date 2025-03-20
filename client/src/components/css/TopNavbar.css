@@ -3,6 +3,11 @@
 .top-navbar {
   background-color: #4CAF50;
   padding: 1rem;
+  position: fixed;
+  top: 0;
+  width: calc(100% - 250px); 
+  left: 250px; 
+  z-index: 2; 
 }
 
 .navbar-container {
@@ -22,7 +27,7 @@
 .navbar-search {
   display: flex;
   align-items: center;
-  gap: 1rem; 
+  gap: 1rem;
 }
 
 .search-input {
@@ -48,7 +53,7 @@
 .icon-button {
   margin-left: 0.5rem;
 }
-  
+
 .dropdown {
   position: relative;
 }

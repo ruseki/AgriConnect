@@ -39,7 +39,11 @@ const TopNavbar = ({ handleOpenSignIn }) => {
         <h1 className="navbar-title">AgriConnect</h1>
         <div className="navbar-search">
           <Search className="search-icon" />
-          <input type="text" placeholder="Search in AgriConnect..." className="search-input" />
+          <input
+            type="text"
+            placeholder="Search in AgriConnect..."
+            className="search-input"
+          />
           {!isAuthenticated ? (
             <button className="sign-in-button" onClick={handleOpenSignIn}>
               Sign In
@@ -61,11 +65,14 @@ const TopNavbar = ({ handleOpenSignIn }) => {
                 </button>
                 {dropdownOpen && (
                   <div className="dropdown-menu">
+                    <button className="dropdown-item" onClick={() => navigate('/profile')}>
+                      Profile
+                    </button>
                     <button className="dropdown-item" onClick={() => navigate('/settings')}>
                       Settings
                     </button>
                     <button className="dropdown-item" onClick={logout}>
-                      Sign Out
+                      Log Out
                     </button>
                   </div>
                 )}

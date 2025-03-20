@@ -1,10 +1,11 @@
-//HomePage.js
+// HomePage.js
 
 import React, { useState } from 'react';
-import TopNavbar from './top_navbar'; 
+import TopNavbar from './top_navbar';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
-import SideBar from './side_bar'; 
+import SideBar from './side_bar';
+import Chatbox from './Chatbox'; // Import the Chatbox
 import './css/HomePage.css';
 
 const HomePage = () => {
@@ -34,11 +35,9 @@ const HomePage = () => {
           </div>
         </div>
       </main>
-      <footer className="footer">
-        <p className="footer-text">© 2025 AgriConnect. UwU.</p>
-      </footer>
       <SignIn open={openSignIn} handleClose={handleCloseSignIn} handleOpenSignUp={handleOpenSignUp} />
       <SignUp open={openSignUp} handleClose={handleCloseSignUp} />
+      <Chatbox />
     </div>
   );
 };
