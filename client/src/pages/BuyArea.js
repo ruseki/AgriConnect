@@ -1,4 +1,3 @@
-// BuyArea.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import TopNavbar from '../components/top_navbar';
@@ -7,11 +6,10 @@ import { useAuth } from '../components/AuthProvider';
 import './css/BuyArea.css';
 
 const BuyArea = () => {
-  const { isAuthenticated, token } = useAuth();
+  const { token } = useAuth();
   const [listings, setListings] = useState([]);
   const [openBuyModal, setOpenBuyModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [quantityToBuy, setQuantityToBuy] = useState(1);
 
   const fetchListings = async () => {
     try {
@@ -31,7 +29,7 @@ const BuyArea = () => {
 
   useEffect(() => {
     if (token) {
-      fetchListings(); 
+      fetchListings();
     }
   }, [token]);
 
@@ -41,39 +39,12 @@ const BuyArea = () => {
   };
 
   const handleCloseBuyModal = () => {
+    setSelectedProduct(null);
     setOpenBuyModal(false);
-    setQuantityToBuy(1);
   };
 
-  const handleAddToCart = async () => {
-    if (quantityToBuy < selectedProduct.minimumOrder) {
-      alert('Cannot place an order as it is under the minimum order.');
-      return;
-    }
-
-    if (quantityToBuy > selectedProduct.quantity) {
-      alert('Cannot place an order as it exceeds the available stocks.');
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        'http://localhost:5000/api/cart/add',
-        { productId: selectedProduct._id, quantity: quantityToBuy },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (response.status === 200) {
-        alert('Product added to cart!');
-        handleCloseBuyModal();
-      } else {
-        console.error('Failed to add product to cart:', response.data.message);
-      }
-    } catch (error) {
-      console.error('Error adding product to cart:', error);
-    }
+  const handleBuyNow = () => {
+    alert(`Buying ${selectedProduct?.productName}! Implement real buying logic here.`);
   };
 
   return (
@@ -85,14 +56,20 @@ const BuyArea = () => {
           <div className="listings-container">
             {listings.length > 0 ? (
               listings.map((listing) => (
-                <div key={listing._id} className="listing-card">
+                <div
+                  key={listing._id}
+                  className="listing-card"
+                  onClick={() => handleOpenBuyModal(listing)} 
+                >
+                  {}
+                  <div
+                    className="image-placeholder"
+                    style={{ backgroundColor: listing.color || '#f1f1f1' }}
+                  ></div>
                   <h3>{listing.productName}</h3>
                   <p>Category: {listing.category}</p>
                   <p>Price: ₱{listing.price}</p>
                   <p>Available Stocks: {listing.quantity} {listing.unit}</p>
-                  <button onClick={() => handleOpenBuyModal(listing)} className="buy-now-btn">
-                    Buy Now
-                  </button>
                 </div>
               ))
             ) : (
@@ -104,19 +81,23 @@ const BuyArea = () => {
             <div className="modal">
               <div className="modal-overlay" onClick={handleCloseBuyModal}></div>
               <div className="modal-content">
+                <button className="close-modal-btn" onClick={handleCloseBuyModal}>
+                  &times;
+                </button>
+                <div
+                  className="image-placeholder-modal"
+                  style={{ backgroundColor: selectedProduct.color || '#f1f1f1' }}
+                ></div>
                 <h2>{selectedProduct.productName}</h2>
-                <p>Price: ₱{selectedProduct.price}</p>
-                <p>Available Stocks: {selectedProduct.quantity} {selectedProduct.unit}</p>
-                <p>Minimum Order: {selectedProduct.minimumOrder} {selectedProduct.unit}</p>
-                <input
-                  type="number"
-                  min="1"
-                  value={quantityToBuy}
-                  onChange={(e) => setQuantityToBuy(Number(e.target.value))}
-                  className="quantity-input"
-                />
-                <button onClick={handleAddToCart} className="add-to-cart-btn">
-                  Add to Cart
+                <p><strong>Seller:</strong> {selectedProduct.seller || 'Unknown'}</p>
+                <p><strong>Listed on:</strong> {selectedProduct.listedDate || 'N/A'}</p>
+                <p><strong>Category:</strong> {selectedProduct.category}</p>
+                <p><strong>Price:</strong> ₱{selectedProduct.price}</p>
+                <p><strong>Available Stocks:</strong> {selectedProduct.quantity} {selectedProduct.unit}</p>
+                <p><strong>Minimum Order:</strong> {selectedProduct.minimumOrder} {selectedProduct.unit}</p>
+                <p><strong>Description:</strong> {selectedProduct.description || 'No description available.'}</p>
+                <button className="buy-now-btn" onClick={handleBuyNow}>
+                  Buy Now
                 </button>
               </div>
             </div>
