@@ -1,95 +1,164 @@
 // CartArea.js
-
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../components/AuthProvider';
+import axios from 'axios';
+import TopNavbar from '../components/top_navbar';
+import SideBar from '../components/side_bar';
 import './css/CartArea.css';
 
-const CartPage = () => {
-  const { token } = useAuth();
+const CartArea = () => {
   const [cartItems, setCartItems] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [expandedItem, setExpandedItem] = useState(null); // Track expanded product cards
 
   useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await axios.get('http://localhost:5000/api/cart', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.status === 200) {
+          setCartItems(response.data.cartItems);
+        } else {
+          console.error('Failed to fetch cart items:', response.data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching cart items:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchCartItems();
   }, []);
 
-  const fetchCartItems = async () => {
+  const handleRemoveItem = async (productId) => {
     try {
-      const response = await fetch('http://localhost:5000/api/cart', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      const result = await response.json();
-      if (response.ok) {
-        setCartItems(result.cartItems);
-        updateTotalPrice(result.cartItems);
+      const token = localStorage.getItem('authToken');
+      const response = await axios.post(
+        'http://localhost:5000/api/cart/remove',
+        { productId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (response.status === 200) {
+        setCartItems(response.data.cartItems);
+        setSelectedItems(selectedItems.filter((id) => id !== productId));
+        alert('Item removed from cart!');
       } else {
-        console.error('Failed to fetch cart items:', result);
+        console.error('Failed to remove item:', response.data.message);
       }
     } catch (error) {
-      console.error('Error fetching cart items:', error);
+      console.error('Error removing item from cart:', error);
     }
   };
 
-  const updateTotalPrice = (items) => {
-    const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    setTotalPrice(total);
+  const handleCheckboxChange = (productId) => {
+    if (selectedItems.includes(productId)) {
+      setSelectedItems(selectedItems.filter((id) => id !== productId));
+    } else {
+      setSelectedItems([...selectedItems, productId]);
+    }
   };
 
-  const handleRemoveFromCart = (id) => {
-    setCartItems(cartItems.filter((item) => item._id !== id));
-    updateTotalPrice(cartItems.filter((item) => item._id !== id));
+  const handleCardClick = (e, productId) => {
+    if (e.target.closest('.cart-checkbox')) return; 
+
+    if (expandedItem === productId) {
+      setExpandedItem(null); 
+    } else {
+      setExpandedItem(productId); 
+    }
   };
 
-  const handleCheckout = () => {
-    // Logic for checkout (e.g., calculate total with commission)
-    const siteCommission = totalPrice * 0.01; // Example: 1% site commission
-    const totalAmount = totalPrice + siteCommission;
-
-    alert(`Total Price: ₱${totalPrice}\nSite Commission: ₱${siteCommission}\nTotal Payable: ₱${totalAmount}`);
-  };
-
-  const handleSelectItem = (id) => {
-    setSelectedItems((prevItems) => {
-      if (prevItems.includes(id)) {
-        return prevItems.filter((itemId) => itemId !== id);
-      } else {
-        return [...prevItems, id];
+  const calculateTotal = () => {
+    return cartItems.reduce((total, item) => {
+      if (selectedItems.includes(item.productId._id)) {
+        const priceWithFee = item.productId.price * 1.01; // 1% commis fee
+        return total + priceWithFee * item.quantity;
       }
-    });
+      return total;
+    }, 0);
   };
 
   return (
-    <div className="cart-page">
-      <h2>Your Cart</h2>
-      <div className="cart-items-container">
-        {cartItems.map((item) => (
-          <div key={item._id} className="cart-item-card">
-            <input
-              type="checkbox"
-              checked={selectedItems.includes(item._id)}
-              onChange={() => handleSelectItem(item._id)}
-            />
-            <h3>{item.productName}</h3>
-            <p>Price: ₱{item.price}</p>
-            <p>Quantity: {item.quantity}</p>
-            <button onClick={() => handleRemoveFromCart(item._id)} className="remove-from-cart-btn">
-              Remove from Cart
-            </button>
-          </div>
-        ))}
-      </div>
-      <div className="cart-summary">
-        <h3>Total Price: ₱{totalPrice}</h3>
-        <button onClick={handleCheckout} className="checkout-btn">
-          Checkout
-        </button>
-      </div>
-    </div>
+    <>
+      <TopNavbar />
+      <main className="main">
+        <SideBar />
+        <div className="main-content">
+          <h1>Your Cart</h1>
+          {loading ? (
+            <p>Loading cart items...</p>
+          ) : cartItems.length > 0 ? (
+            <div className="cart-container">
+              {cartItems.map((item) => {
+                const priceWithFee = item.productId.price * 1.01; // for the 1% commission fee
+                const isExpanded = expandedItem === item.productId._id;
+                const isSelected = selectedItems.includes(item.productId._id);
+
+                return (
+                  <div
+                    key={item.productId._id}
+                    className={`cart-item-card ${isExpanded ? 'expanded' : ''}`}
+                    onClick={(e) => handleCardClick(e, item.productId._id)} 
+                  >
+                    <div className="checkbox-container">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={(e) => {
+                          handleCheckboxChange(item.productId._id);
+                        }}
+                        className="cart-checkbox"
+                      />
+                    </div>
+                    <div
+                      className="product-image"
+                      style={{ backgroundColor: item.productId.color || '#ccc' }}
+                    ></div>
+                    <h3>{item.productId.productName}</h3>
+                    {isExpanded && (
+                      <div className="expanded-details">
+                        <p>Product Price: ₱{item.productId.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                        <p>Commission Fee (1%): ₱{(item.productId.price * 0.01).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                        <p>Total Price (with Fee): ₱{(priceWithFee * item.quantity).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                      </div>
+                    )}
+                    {!isExpanded && (
+                      <p>
+                        Total Price: ₱{(priceWithFee * item.quantity).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      </p>
+                    )}
+                    <p>Quantity: {item.quantity}</p>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation(); 
+                        handleRemoveItem(item.productId._id);
+                      }}
+                      className="remove-item-btn"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                );
+              })}
+              <div className="cart-total">
+                <h2>
+                  Total Cart Price: ₱{calculateTotal().toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                </h2>
+                <button className="checkout-btn">Proceed to Checkout</button>
+              </div>
+            </div>
+          ) : (
+            <p className="empty-cart">Your cart is empty.</p>
+          )}
+        </div>
+      </main>
+    </>
   );
 };
 
-export default CartPage;
+export default CartArea;
