@@ -1,9 +1,5 @@
 /* HomePage.css */
 
-body {
-  background-image: url('../../assets/sdfgx.png'); /*ganto lang, lagay mo lang sa src > assets folder*/
-}
-
 .main-content {
   display: flex;
   justify-content: center;

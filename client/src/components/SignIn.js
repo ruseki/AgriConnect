@@ -16,14 +16,18 @@ const SignIn = ({ open, handleClose, handleOpenSignUp }) => {
     try {
       const response = await axios.post('http://localhost:5000/api/auth/login', {
         email,
-        password
+        password,
       });
-
+  
+      console.log('Login API response:', response.data);
+  
       if (response.status === 200) {
-        console.log(response);
         console.log('Token received:', response.data.token); 
-        login(response.data.token); 
+  
+        localStorage.setItem('isAdmin', response.data.isAdmin.toString());
         localStorage.setItem('userId', response.data.userId);
+  
+        login(response.data.token); 
         alert('Login successful');
         setEmail('');
         setPassword('');
@@ -31,6 +35,8 @@ const SignIn = ({ open, handleClose, handleOpenSignUp }) => {
         handleClose();
       }
     } catch (error) {
+      console.error('Error in handleSignIn:', error);
+  
       setError(error.response?.data?.message || 'An error occurred');
     }
   };
