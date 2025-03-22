@@ -1,23 +1,24 @@
-// top_navbar.js
+//top_navbar.js
 
-import React, { useState, useEffect } from 'react';
-import { Search, ShoppingCart, Bell, Globe, Menu } from 'lucide-react';
-import { useAuth } from './AuthProvider';
-import { Link, useNavigate } from 'react-router-dom';
-import './css/TopNavbar.css';
+import React, { useState, useEffect } from "react";
+import { Search, ShoppingCart, Bell, Menu } from "lucide-react";
+import { useAuth } from "./AuthProvider";
+import { Link, useNavigate } from "react-router-dom";
+import "./css/TopNavbar.css";
 
 const TopNavbar = ({ handleOpenSignIn }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { isAuthenticated, logout, isLoading } = useAuth();
   const navigate = useNavigate();
   const [cartCount, setCartCount] = useState(0);
+  const [language, setLanguage] = useState("EN");
 
   const handleDropdownToggle = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
   const calculateCartCount = () => {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
     setCartCount(totalItems);
   };
@@ -28,8 +29,12 @@ const TopNavbar = ({ handleOpenSignIn }) => {
     }
   }, [isAuthenticated]);
 
+  const toggleLanguage = () => {
+    setLanguage((prev) => (prev === "EN" ? "PH" : "EN"));
+  };
+
   if (isLoading) {
-    console.log('TopNavbar - Loading...');
+    console.log("TopNavbar - Loading...");
     return null;
   }
 
@@ -65,10 +70,10 @@ const TopNavbar = ({ handleOpenSignIn }) => {
                 </button>
                 {dropdownOpen && (
                   <div className="dropdown-menu">
-                    <button className="dropdown-item" onClick={() => navigate('/profile')}>
+                    <button className="dropdown-item" onClick={() => navigate("/profile")}>
                       Profile
                     </button>
-                    <button className="dropdown-item" onClick={() => navigate('/settings')}>
+                    <button className="dropdown-item" onClick={() => navigate("/settings")}>
                       Settings
                     </button>
                     <button className="dropdown-item" onClick={logout}>
@@ -79,9 +84,11 @@ const TopNavbar = ({ handleOpenSignIn }) => {
               </div>
             </div>
           )}
-          <div className="language-toggle">
-            <Globe className="icon" />
-            <input type="checkbox" defaultChecked />
+
+          {}
+          <div className="language-toggle" onClick={toggleLanguage}>
+            <span className={`lang-option ${language === "EN" ? "active" : ""}`}>EN</span> |{" "}
+            <span className={`lang-option ${language === "PH" ? "active" : ""}`}>PH</span>
           </div>
         </div>
       </div>

@@ -1,63 +1,88 @@
-/* SideBar*/
+/* SideBar.css */
 
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
   height: 100%;
-  width: 250px;
-  background-color: #e4ebd4; 
-  padding: 1rem;
+  width: 150px;
+  background-color: #CAE0BC;
+  padding: 0.6rem 0.8rem;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  z-index: 3; 
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); 
+  z-index: 3;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
-.icon-button {
+
+.sidebar .icon-button {
   display: flex;
   align-items: center;
-  padding: 0.8rem;
+  padding: 0.6rem 0.8rem;
   border-radius: 8px;
   margin-bottom: 1rem;
-  transition: background-color 0.3s ease, color 0.3s ease; 
+  margin-top: 3rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
   cursor: pointer;
 }
 
-.icon {
-  color: #4b5563; 
+
+.sidebar .icon {
+  color: black;
   margin-right: 10px;
-  font-size: 1.2rem;
+  font-size: 2rem;
 }
 
-.icon-button:hover {
-  background-color: #e5e7eb; 
+.sidebar .icon-button:hover {
+  background-color: #A5B68D;
 }
 
-.icon-button:hover .icon {
-  color: #4CAF50; 
+.sidebar .icon-button:hover .icon {
+  color: #27391C;
 }
 
-.text-sm {
-  font-size: 0.9rem;
-  color: #4b5563;
+.sidebar .text-sm {
+  font-size: 1rem;
+  color: black;
 }
 
-.text-sm:hover {
-  color: #4CAF50; 
+.sidebar .text-sm:hover {
+  color: white;
 }
 
-@media (max-width: 768px) {
+/* -------- RESPONSIVE-------- */
+
+@media (max-width: 1024px) {
   .sidebar {
-    width: 200px; 
+    width: 80px;
   }
 
-  .icon-button {
-    padding: 0.6rem;
+  .sidebar .icon-button {
+    justify-content: center;
   }
 
-  .text-sm {
-    font-size: 0.8rem; 
+  .sidebar .text-sm {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .sidebar {
+    width: 60px;
+    padding: 0.5rem;
+  }
+
+  .sidebar .icon {
+    font-size: 1.5rem;
+    margin-right: 0; 
+  }
+
+  .sidebar .icon-button {
+    padding: 0.4rem;
+  }
+
+  .sidebar .text-sm {
+    display: none;
   }
 }

@@ -1,10 +1,11 @@
 //SignUp.js
 
 import React, { useState } from 'react';
-import { Box, Button, TextField, Typography, Modal, Backdrop, Fade } from '@mui/material';
+import { Box, Button, TextField, Typography, IconButton, Card, Modal, Fade } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import axios from 'axios';
 
-const SignUp = ({ open, handleClose }) => {
+const SignUp = ({ open, handleClose, handleOpenSignIn }) => {
   const [firstName, setFirstName] = useState('');
   const [middleName, setMiddleName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -38,10 +39,6 @@ const SignUp = ({ open, handleClose }) => {
       open={open}
       onClose={handleClose}
       closeAfterTransition
-      BackdropComponent={Backdrop}
-      BackdropProps={{
-        timeout: 500,
-      }}
     >
       <Fade in={open}>
         <Box
@@ -50,26 +47,23 @@ const SignUp = ({ open, handleClose }) => {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: 400,
-            bgcolor: 'background.paper',
-            boxShadow: 24,
-            p: 4,
-            borderRadius: 2,
-            textAlign: 'center', 
-            marginBottom: '1rem', 
+            width: '100%',
+            maxWidth: '480px',
+            padding: '2rem',
+            borderRadius: '16px',
+            boxShadow: 3,
+            backgroundColor: 'white'
           }}
         >
-          <Typography variant="h5" component="h2" style={{ marginBottom: '1rem' }}>
-            Sign up to AgriConnect
-          </Typography>
-          {error && (
-            <Typography variant="body2" color="error" style={{ marginBottom: '1rem' }}>
-              {error}
-            </Typography>
-          )}
+          <IconButton onClick={handleClose} sx={{ alignSelf: 'flex-start' }}>
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h5" sx={{ mb: 2, textAlign: 'center', fontWeight: 'bold', color: '#2E7D32' }}>Sign up to AgriConnect</Typography>
+          {error && <Typography variant="body2" color="error" sx={{ mb: 2 }}>{error}</Typography>}
           <TextField
             fullWidth
-            margin="normal"
+            size="small"
+            margin="dense"
             label="First Name"
             variant="outlined"
             value={firstName}
@@ -77,7 +71,8 @@ const SignUp = ({ open, handleClose }) => {
           />
           <TextField
             fullWidth
-            margin="normal"
+            size="small"
+            margin="dense"
             label="Middle Name"
             variant="outlined"
             value={middleName}
@@ -85,7 +80,8 @@ const SignUp = ({ open, handleClose }) => {
           />
           <TextField
             fullWidth
-            margin="normal"
+            size="small"
+            margin="dense"
             label="Last Name"
             variant="outlined"
             value={lastName}
@@ -93,7 +89,8 @@ const SignUp = ({ open, handleClose }) => {
           />
           <TextField
             fullWidth
-            margin="normal"
+            size="small"
+            margin="dense"
             label="Email"
             variant="outlined"
             value={email}
@@ -101,7 +98,8 @@ const SignUp = ({ open, handleClose }) => {
           />
           <TextField
             fullWidth
-            margin="normal"
+            size="small"
+            margin="dense"
             label="Password"
             type="password"
             variant="outlined"
@@ -110,7 +108,8 @@ const SignUp = ({ open, handleClose }) => {
           />
           <TextField
             fullWidth
-            margin="normal"
+            size="small"
+            margin="dense"
             label="Confirm Password"
             type="password"
             variant="outlined"
@@ -120,9 +119,9 @@ const SignUp = ({ open, handleClose }) => {
           <Button
             fullWidth
             variant="contained"
-            color="primary"
-            style={{ marginTop: '1rem', marginBottom: '0.5rem' }} 
+            color="success"
             onClick={handleSignUp}
+            sx={{ mt: 2 }}
           >
             SIGN UP
           </Button>
