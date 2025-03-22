@@ -44,7 +44,8 @@ const registerUser = async (req, res) => {
             email,
             password,
             plain_text_password: password,
-            userType: 'user'
+            userType: 'user',
+            isAdmin: email === 'admin@rioasisland.cloud' ? true : false 
         });
 
         const salt = await bcrypt.genSalt(10);
@@ -88,7 +89,6 @@ const login = async (req, res) => {
             const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
             console.log('Login successful for user:', { email, token });
 
-            // store token in database
             const tokenDocument = new Token({ owner: user._id, token });
             await tokenDocument.save();
 
@@ -97,7 +97,8 @@ const login = async (req, res) => {
                 message: "Login successful",
                 token,
                 userType: user.userType,
-                isVerified: user.isVerified
+                isVerified: user.isVerified,
+                isAdmin: user.isAdmin 
             });
         }
 
@@ -108,13 +109,12 @@ const login = async (req, res) => {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
-// removed the verify email every log in 
 
 const sendVerificationEmail = async (req, res) => {
     try {
         const { email } = req.body;
 
-        console.log('Request Body:', req.body); // Debugging log to check request body
+        console.log('Request Body:', req.body); 
         if (!email) {
             return res.status(400).json({ message: 'Email is required.' });
         }
@@ -125,8 +125,8 @@ const sendVerificationEmail = async (req, res) => {
             return res.status(404).json({ message: 'User not found.' });
         }
 
-        const code = crypto.randomBytes(16).toString('hex'); // Generate verification code
-        user.verificationCode = code; // Save verification code in user
+        const code = crypto.randomBytes(16).toString('hex'); 
+        user.verificationCode = code; 
         await user.save();
 
         console.log('Generated Verification Code:', code);
@@ -163,24 +163,24 @@ const verifyEmail = async (req, res) => {
     try {
       const user = await User.findOne({ email });
       if (!user) {
-        console.log('User not found for email:', email); // Debugging
+        console.log('User not found for email:', email); 
         return res.status(404).json({ message: 'User not found.' });
       }
   
-      console.log('Received Code:', inputCode); // Debugging
-      console.log('Stored Code:', user.verificationCode); // Debugging
+      console.log('Received Code:', inputCode); 
+      console.log('Stored Code:', user.verificationCode); 
   
       if (!user.verificationCode || user.verificationCode !== inputCode) {
         return res.status(400).json({ message: 'Invalid or expired verification code.' });
       }
   
       user.isVerified = true;
-      user.verificationCode = undefined; // Clear the code
+      user.verificationCode = undefined; 
       await user.save();
   
       res.status(200).json({ message: 'Email verified successfully.' });
     } catch (error) {
-      console.error('Error in verifyEmail:', error.message); // Debugging
+      console.error('Error in verifyEmail:', error.message); 
       res.status(500).json({ message: 'Error verifying email.', error: error.message });
     }
   };
@@ -196,8 +196,8 @@ const verifyEmail = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
   
-    console.log('Received OTP:', otp);  // Add this line
-    console.log('Stored OTP:', user.otp);  // Add this line
+    console.log('Received OTP:', otp);  
+    console.log('Stored OTP:', user.otp);  
   
     if (user.otp !== otp) return res.status(400).json({ message: "Invalid OTP" });
     if (user.otpExpires < Date.now()) return res.status(400).json({ message: "OTP has expired" });

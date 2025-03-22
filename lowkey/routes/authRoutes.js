@@ -1,8 +1,10 @@
-//authRoutes.js
+/* authRoutes.js */
 
 const express = require('express');
 const { login, registerUser, verifyEmail, forgotPassword, resetPassword, resendVerificationCode, sendVerificationEmail, getUser } = require('../controllers/authController');
 const auth = require('../middleware/auth');
+const AdminRoutes = require('./Admin'); 
+
 
 const router = express.Router();
 
@@ -13,6 +15,12 @@ router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 router.post('/resend-verification-code', resendVerificationCode);
 router.post('/send-verification-email', auth, sendVerificationEmail);
-router.get('/user', auth, getUser); 
+router.get('/user', auth, getUser);
+
+
+
+
+
+router.use('/admin', AdminRoutes);
 
 module.exports = router;

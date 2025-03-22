@@ -6,9 +6,11 @@ import Settings from './pages/Settings';
 import ProtectedRoute from './components/ProtectedRoutes';
 import BuyArea from './pages/BuyArea';
 import CartArea from './pages/CartArea';
-import Profile from './pages/Profile'; 
+import Profile from './pages/Profile';
 import './App.css';
 import { AuthProvider } from './components/AuthProvider';
+import AdminRoutes from './routes/adminRoutes'; 
+import AdminDashboard from './admin/adminDashboard';
 
 const App = () => {
   return (
@@ -20,7 +22,15 @@ const App = () => {
           <Route path="/settings" element={<Settings />} />
           <Route path="/buy-area" element={<ProtectedRoute element={BuyArea} />} />
           <Route path="/cart" element={<ProtectedRoute element={CartArea} />} />
-          <Route path="/profile" element={<ProtectedRoute element={Profile} />} /> {}
+          <Route path="/profile" element={<ProtectedRoute element={Profile} />} />
+          <Route
+            path="/admin"
+            element={
+              <AdminRoutes>
+                <AdminDashboard />
+              </AdminRoutes>
+            }
+          />
         </Routes>
       </Router>
     </AuthProvider>

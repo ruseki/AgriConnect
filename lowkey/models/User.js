@@ -23,11 +23,11 @@ const UserSchema = new mongoose.Schema({
     verificationCode: { type: String },
     isVerified: { type: Boolean, default: false },
     userType: { type: String, default: 'user' },
+    isAdmin: { type: Boolean, default: false }, // New field to manage admin accounts
 }, { timestamps: true });
 
 UserSchema.pre('validate', async function (next) {
     if (this.isNew) {
-
         let uniqueId = generateUserId();
         let existingUser = await this.constructor.findOne({ userId: uniqueId });
 
