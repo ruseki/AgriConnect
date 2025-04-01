@@ -1,5 +1,3 @@
-//top_navbar.js
-
 import React, { useState, useEffect } from "react";
 import { Search, ShoppingCart, Bell, Menu } from "lucide-react";
 import { useAuth } from "./AuthProvider";
@@ -31,6 +29,11 @@ const TopNavbar = ({ handleOpenSignIn }) => {
 
   const toggleLanguage = () => {
     setLanguage((prev) => (prev === "EN" ? "PH" : "EN"));
+  };
+
+  const handleLogout = () => {
+    logout(); 
+    navigate("/"); 
   };
 
   if (isLoading) {
@@ -70,13 +73,19 @@ const TopNavbar = ({ handleOpenSignIn }) => {
                 </button>
                 {dropdownOpen && (
                   <div className="dropdown-menu">
-                    <button className="dropdown-item" onClick={() => navigate("/profile")}>
+                    <button
+                      className="dropdown-item"
+                      onClick={() => navigate("/profile")}
+                    >
                       Profile
                     </button>
-                    <button className="dropdown-item" onClick={() => navigate("/settings")}>
+                    <button
+                      className="dropdown-item"
+                      onClick={() => navigate("/settings")}
+                    >
                       Settings
                     </button>
-                    <button className="dropdown-item" onClick={logout}>
+                    <button className="dropdown-item" onClick={handleLogout}>
                       Log Out
                     </button>
                   </div>
@@ -84,11 +93,18 @@ const TopNavbar = ({ handleOpenSignIn }) => {
               </div>
             </div>
           )}
-
-          {}
           <div className="language-toggle" onClick={toggleLanguage}>
-            <span className={`lang-option ${language === "EN" ? "active" : ""}`}>EN</span> |{" "}
-            <span className={`lang-option ${language === "PH" ? "active" : ""}`}>PH</span>
+            <span
+              className={`lang-option ${language === "EN" ? "active" : ""}`}
+            >
+              EN
+            </span>{" "}
+            |{" "}
+            <span
+              className={`lang-option ${language === "PH" ? "active" : ""}`}
+            >
+              PH
+            </span>
           </div>
         </div>
       </div>

@@ -46,8 +46,8 @@ const listingSchema = new mongoose.Schema({
     required: true,
   },
   status: {
-    type: String,
-    default: 'available', 
+    type: Boolean,
+    default: true, 
   },
   color: {
     type: String,

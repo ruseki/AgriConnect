@@ -107,4 +107,20 @@ exports.signin = async (req, res) => {
     res.send({ token });
 };
 
-
+exports.updateSellerStatus = async (req, res) => {
+    try {
+      const user = await User.findById(req.params.id);
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      user.isSeller = req.body.isSeller; 
+      await user.save();
+  
+      res.status(200).json({ message: 'Seller status updated successfully', user });
+    } catch (error) {
+      res.status(500).json({ message: 'Error updating seller status', error: error.message });
+    }
+  };
+  

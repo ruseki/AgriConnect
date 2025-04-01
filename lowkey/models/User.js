@@ -23,7 +23,8 @@ const UserSchema = new mongoose.Schema({
     verificationCode: { type: String },
     isVerified: { type: Boolean, default: false },
     userType: { type: String, default: 'user' },
-    isAdmin: { type: Boolean, default: false }, // New field to manage admin accounts
+    isAdmin: { type: Boolean, default: false }, 
+    isSeller: { type: Boolean, default: false},
 }, { timestamps: true });
 
 UserSchema.pre('validate', async function (next) {

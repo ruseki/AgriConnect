@@ -1,4 +1,3 @@
-// CartArea.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import TopNavbar from '../components/top_navbar';
@@ -20,7 +19,7 @@ const CartArea = () => {
         });
 
         if (response.status === 200) {
-          setCartItems(response.data.cartItems);
+          setCartItems(response.data.cartItems); // Assuming populated data
         } else {
           console.error('Failed to fetch cart items:', response.data.message);
         }
@@ -64,22 +63,22 @@ const CartArea = () => {
   };
 
   const handleCardClick = (e, productId) => {
-    if (e.target.closest('.cart-checkbox')) return; 
+    if (e.target.closest('.cart-checkbox')) return;
 
     if (expandedItem === productId) {
-      setExpandedItem(null); 
+      setExpandedItem(null);
     } else {
-      setExpandedItem(productId); 
+      setExpandedItem(productId);
     }
   };
 
   const calculateTotal = () => {
     return cartItems.reduce((total, item) => {
-      if (selectedItems.includes(item.productId._id)) {
-        const priceWithFee = item.productId.price * 1.01; // 1% commis fee
+      if (item.productId && selectedItems.includes(item.productId._id)) {
+        const priceWithFee = item.productId.price * 1.01; // 1% commission fee
         return total + priceWithFee * item.quantity;
       }
-      return total;
+      return total; 
     }, 0);
   };
 
@@ -95,7 +94,12 @@ const CartArea = () => {
           ) : cartItems.length > 0 ? (
             <div className="cart-container">
               {cartItems.map((item) => {
-                const priceWithFee = item.productId.price * 1.01; // for the 1% commission fee
+                if (!item.productId) {
+                  console.warn('Invalid item in cart:', item);
+                  return null; 
+                }
+
+                const priceWithFee = item.productId.price * 1.01; // 1% commission fee
                 const isExpanded = expandedItem === item.productId._id;
                 const isSelected = selectedItems.includes(item.productId._id);
 
@@ -103,7 +107,7 @@ const CartArea = () => {
                   <div
                     key={item.productId._id}
                     className={`cart-item-card ${isExpanded ? 'expanded' : ''}`}
-                    onClick={(e) => handleCardClick(e, item.productId._id)} 
+                    onClick={(e) => handleCardClick(e, item.productId._id)}
                   >
                     <div className="checkbox-container">
                       <input
@@ -135,7 +139,7 @@ const CartArea = () => {
                     <p>Quantity: {item.quantity}</p>
                     <button
                       onClick={(e) => {
-                        e.stopPropagation(); 
+                        e.stopPropagation();
                         handleRemoveItem(item.productId._id);
                       }}
                       className="remove-item-btn"

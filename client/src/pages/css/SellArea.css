@@ -90,6 +90,19 @@
   background-color: #1d4ed8;
 }
 
+.edit-btn {
+  background-color: #4caf50; 
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.edit-btn:hover {
+  background-color: #388e3c; 
+}
+
 .listings-container {
   display: flex;
   flex-wrap: wrap;
@@ -188,4 +201,82 @@
   .listings-container {
     justify-content: center; 
   }
+}
+
+.unlist-btn {
+  background-color: #ff9800; 
+  color: white; 
+  border: none; 
+  border-radius: 5px; 
+  padding: 10px 20px; 
+  font-size: 1rem; 
+  cursor: pointer; 
+  transition: background-color 0.3s ease; 
+}
+
+.unlist-btn:hover {
+  background-color: #e65100; 
+}
+
+.list-btn {
+  background-color: #ff9800; 
+  color: white; 
+  border: none; 
+  border-radius: 5px; 
+  padding: 10px 20px;
+  font-size: 1rem; 
+  cursor: pointer; 
+  transition: background-color 0.3s ease; 
+}
+
+.delete-btn:hover {
+  background-color: #d60c0c; 
+}
+
+.delete-btn {
+  background-color: #f80c0c; 
+  color: white; 
+  border: none; 
+  border-radius: 5px; 
+  padding: 10px 20px; 
+  font-size: 1rem; 
+  cursor: pointer;
+  transition: background-color 0.3s ease; 
+}
+
+.unlist-btn:hover {
+  background-color: #e65100; 
+}
+
+.confirmation-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.confirm-delete-btn {
+  background-color: #28a745; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.confirm-delete-btn:hover {
+  background-color: #218838; 
+}
+
+.cancel-delete-btn {
+  background-color: #ffc107; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cancel-delete-btn:hover {
+  background-color: #e0a800; 
 }

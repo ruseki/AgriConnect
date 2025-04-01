@@ -103,12 +103,12 @@ const SellArea = () => {
       alert('Token or User ID is missing. Please log in again.');
       return;
     }
-
+  
     if (!productName || !location) {
       alert('Product Name and Location are required.');
       return;
     }
-
+  
     try {
       const response = await fetch('http://localhost:5000/api/listings', {
         method: 'POST',
@@ -131,50 +131,84 @@ const SellArea = () => {
           userId,
         }),
       });
-
+  
       const result = await response.json();
       if (!response.ok) {
         console.error('Failed Response:', result);
         throw new Error(result.message || 'Failed to create listing');
       }
-
+  
       alert('Listing published!');
       handleCloseSellModal();
-      fetchListings(); 
+      fetchListings();
     } catch (error) {
       console.error('Error creating listing:', error);
       alert(`Failed to create listing: ${error.message}`);
     }
   };
-
-  const handleMarkAsSold = async (id) => {
+  
+  const handleUnlist = async (listingId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/listings/mark-as-sold/${id}`, {
-        method: 'PATCH',
+      console.log(`Attempting to unlist: /api/listings/${listingId}/unlist`);
+      const response = await fetch(`http://localhost:5000/api/listings/${listingId}/unlist`, {
+        method: "PUT",
         headers: {
-          'Authorization': `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`, 
         },
       });
-
-      const result = await response.json();
-      if (response.ok) {
-        alert('Product sold out');
-        fetchListings();
-      } else {
-        alert(result.message);
+      console.log("Identifier Passed to Unlist:", listingId);
+console.log("Listings State After Update:", listings);
+  
+      if (!response.ok) {
+        throw new Error("Failed to unlist the product");
       }
+  
+      const data = await response.json();
+  
+      setListings((prevListings) =>
+        prevListings.map((listing) =>
+          listing.identifier === listingId ? { ...listing, status: false } : listing
+        )
+      );
     } catch (error) {
-      console.error('Error marking listing as sold:', error);
-      alert('Failed to mark listing as sold');
+      console.error("Error unlisting the product:", error.message);
     }
   };
-
+  
+  const handleRelist = async (listingId) => {
+    try {
+      console.log(`Attempting to relist: /api/listings/${listingId}/relist`);
+      const response = await fetch(`http://localhost:5000/api/listings/${listingId}/relist`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`, 
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to relist the product");
+      }
+  
+      const data = await response.json();
+  
+      setListings((prevListings) =>
+        prevListings.map((listing) =>
+          listing.identifier === listingId ? { ...listing, status: true } : listing
+        )
+      );
+    } catch (error) {
+      console.error("Error relisting the product:", error.message);
+    }
+  };
+  
   const handleEditSubmit = async () => {
     if (!token || !userId || !editingListing) {
       alert('Token or User ID is missing, or no listing selected for editing.');
       return;
     }
-
+  
     try {
       const response = await fetch(`http://localhost:5000/api/listings/${editingListing._id}`, {
         method: 'PUT',
@@ -197,22 +231,22 @@ const SellArea = () => {
           userId,
         }),
       });
-
+  
       const result = await response.json();
       if (!response.ok) {
         console.error('Failed Response:', result);
         throw new Error(result.message || 'Failed to update listing');
       }
-
+  
       alert('Listing updated successfully!');
       handleCloseSellModal();
-      fetchListings(); 
+      fetchListings();
     } catch (error) {
       console.error('Error updating listing:', error);
       alert(`Failed to update listing: ${error.message}`);
     }
   };
-
+  
   const handleEdit = (listing) => {
     setEditingListing(listing);
     setProductName(listing.productName);
@@ -229,6 +263,41 @@ const SellArea = () => {
     setOpenSellModal(true);
   };
 
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
+  const handleDeleteClick = (id) => {
+    setShowConfirmation(true); 
+  };
+  
+  const handleCancelDelete = () => {
+    setShowConfirmation(false); 
+  };
+  
+  const handleConfirmDelete = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/listings/delete/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`, 
+        },
+      });
+  
+      const result = await response.json();
+      if (!response.ok) {
+        console.error('Failed to delete listing:', result.message);
+        alert(result.message);
+        return;
+      }
+  
+      alert('Listing successfully deleted!');
+      fetchListings(); 
+      setShowConfirmation(false); 
+    } catch (error) {
+      console.error('Error deleting listing:', error.message); 
+      alert('Failed to delete the listing.');
+    }
+  };
+
   return (
     <>
       <TopNavbar />
@@ -238,171 +307,226 @@ const SellArea = () => {
           <button className="start-selling-btn" onClick={handleOpenSellModal}>
             Start Selling!
           </button>
-
+  
           <div className="listings-container">
             {listings.length > 0 ? (
               listings.map((listing) => (
                 <div
-                  key={listing._id}
+                  key={listing.identifier} 
                   className="listing-card"
                   style={{
                     backgroundColor: listing.color,
                   }}
                 >
-                  <h3>Product ID: {listing._id}</h3>
+                  <h3>Product ID: {listing.identifier}</h3>
                   <h3>Product: {listing.productName}</h3>
                   <p>Category: {listing.category}</p>
                   <p>Price: ₱{listing.price}</p>
                   <p>Details: {listing.details}</p>
-                  <p>Status: {listing.status}</p>
-                  <p>Stocks Availability: {listing.quantity} {listing.unit}</p>
-                  {listing.status === 'available' && (
-                    <button onClick={() => handleMarkAsSold(listing._id)} className="mark-as-sold-btn">
-                      Mark as Sold
-                    </button>
-                  )}
+                  <p>This listing is {listing.status ? "active" : "inactive"}.</p>
+                  <p>
+                    Stocks Availability: {listing.quantity} {listing.unit}
+                  </p>
+  
+                  <button
+                    onClick={() =>
+                      listing.status
+                        ? handleUnlist(listing.identifier)
+                        : handleRelist(listing.identifier)
+                    }
+                    className={listing.status ? "unlist-btn" : "list-btn"}
+                  >
+                    {listing.status ? "Unlist" : "List Again"}
+                  </button>
+  
                   <button onClick={() => handleEdit(listing)} className="edit-btn">
                     <Edit2 className="icon" />
                   </button>
+  
+                  {}
+                  {editingListing && !showConfirmation && (
+  <button
+    onClick={() => handleDeleteClick(listing.identifier)} 
+    className="delete-btn"
+  >
+    Delete
+  </button>
+)}
                 </div>
               ))
             ) : (
               <p>You have no listings yet.</p>
             )}
           </div>
-
+  
           {openSellModal && (
-            <div className="modal">
-              <div className="modal-overlay" onClick={handleCloseSellModal}></div>
-              <div className="modal-content">
-                <h2 className="modal-title">
-                  {editingListing ? 'Edit Listing' : 'Create a New Listing'}
-                </h2>
-                <div className="input-group">
-                  <Tag className="icon" />
-                  <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="input-field"
-                  >
-                    <option value="" disabled>Select a Category</option>
-                    {Object.keys(categories).map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="input-group">
-                  <Package className="icon" />
-                  <select
-                    value={productName}
-                    onChange={(e) => setProductName(e.target.value)}
-                    className="input-field"
-                    disabled={!category}
-                  >
-                    <option value="" disabled>Select a Product</option>
-                    {categories[category] && categories[category].map((product) => (
-                      <option key={product} value={product}>{product}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="input-group">
-                  <input
-                    type="number"
-                    placeholder="Stocks"
-                    value={quantity}
-                    onChange={(e) => setQuantity(e.target.value)}
-                    className="input-field"
-                  />
-                  <select
-                    value={unit}
-                    onChange={(e) => setUnit(e.target.value)}
-                    className="input-select"
-                  >
-                    <option value="sack">Sack</option>
-                    <option value="kilograms">Kilograms</option>
-                    <option value="cavan">Cavan</option>
-                  </select>
-                </div>
-                <div className="input-group">
-                  <input
-                    type="number"
-                    placeholder="Minimum Order"
-                    value={minimumOrder}
-                    onChange={(e) => setMinimumOrder(e.target.value)}
-                    className="input-field"
-                  />
-                </div>
-                <div className="input-group">
-                  <input
-                    type="text"
-                    placeholder="Condition"
-                    value={condition}
-                    onChange={(e) => setCondition(e.target.value)}
-                    className="input-field"
-                  />
-                </div>
-                <div className="input-group">
-                  <textarea
-                    placeholder="Details"
-                    value={details}
-                    onChange={(e) => setDetails(e.target.value)}
-                    className="input-field h-24"
-                  />
-                </div>
-                <div className="input-group">
-                  <select
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    className="input-field"
-                  >
-                    <option value="" disabled>Select a Location</option>
-                    {locations.map((locationOption, index) => (
-                      <option key={index} value={locationOption}>
-                        {locationOption}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="input-group">
-                  <input
-                    type="number"
-                    placeholder="Price"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="input-field"
-                  />
-                </div>
-                <div className="input-group">
-                  <select
-                    value={color}
-                    onChange={(e) => setColor(e.target.value)}
-                    className="input-select"
-                  >
-                    <option value="red">Red</option>
-                    <option value="green">Green</option>
-                    <option value="blue">Blue</option>
-                    <option value="yellow">Yellow</option>
-                    <option value="orange">Orange</option>
-                    <option value="purple">Purple</option>
-                    <option value="pink">Pink</option>
-                    <option value="white">White</option>
-                    <option value="black">Black</option>
-                  </select>
-                </div>
-                <button
-                  className="publish-btn"
-                  onClick={editingListing ? handleEditSubmit : handlePublish}
-                >
-                  <Truck className="mr-2" />
-                  {editingListing ? 'Publish Edit' : 'Publish'}
-                </button>
-              </div>
-            </div>
-          )}
+  <div className="modal">
+    <div className="modal-overlay" onClick={handleCloseSellModal}></div>
+    <div className="modal-content">
+      <h2 className="modal-title">
+        {editingListing ? "Edit Listing" : "Create a New Listing"}
+      </h2>
+      <div className="input-group">
+        <Tag className="icon" />
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="input-field"
+        >
+          <option value="" disabled>
+            Select a Category
+          </option>
+          {Object.keys(categories).map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="input-group">
+        <Package className="icon" />
+        <select
+          value={productName}
+          onChange={(e) => setProductName(e.target.value)}
+          className="input-field"
+          disabled={!category}
+        >
+          <option value="" disabled>
+            Select a Product
+          </option>
+          {categories[category]?.map((product) => (
+            <option key={product} value={product}>
+              {product}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="input-group">
+        <input
+          type="number"
+          placeholder="Stocks"
+          value={quantity}
+          onChange={(e) => setQuantity(e.target.value)}
+          className="input-field"
+        />
+        <select
+          value={unit}
+          onChange={(e) => setUnit(e.target.value)}
+          className="input-select"
+        >
+          <option value="sack">Sack</option>
+          <option value="kilograms">Kilograms</option>
+          <option value="cavan">Cavan</option>
+        </select>
+      </div>
+      <div className="input-group">
+        <input
+          type="number"
+          placeholder="Minimum Order"
+          value={minimumOrder}
+          onChange={(e) => setMinimumOrder(e.target.value)}
+          className="input-field"
+        />
+      </div>
+      <div className="input-group">
+        <input
+          type="text"
+          placeholder="Condition"
+          value={condition}
+          onChange={(e) => setCondition(e.target.value)}
+          className="input-field"
+        />
+      </div>
+      <div className="input-group">
+        <textarea
+          placeholder="Details"
+          value={details}
+          onChange={(e) => setDetails(e.target.value)}
+          className="input-field h-24"
+        />
+      </div>
+      <div className="input-group">
+        <select
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="input-field"
+        >
+          <option value="" disabled>
+            Select a Location
+          </option>
+          {locations.map((locationOption, index) => (
+            <option key={index} value={locationOption}>
+              {locationOption}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="input-group">
+        <input
+          type="number"
+          placeholder="Price"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          className="input-field"
+        />
+      </div>
+      <div className="input-group">
+        <select
+          value={color}
+          onChange={(e) => setColor(e.target.value)}
+          className="input-select"
+        >
+          <option value="red">Red</option>
+          <option value="green">Green</option>
+          <option value="blue">Blue</option>
+          <option value="yellow">Yellow</option>
+          <option value="orange">Orange</option>
+          <option value="purple">Purple</option>
+          <option value="pink">Pink</option>
+          <option value="white">White</option>
+          <option value="black">Black</option>
+        </select>
+      </div>
+
+      {}
+      <button
+        className="publish-btn"
+        onClick={editingListing ? handleEditSubmit : handlePublish}
+      >
+        <Truck className="mr-2" />
+        {editingListing ? "Publish Edit" : "Publish"}
+      </button>
+
+      {}
+      {editingListing && !showConfirmation && (
+        <button
+          className="delete-btn"
+          onClick={() => handleDeleteClick(editingListing._id)}
+        >
+          Delete
+        </button>
+      )}
+
+      {}
+      {editingListing && showConfirmation && (
+        <div className="confirmation-buttons">
+          <button
+            className="confirm-delete-btn"
+            onClick={() => handleConfirmDelete(editingListing._id)}
+          >
+            Yes
+          </button>
+          <button className="cancel-delete-btn" onClick={handleCancelDelete}>
+            No
+          </button>
+        </div>
+      )}
+    </div>
+  </div>
+)}
         </div>
       </main>
     </>
   );
 };
-
-export default SellArea;
+  export default SellArea;

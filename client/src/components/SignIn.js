@@ -19,21 +19,26 @@ const SignIn = ({ open, handleClose, handleOpenSignUp }) => {
         password,
       });
   
-      console.log('Login API response:', response.data);
+      console.log('Login API response:', response.data); 
   
-      if (response.status === 200) {
-        console.log('Token received:', response.data.token); 
+      const { userId, token, isAdmin } = response.data; 
   
-        localStorage.setItem('isAdmin', response.data.isAdmin.toString());
-        localStorage.setItem('userId', response.data.userId);
-  
-        login(response.data.token); 
-        alert('Login successful');
-        setEmail('');
-        setPassword('');
-        setError('');
-        handleClose();
+      if (!userId || !token) {
+        throw new Error('Invalid response: Missing userId or token.');
       }
+  
+      console.log('Token received:', token);
+      console.log('Admin status:', isAdmin);
+  
+      localStorage.setItem('isAdmin', isAdmin.toString());
+      localStorage.setItem('userId', userId);
+  
+      login(token, response.data); 
+      alert('Login successful');
+      setEmail('');
+      setPassword('');
+      setError('');
+      handleClose();
     } catch (error) {
       console.error('Error in handleSignIn:', error);
   

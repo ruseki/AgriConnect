@@ -1,17 +1,51 @@
-/* adminDashboard.js */
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import './css/adminDashboard.css';
-import SideBar from '../components/side_bar'; 
-import TopNavbar from '../components/top_navbar'; 
+import SideBar from '../components/side_bar';
+import TopNavbar from '../components/top_navbar';
+import axios from 'axios';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userFromLocalStorage = JSON.parse(localStorage.getItem('user'));
+
+    if (!userFromLocalStorage || !userFromLocalStorage.isAdmin) {
+      console.error('User is not an admin based on localStorage. Redirecting to homepage.');
+      navigate('/');
+      return;
+    }
+
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/user', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+        });
+
+        const user = response.data;
+
+        if (!user.isAdmin) {
+          console.error('User is not an admin based on API response. Redirecting to homepage.');
+          navigate('/');
+        } else {
+          console.log('Admin access granted.');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        navigate('/');
+      }
+    };
+
+    fetchUser();
+  }, [navigate]);
+
   const totalUsers = 15;
   const onlineUsers = 3;
   const verifiedSellers = 2;
-  const totalUsersPercent = 15; 
+  const totalUsersPercent = 15;
   const onlineUsersPercent = 3;
   const verifiedSellersPercent = 2;
 
@@ -23,10 +57,10 @@ const AdminDashboard = () => {
         <div className="dashboard-main">
           <div className="admin-dashboard">
             <h1>Admin Panel</h1>
-            <p>No backend yet, example values only.</p>
+            <p>Admin privileges confirmed. Welcome!</p>
           </div>
 
-          {}
+          {/* Statistics Section */}
           <div className="stats-container">
             <div className="stat-card">
               <h3>Total Users</h3>
@@ -80,13 +114,20 @@ const AdminDashboard = () => {
 
           {}
           <div className="admin-sections">
-            <button className="admin-button">Manage Users</button>
-            <button className="admin-button" onClick={() => (window.location.href = '/manage-tickets')}>
+            <button
+              className="admin-button"
+              onClick={() => navigate('/manage-users')}
+            >
+              Manage Users
+            </button>
+            <button
+              className="admin-button"
+              onClick={() => navigate('/manage-tickets')}
+            >
               Manage Tickets
             </button>
             <button className="admin-button">Manage Listings</button>
             <button className="admin-button">Site Settings</button>
-
           </div>
         </div>
       </div>

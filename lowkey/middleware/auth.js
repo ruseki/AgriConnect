@@ -1,5 +1,3 @@
-/*auth.js*/
-
 const jwt = require('jsonwebtoken');
 const Token = require('../models/tokens/login_state_token');
 const User = require('../models/User');
@@ -29,7 +27,11 @@ const auth = async (req, res, next) => {
     }
 
     req.userId = decoded.userId;
-    req.user = { _id: user._id, email: user.email };
+    req.user = { 
+      _id: user._id, 
+      email: user.email, 
+      isAdmin: user.isAdmin 
+    };
     next();
   } catch (error) {
     console.error('Authentication Error:', error.message || error);

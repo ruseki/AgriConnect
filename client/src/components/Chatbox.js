@@ -1,16 +1,14 @@
-// components/Chatbox.js
-
 import React, { useState } from 'react';
 import { MessageCircle, X } from 'lucide-react'; 
 import './css/Chatbox.css';
 
 const Chatbox = () => {
-  const [isOpen, setIsOpen] = useState(false); 
-  const [selectedUser, setSelectedUser] = useState(null); 
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [conversations, setConversations] = useState([
     { id: 1, name: 'Seller Ronalie', messages: ['Hi po! Send me your credit card details right now!'] },
     { id: 2, name: 'Buyer Dyana', messages: ['Bibilhin ko ang product mo kung ibbigay mo sakin facebook account details mo'] },
-  ]); // example lamang
+  ]);
 
   const toggleChatbox = () => {
     setIsOpen(!isOpen);
@@ -22,9 +20,11 @@ const Chatbox = () => {
 
   return (
     <div className="chatbox-container">
-      <div className="chat-icon" onClick={toggleChatbox}>
-        <MessageCircle size={24} className="icon-message" />
-      </div>
+      {!isOpen && (
+        <div className="chat-icon" onClick={toggleChatbox}>
+          <MessageCircle size={24} className="icon-message" />
+        </div>
+      )}
 
       {isOpen && (
         <div className="chatbox">

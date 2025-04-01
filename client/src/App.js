@@ -9,8 +9,9 @@ import CartArea from './pages/CartArea';
 import Profile from './pages/Profile';
 import './App.css';
 import { AuthProvider } from './components/AuthProvider';
-import AdminRoutes from './routes/adminRoutes'; 
+import AdminRoutes from './routes/adminRoutes';
 import AdminDashboard from './admin/adminDashboard';
+import ManageUsers from './admin/manageUsers'; 
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
           <Route path="/buy-area" element={<ProtectedRoute element={BuyArea} />} />
           <Route path="/cart" element={<ProtectedRoute element={CartArea} />} />
           <Route path="/profile" element={<ProtectedRoute element={Profile} />} />
+          <Route path="/manage-users" element={<ManageUsers />} /> {}
           <Route
             path="/admin"
             element={

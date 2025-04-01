@@ -19,7 +19,7 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import listingsRoute from './routes/listings.js';
 import cartRoutes from './routes/cartRoutes.js';
-import userRoutes from './routes/userRoutes.js'; 
+import userRoutes from './routes/userRoutes.js'; // Ensure user routes are included
 
 dotenv.config();
 const app = express();
@@ -35,11 +35,14 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Route mappings
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingsRoute);
 app.use('/api/cart', cartRoutes);
-app.use('/api', userRoutes); 
+app.use('/api', userRoutes); // Handles user-related endpoints
+app.use('/api/users', userRoutes);
 
+// Test endpoint
 app.get('/testlamang', (req, res) => {
   res.send('Server is running!');
 });
@@ -58,5 +61,3 @@ const start = async () => {
 };
 
 start();
-
-
