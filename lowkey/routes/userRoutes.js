@@ -5,26 +5,21 @@ import User from '../models/User.js';
 
 const router = express.Router();
 
-router.get('/user', auth, async (req, res) => {
+router.get('/:userId', auth, async (req, res) => {
+  const { userId } = req.params;
+
   try {
-    const user = await User.findById(req.userId).select(
-      'first_name middle_name last_name email isAdmin createdAt'
+    const user = await User.findById(userId).select(
+      'first_name last_name email birthDate country province cityOrTown barangay bio createdAt'
     );
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.status(200).json({
-      userId: user._id,
-      firstName: user.first_name,
-      middleName: user.middle_name || '',
-      lastName: user.last_name,
-      email: user.email,
-      isAdmin: user.isAdmin,
-      createdAt: user.createdAt,
-    });
+    res.status(200).json({ user });
   } catch (error) {
+    console.error('Error fetching user data:', error.message);
     res.status(500).json({ message: 'Error fetching user data', error: error.message });
   }
 });
@@ -32,7 +27,7 @@ router.get('/user', auth, async (req, res) => {
 router.get('/users', auth, adminMiddleware, async (req, res) => {
   try {
     const users = await User.find().select(
-      'userId first_name last_name email isVerified isSeller activeListings icon'
+      'userId first_name last_name email isVerified isSeller country province cityOrTown barangay bio'
     );
 
     if (!users.length) {
@@ -86,6 +81,32 @@ router.patch('/remove-seller/:userId', auth, async (req, res) => {
   } catch (error) {
     console.error('Error removing seller role:', error.message);
     res.status(500).json({ message: 'Server error while removing seller role', error: error.message });
+  }
+});
+
+router.put('/user', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const { country, province, cityOrTown, barangay, bio, ...rest } = req.body;
+
+    Object.assign(user, {
+      ...rest,
+      country: country || user.country,
+      province: province || user.province,
+      cityOrTown: cityOrTown || user.cityOrTown,
+      barangay: barangay || user.barangay,
+      bio: bio || user.bio, 
+    });
+
+    await user.save();
+    res.status(200).json({ message: 'User updated successfully', user });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating user', error: error.message });
   }
 });
 
