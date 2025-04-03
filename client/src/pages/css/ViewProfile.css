@@ -1,0 +1,87 @@
+/* ViewProfile.css */
+
+.viewprofile-main-content {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    margin-top: 15rem; 
+    margin-left: 250px; 
+  }
+
+  .viewprofile-cover-photo {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    color: white;
+  }
+  
+  .viewprofile-user-icon-container {
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .viewprofile-user-icon {
+    color: #38a169; 
+  }
+  
+  .viewprofile-user-info-section {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .viewprofile-user-name {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+  
+  .viewprofile-account-created {
+    font-size: 1rem;
+    color: #888;
+  }
+  
+  .viewprofile-bio {
+    font-size: 1rem;
+    margin-top: 5px;
+    color: #444;
+  }
+  
+  .viewprofile-listings-section {
+    margin-top: 20px;
+  }
+  
+  .viewprofile-listings-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .viewprofile-listing-card {
+    width: 200px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f1f1f1;
+    text-align: center;
+    border: 1px solid #ddd;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .viewprofile-listing-card:hover {
+    background-color: #e5e5e5;
+    transform: scale(1.02);
+  }
+  
+  .viewprofile-image-placeholder {
+    width: 100%;
+    height: 150px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background-color: #f1f1f1; 
+  }
