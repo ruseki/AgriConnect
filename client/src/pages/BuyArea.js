@@ -1,28 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { User } from 'lucide-react'; 
 import TopNavbar from '../components/top_navbar';
 import SideBar from '../components/side_bar';
 import { useAuth } from '../components/AuthProvider';
 import './css/BuyArea.css';
+import { useNavigate } from 'react-router-dom';
 
 const BuyArea = () => {
-  const { token, userId } = useAuth(); 
+  const { token, userId } = useAuth();
   const [listings, setListings] = useState([]);
   const [openBuyModal, setOpenBuyModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [cartQuantity, setCartQuantity] = useState(1); 
+  const [cartQuantity, setCartQuantity] = useState(1);
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 }); 
+  const [showMenu, setShowMenu] = useState(false); 
+  const [selectedUser, setSelectedUser] = useState(null); 
+const navigate = useNavigate();
+
 
   const fetchListings = async () => {
     try {
-      console.log('Fetching listings with token:', token);
-
       const response = await axios.get('http://localhost:5000/api/listings', {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.status === 200) {
-        setListings(response.data.listings.filter((listing) => listing.status === true && listing.quantity > 0));
-        console.log('Fetched listings:', response.data.listings);
+        setListings(
+          response.data.listings.filter((listing) => listing.status === true && listing.quantity > 0)
+        );
       } else {
         console.error('Failed to fetch listings:', response.data.message);
       }
@@ -39,7 +45,7 @@ const BuyArea = () => {
 
   const handleOpenBuyModal = (listing) => {
     setSelectedProduct(listing);
-    setCartQuantity(listing.minimumOrder || 1); 
+    setCartQuantity(listing.minimumOrder || 1);
     setOpenBuyModal(true);
   };
 
@@ -73,10 +79,40 @@ const BuyArea = () => {
     }
   };
 
+  const handleRightClick = (e, user) => {
+    e.preventDefault();
+    console.log('Right-click event triggered:', user); 
+    setMenuPosition({ x: e.clientX, y: e.clientY });
+    setSelectedUser(user._id); 
+    setShowMenu(true);
+  };
+  
+  const handleLeftClick = (e, user) => {
+    console.log('Left-click event triggered:', user); 
+    setMenuPosition({ x: e.clientX, y: e.clientY });
+    setSelectedUser(user._id); 
+    setShowMenu(true);
+  };
+
+  const handleClickOutside = () => {
+    setShowMenu(false); 
+  };
+
+
+  const handleMenuOptionClick = (option) => {
+    if (option === 'profile') {
+      console.log('Navigating to:', `/view-profile/${selectedUser}`); 
+      navigate(`/view-profile/${selectedUser}`); 
+    } else if (option === 'report') {
+      alert(`Reporting ${selectedUser}`);
+    }
+    setShowMenu(false); 
+  };
+
   return (
     <>
       <TopNavbar />
-      <main className="main">
+      <main className="main" onClick={handleClickOutside}>
         <SideBar />
         <div className="main-content">
           <div className="listings-container">
@@ -113,17 +149,42 @@ const BuyArea = () => {
                   className="image-placeholder-modal"
                   style={{ backgroundColor: selectedProduct.color || '#f1f1f1' }}
                 ></div>
-                <h2>{selectedProduct.productName}</h2>
-                <p className="seller-info">
-                  <span className="seller-icon">S</span> {selectedProduct.seller || 'Unknown'}
+                <div className="product-header">
+                  <h2>{selectedProduct.productName}</h2>
+                  <User
+                    size={30}
+                    className="user-icon"
+                    onContextMenu={(e) => handleRightClick(e, selectedProduct.userId)}
+                    onClick={(e) => handleLeftClick(e, selectedProduct.userId)}
+                  />
+                  {showMenu && (
+                    <div
+                      className="context-menu"
+                      style={{ top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}
+                    >
+                      <div
+                        className="menu-option"
+                        onClick={() => handleMenuOptionClick('profile')}
+                      >
+                        Check Profile
+                      </div>
+                      <div
+                        className="menu-option"
+                        onClick={() => handleMenuOptionClick('report')}
+                      >
+                        Report
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <p className="user-info">
+                  User: <strong>{selectedProduct.seller || 'Unknown'}</strong>
                 </p>
                 <p><strong>Price:</strong> ₱{selectedProduct.price}</p>
                 <p><strong>Available Stocks:</strong> {selectedProduct.quantity} {selectedProduct.unit}</p>
-                <p><strong>Minimum Order:</strong> {selectedProduct.minimumOrder} {selectedProduct.unit}</p>
                 <p><strong>Description:</strong> {selectedProduct.description}</p>
                 <p><strong>Listed on:</strong> {selectedProduct.listedDate || 'N/A'}</p>
 
-                {}
                 {selectedProduct.userId !== userId && (
                   <div className="add-to-cart-container">
                     <h3 className="add-to-cart-title">Add to Cart</h3>
