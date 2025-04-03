@@ -1,5 +1,3 @@
-//routes/listings.js
-
 import express from 'express';
 import auth from '../middleware/auth.js';
 import { addIdentifier } from '../middleware/list.js';
@@ -7,16 +5,36 @@ import Listing from '../models/Listing.js';
 
 const router = express.Router();
 
+router.get('/user/:userId', auth, async (req, res) => {
+  try {
+    const { userId } = req.params; 
+    console.log(`Fetching listings for User ID: ${userId}`);
+
+    const listings = await Listing.find({ userId, status: true })
+      .select('productName category price quantity unit details color listedDate status');
+
+    if (listings.length === 0) {
+      console.log(`No active listings found for User ID: ${userId}`);
+      return res.status(200).json({ listings: [] });
+    }
+
+    res.status(200).json({ listings });
+  } catch (error) {
+    console.error('Error fetching listings for user:', error.message);
+    res.status(500).json({ message: 'Error fetching listings', error: error.message });
+  }
+});
+
 router.get('/user-listings', auth, async (req, res) => {
   try {
     const userId = req.user._id;
 
-    console.log('Fetching user listings for User ID:', userId);
+    console.log('Fetching user listings for logged-in User ID:', userId);
 
     const listings = await Listing.find({ userId });
 
     if (listings.length === 0) {
-      console.log('No listings found for User ID:', userId);
+      console.log('No listings found for logged-in User ID:', userId);
       return res.status(200).json({ listings: [] });
     }
 
@@ -34,7 +52,7 @@ router.get('/', auth, async (req, res) => {
 
     const listings = await Listing.find({
       userId: { $ne: userId },
-      status: true, // Update from 'available' to true
+      status: true, 
       quantity: { $gt: 0 },
     })
       .populate('userId', 'first_name last_name')
@@ -59,8 +77,6 @@ router.get('/', auth, async (req, res) => {
     res.status(500).json({ message: 'Error fetching listings', error: error.message });
   }
 });
-
-
 
 router.post('/', auth, addIdentifier, async (req, res) => {
   try {
@@ -113,7 +129,7 @@ router.patch('/mark-as-sold/:id', auth, async (req, res) => {
       return res.status(404).json({ message: 'Listing not found' });
     }
 
-    listing.status = false; // Update to Boolean false
+    listing.status = false; 
     await listing.save();
 
     console.log('Listing successfully marked as sold:', listing);
@@ -163,17 +179,15 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
-
-// Unlist Product
 router.put("/:identifier/unlist", auth, async (req, res) => {
   try {
-    const { identifier } = req.params; // Extract identifier from request params
+    const { identifier } = req.params; 
     console.log("Unlisting Product Identifier:", identifier);
 
     const updatedListing = await Listing.findOneAndUpdate(
-      { identifier }, // Match by identifier instead of _id
-      { status: false }, // Set status to false
-      { new: true } // Return the updated listing
+      { identifier }, 
+      { status: false }, 
+      { new: true } 
     );
 
     if (!updatedListing) {
@@ -188,16 +202,15 @@ router.put("/:identifier/unlist", auth, async (req, res) => {
   }
 });
 
-// Relist Product
 router.put("/:identifier/relist", auth, async (req, res) => {
   try {
-    const { identifier } = req.params; // Extract identifier from request params
+    const { identifier } = req.params; 
     console.log("Relisting Product Identifier:", identifier);
 
     const updatedListing = await Listing.findOneAndUpdate(
-      { identifier }, // Match by identifier instead of _id
-      { status: true }, // Set status to true
-      { new: true } // Return the updated listing
+      { identifier }, 
+      { status: true }, 
+      { new: true } 
     );
 
     if (!updatedListing) {
@@ -211,6 +224,7 @@ router.put("/:identifier/relist", auth, async (req, res) => {
     res.status(500).json({ message: "Error relisting product", error: error.message });
   }
 });
+
 router.delete('/delete/:id', auth, async (req, res) => {
   try {
     const { id } = req.params;
