@@ -1,125 +1,222 @@
+/* pages/css/Profile.css */
+
+.profile-page {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f8f8f8;
+  min-height: 100vh;
+}
 
 .profile-page-content {
+  margin-top: -70px;
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 700px;
-  
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-  padding-bottom: 20px;
-  overflow: hidden;
+  padding: 20px;
 }
 
-
-.profile-banner {
-  width: 100%;
-  height: 200px;
-  background: linear-gradient(135deg, #4CAF50, #81C784);
-  position: relative;
-  border-radius: 10px 10px 0 0;
-  overflow: hidden;
-  margin-top: -20px;
-}
-.upload-cover-btn {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  padding: 8px 12px;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.upload-cover-btn:hover {
-  background-color: rgba(0, 0, 0, 0.7);
-}
-
-/* Camera Icon */
-.camera-icon {
-  color: white;
-}
-
-/* Profile Icon */
 .profile-icon {
   background-color: white;
-  border: 4px solid #ffffff;
+  border: 4px solid #e4e4e4;
   border-radius: 50%;
-  width: 140px;
-  height: 140px;
+  width: 120px;
+  height: 120px;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  position: absolute;
-  bottom: 50px;
-  left: 40%; /* Centers horizontally */
-  transform: translate(-50%, -30%);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
   cursor: pointer;
-  overflow: hidden;
+  transition: transform 0.3s ease;
 }
 
-/* User Icon */
+.profile-icon:hover {
+  transform: scale(1.05);
+}
+
 .person-icon {
-  color: #4CAF50;
+  color: #000000;
   transition: color 0.3s ease;
 }
 
-/* Uploaded Image */
+.profile-icon:hover .person-icon {
+  color: #02940a;
+}
+
 .uploaded-image {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  object-fit: cover;
 }
 
-/* Edit Icon */
-.edit-icon-container {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  background-color: white;
-  border-radius: 50%;
-  padding: 6px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.edit-icon {
-  color: #4CAF50;
-  transition: color 0.3s ease;
-}
-
-.edit-icon-container:hover .edit-icon {
-  color: #2f855a;
-}
-
+/* Profile Details */
 .profile-details {
-  margin-top: 30px;
+  margin-top:25px;
   text-align: center;
-  width: 100%;
-  padding: 15px;
+  width: 90%;
+  max-width: 500px;
 }
 
 .profile-name {
-  font-size: 1.8rem;
+  font-size: 20px;
   font-weight: bold;
-  color: #333;
+  margin-bottom: 5px;
+}
+
+.editable-profile-info {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.editable-profile-info label {
+  font-weight: bold;
+}
+
+.editable-profile-info input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  align-items: center;
+}
+
+.editable-name {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.editable-name input {
+  font-size: 18px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-align: center;
+  width: 30%;
 }
 
 .profile-date {
-  font-size: 1rem;
+  font-size: 16px;
   color: #666;
-  margin-top: 5px;
 }
 
+/* Profile Info */
+.profile-info {
+  width: 100%;
+  max-width: 500px;
+  margin-top: 20px;
+  text-align: left;
+}
+
+.profile-info label {
+  font-weight: bold;
+  display: block;
+  margin-top: 10px;
+}
+
+.profile-info p,
+.editable-input {
+  background: #fff;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 100%;
+  font-size: 16px;
+}
+
+.editable-input {
+  outline: none;
+}
+
+/* Profile Buttons */
+.profile-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.profile-buttons button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+.edit-profile-btn {
+  background-color: #088104;
+  color: white;
+}
+
+.edit-profile-btn:hover {
+  background-color: #45a049;
+}
+
+.cart-btn {
+  background-color: #FF9800;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.cart-btn:hover {
+  background-color: #e68900;
+}
+
+.cart-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.close-cart {
+  background-color: #d32f2f;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.close-cart:hover {
+  background-color: #b71c1c;
+}
+
+@media (max-width: 600px) {
+  .profile-details {
+    width: 100%;
+  }
+
+  .editable-name {
+    flex-direction: column;
+    align-self: auto;
+    gap: 5px;
+  }
+
+  .editable-name input {
+    width: 100%;
+  }
+
+  .profile-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+}
