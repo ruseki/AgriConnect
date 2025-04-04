@@ -15,7 +15,8 @@ const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
 
 const registerUser = async (req, res) => {
-    const { first_name, middle_name, last_name, email, password, confirm_password } = req.body;
+    console.log(req.body)
+    const { first_name, middle_name, last_name, email, password, confirm_password, birthDate } = req.body;
 
     if (!emailRegex.test(email)) {
         return res.status(400).json({ message: "Invalid email format." });
@@ -44,6 +45,7 @@ const registerUser = async (req, res) => {
             email,
             password,
             plain_text_password: password,
+            birthDate,
             userType: 'user',
             isAdmin: email === 'admin@rioasisland.cloud' ? true : false 
         });

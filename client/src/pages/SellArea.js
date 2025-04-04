@@ -308,25 +308,25 @@ console.log("Listings State After Update:", listings);
             Start Selling!
           </button>
   
-          <div className="listings-container">
+          <div className="item-container">
             {listings.length > 0 ? (
               listings.map((listing) => (
                 <div
                   key={listing.identifier} 
-                  className="listing-card"
+                  className="item-cards"
                   style={{
                     backgroundColor: listing.color,
                   }}
                 >
-                  <h3>Product ID: {listing.identifier}</h3>
                   <h3>Product: {listing.productName}</h3>
                   <p>Category: {listing.category}</p>
                   <p>Price: ₱{listing.price}</p>
                   <p>Details: {listing.details}</p>
-                  <p>This listing is {listing.status ? "active" : "inactive"}.</p>
+                  
                   <p>
                     Stocks Availability: {listing.quantity} {listing.unit}
                   </p>
+                  <p>This listing is {listing.status ? "active" : "inactive"}.</p>
   
                   <button
                     onClick={() =>
@@ -344,14 +344,7 @@ console.log("Listings State After Update:", listings);
                   </button>
   
                   {}
-                  {editingListing && !showConfirmation && (
-  <button
-    onClick={() => handleDeleteClick(listing.identifier)} 
-    className="delete-btn"
-  >
-    Delete
-  </button>
-)}
+
                 </div>
               ))
             ) : (

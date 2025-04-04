@@ -1,5 +1,3 @@
-//ProtectedRoutes.js
-
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from './AuthProvider';
@@ -7,12 +5,11 @@ import { useAuth } from './AuthProvider';
 const ProtectedRoute = ({ element: Component, ...rest }) => {
   const { isAuthenticated } = useAuth();
 
-  return isAuthenticated ? ( // idk 
-    <Component {...rest} />
+  return isAuthenticated ? (
+    <Component {...rest} />  // Render the component passed to the route
   ) : (
-    <Navigate to="/" /> 
+    <Navigate to="/" />  // Redirect if not authenticated
   );
 };
-
 
 export default ProtectedRoute;

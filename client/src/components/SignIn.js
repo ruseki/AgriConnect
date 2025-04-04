@@ -33,7 +33,7 @@ const SignIn = ({ open, handleClose, handleOpenSignUp }) => {
       localStorage.setItem('isAdmin', isAdmin.toString());
       localStorage.setItem('userId', userId);
   
-      login(token, response.data); 
+      login(token, userId); 
       alert('Login successful');
       setEmail('');
       setPassword('');

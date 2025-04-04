@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Home, ShoppingCart, DollarSign } from 'lucide-react';
+import { Home, ShoppingCart, DollarSign, Box } from 'lucide-react'; // Added Box icon for Inventory
 import { useAuth } from './AuthProvider';
 import './css/SideBar.css';
 
@@ -32,6 +32,12 @@ const SideBar = ({ handleOpenSignIn }) => {
         <DollarSign className="icon" />
         <span className="text-sm">Selling</span>
       </button>
+
+      {/* Inventory Button at the Bottom */}
+      <Link to="/inventory" className="icon-button inventory-button">
+        <Box className="icon" />
+        <span className="text-sm">Inventory</span>
+      </Link>
     </aside>
   );
 };

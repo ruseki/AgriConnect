@@ -19,19 +19,22 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = (token, user) => {
-    console.log('Saving user and token to localStorage:', user);
-    if (!user.userId) {
-      console.error('Invalid user object, userId is undefined.');
+    console.log('Saving user and token to localStorage:', user._id);
+    if (!user._id) {
+      console.error('Invalid user object, _id is undefined.');
       return;
     }
-  
+
     localStorage.setItem('authToken', token);
     localStorage.setItem('user', JSON.stringify({
+      _id: user._id,
       userId: user.userId,
       email: user.email,
       isAdmin: user.isAdmin,
     }));
+
     setToken(token);
+    setUserId(userId);
     setIsAuthenticated(true);
   };
 
@@ -48,10 +51,10 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('authToken');
       const user = JSON.parse(localStorage.getItem('user')); // Retrieve user object
       console.log('Retrieved token and user:', { token, user });
-      if (token && user) {
+      if (token && userId) {
         const isValid = await validateToken(token);
         setToken(token);
-        setUserId(user.userId);
+        setUserId(user._id); // Use MongoDB _id
         setIsAuthenticated(isValid);
       } else {
         setIsAuthenticated(false);

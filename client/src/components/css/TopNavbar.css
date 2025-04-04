@@ -1,7 +1,7 @@
 /* TopNavbar.css */
 
 .top-navbar {
-  background-color: #77B254;
+  background-color: #0a9758;
   padding: 1.5rem;
   position: fixed;
   top: 0;
@@ -24,7 +24,6 @@
   font-weight: bold;
   color: white;
 }
-
 
 .navbar-search {
   display: flex;
@@ -67,7 +66,6 @@
 }
 
 
-
 .user-options {
   display: flex;
   align-items: center;
@@ -94,26 +92,31 @@
 
 .dropdown-menu {
   position: absolute;
-  top: 100%;
+  top: 150%;
   right: 0;
   color: black;
-  background-color: #CAE0BC;
+  background-color: #EDE8DC;
   border: 1px solid #ccc;
-  border-radius: 0.375rem;
-  padding: 0.9rem 0;
+  border-radius: 0.9rem;
+  padding: 0.8rem 0;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  width: 7rem;
+  width: 10rem;
   text-align: center;
   font-size: 18px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .dropdown-item {
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.2rem;
   cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .dropdown-item:hover {
-  background-color: #A5B68D;
+  background-color: #75A47F;
+  color: white;
+  border-radius: 0.3rem;
 }
 
 

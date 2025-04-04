@@ -8,27 +8,29 @@ import './css/BuyArea.css';
 import { useNavigate } from 'react-router-dom';
 
 const BuyArea = () => {
-  const { token, userId } = useAuth();
+  const { token, userId } = useAuth(); // Ensure userId here is the correct string identifier
   const [listings, setListings] = useState([]);
   const [openBuyModal, setOpenBuyModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [cartQuantity, setCartQuantity] = useState(1);
-  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 }); 
-  const [showMenu, setShowMenu] = useState(false); 
-  const [selectedUser, setSelectedUser] = useState(null); 
-const navigate = useNavigate();
-
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+  const [showMenu, setShowMenu] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const navigate = useNavigate();
 
   const fetchListings = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/listings', {
         headers: { Authorization: `Bearer ${token}` },
       });
-
+  
       if (response.status === 200) {
-        setListings(
-          response.data.listings.filter((listing) => listing.status === true && listing.quantity > 0)
-        );
+        const allListings = response.data.listings.filter((listing) => {
+          return listing.userId !== userId; // Compare using schema-defined userId
+        });
+  
+        console.log('Filtered Listings:', allListings);
+        setListings(allListings);
       } else {
         console.error('Failed to fetch listings:', response.data.message);
       }
@@ -38,6 +40,7 @@ const navigate = useNavigate();
   };
 
   useEffect(() => {
+    console.log('Logged-in User ID:', userId);
     if (token) {
       fetchListings();
     }
@@ -81,32 +84,28 @@ const navigate = useNavigate();
 
   const handleRightClick = (e, user) => {
     e.preventDefault();
-    console.log('Right-click event triggered:', user); 
     setMenuPosition({ x: e.clientX, y: e.clientY });
-    setSelectedUser(user._id); 
+    setSelectedUser(user._id);
     setShowMenu(true);
   };
   
   const handleLeftClick = (e, user) => {
-    console.log('Left-click event triggered:', user); 
     setMenuPosition({ x: e.clientX, y: e.clientY });
-    setSelectedUser(user._id); 
+    setSelectedUser(user._id);
     setShowMenu(true);
   };
 
   const handleClickOutside = () => {
-    setShowMenu(false); 
+    setShowMenu(false);
   };
-
 
   const handleMenuOptionClick = (option) => {
     if (option === 'profile') {
-      console.log('Navigating to:', `/view-profile/${selectedUser}`); 
-      navigate(`/view-profile/${selectedUser}`); 
+      navigate(`/view-profile/${selectedUser}`);
     } else if (option === 'report') {
       alert(`Reporting ${selectedUser}`);
     }
-    setShowMenu(false); 
+    setShowMenu(false);
   };
 
   return (

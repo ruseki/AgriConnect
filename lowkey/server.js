@@ -32,15 +32,26 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(bodyParser.json());
+
+// Configure body-parser with proper error handling
+app.use(bodyParser.json({
+  verify: (req, res, buf) => {
+    try {
+      JSON.parse(buf);
+    } catch (e) {
+      res.status(400).json({ message: 'Invalid JSON payload' });
+      throw new Error('Invalid JSON');
+    }
+  }
+}));
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Route mappings
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingsRoute);
 app.use('/api/cart', cartRoutes);
-app.use('/api', userRoutes); // Handles user-related endpoints
-app.use('/api/users', userRoutes);
+app.use('/api/users', userRoutes); // Handles user-related endpoints
 
 // Test endpoint
 app.get('/testlamang', (req, res) => {

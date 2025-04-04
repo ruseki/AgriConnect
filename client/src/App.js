@@ -1,5 +1,6 @@
+// In App.js
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import SellArea from './pages/SellArea';
 import Settings from './pages/Settings';
@@ -7,7 +8,8 @@ import ProtectedRoute from './components/ProtectedRoutes';
 import BuyArea from './pages/BuyArea';
 import CartArea from './pages/CartArea';
 import Profile from './pages/Profile';
-import ViewProfile from './pages/ViewProfile'; 
+import ViewProfile from './pages/ViewProfile';
+import InventoryPage from './pages/InventoryPage';
 import './App.css';
 import { AuthProvider } from './components/AuthProvider';
 import AdminRoutes from './routes/adminRoutes';
@@ -27,6 +29,7 @@ const App = () => {
           <Route path="/profile" element={<ProtectedRoute element={Profile} />} />
           <Route path="/view-profile/:userId" element={<ProtectedRoute element={ViewProfile} />} />
           <Route path="/manage-users" element={<ManageUsers />} />
+          <Route path="/inventory" element={<ProtectedRoute element={InventoryPage} />} />
           <Route
             path="/admin"
             element={

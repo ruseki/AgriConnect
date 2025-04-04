@@ -1,5 +1,3 @@
-//Settings.js
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -13,10 +11,18 @@ const Settings = () => {
   const [verificationStatus, setVerificationStatus] = useState('');
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [personalDetails, setPersonalDetails] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    about: '',
+    phoneNumber: '',
+  });
 
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem('authToken');
+      console.log(token)
       if (token) {
         try {
           const response = await axios.get('http://localhost:5000/api/auth/user', {
@@ -24,8 +30,19 @@ const Settings = () => {
               Authorization: `Bearer ${token}`,
             },
           });
-          setIsVerified(response.data.isVerified);
-          setEmail(response.data.email);
+
+          console.log(response)
+
+          setIsVerified(response.data.user.isVerified); // Ensure accessing nested data if necessary
+          setEmail(response.data.user.email); // Ensure accessing nested data if necessary
+          console.log('Email set in state:', response.data.user.email); // Added for debugging
+          setPersonalDetails({
+            firstName: response.data.user.first_name || '',
+            lastName: response.data.user.last_name || '',
+            email: response.data.user.email || '',
+            about: response.data.user.bio || '',
+            phoneNumber: response.data.user.phoneNumber || '',
+          });
         } catch (error) {
           console.error('Error fetching user data:', error);
         }
@@ -34,58 +51,88 @@ const Settings = () => {
     fetchUserData();
   }, []);
 
+  const handlePersonalDetailsChange = (e) => {
+    const { name, value } = e.target;
+    setPersonalDetails((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSavePersonalDetails = async () => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      try {
+        await axios.put('http://localhost:5000/api/auth/update-profile', personalDetails, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        alert('Profile updated successfully!'); // Success message
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        alert('Failed to update profile.');
+      }
+    }
+  };
+
   const handleSendVerificationEmail = async () => {
     const token = localStorage.getItem('authToken');
     setIsLoading(true);
-    if (token) {
-        try {
-            await axios.post('http://localhost:5000/api/auth/send-verification-email', 
-            { email }, 
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            setEmailSent(true);
-            setVerificationStatus('Verification email sent successfully.');
-        } catch (error) {
-            setVerificationStatus(
-                `Error: ${error.response?.data?.message || 'Something went wrong'}`
-            );
-        }
+    if (token && email) { // Added check for email
+      try {
+        const response = await axios.post(
+          'http://localhost:5000/api/auth/send-verification-email',
+          { email },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log('Verification email sent:', response.data);
+        setEmailSent(true);
+        setVerificationStatus('Verification email sent successfully.');
+      } catch (error) {
+        console.error('Error sending verification email:', error);
+        setVerificationStatus(
+          `Error: ${error.response?.data?.message || 'Something went wrong'}`
+        );
+      }
+    } else {
+      setVerificationStatus('Error: Email is missing. Please refresh and try again.');
     }
     setIsLoading(false);
   };
-
   const handleVerifyCode = async () => {
     setIsLoading(true);
-  
+
     try {
       console.log('Sending Verification:', { email, token: verificationCode });
-  
+
       const response = await axios.post('http://localhost:5000/api/auth/verify-email', {
         email,
         token: verificationCode,
       });
-  
-      console.log("Verification Response:", response); 
-  
+
+      console.log('Verification Response:', response);
+
       if (response.status === 200) {
-        setVerificationStatus(response.data.message); 
-        setIsVerified(true); 
+        setVerificationStatus(response.data.message);
+        setIsVerified(true);
       } else {
-        setVerificationStatus('Error verifying email.'); 
+        setVerificationStatus('Error verifying email.');
       }
     } catch (error) {
       console.error('Error during verification:', error.response?.data?.message || error.message);
-  
+
       setVerificationStatus(
         `Error: ${error.response?.data?.message || 'Something went wrong'}`
       );
     }
-  
+
     setIsLoading(false);
-  };  
+  };
 
   const renderContent = () => {
     switch (currentView) {
@@ -99,15 +146,15 @@ const Settings = () => {
             >
               {isLoading ? 'Sending...' : 'Send Verification Email'}
             </button>
-            {emailSent && (
-              <div className="status-message">{verificationStatus}</div>
-            )}
+            {emailSent && <div className="status-message">{verificationStatus}</div>}
             <input
               type="text"
               placeholder="Enter verification code"
               value={verificationCode}
-              onChange={(e) => { setVerificationCode(e.target.value)}}
-              className="verify-input" 
+              onChange={(e) => {
+                setVerificationCode(e.target.value);
+              }}
+              className="verify-input"
             />
             <button
               onClick={handleVerifyCode}
@@ -116,9 +163,82 @@ const Settings = () => {
             >
               {isLoading ? 'Submitting...' : 'Confirm Verification Code'}
             </button>
-            {verificationStatus && (
-              <div className="status-message">{verificationStatus}</div>
-            )}
+            {verificationStatus && <div className="status-message">{verificationStatus}</div>}
+          </div>
+        );
+      case 'personal-details':
+        return (
+          <div className="personal-details-content">
+            <h1>Personal Information</h1>
+
+            <div className="section">
+              <h2>Profile</h2>
+
+              <div className="form-group">
+                <label>First name</label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={personalDetails.firstName}
+                  onChange={handlePersonalDetailsChange}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Last name</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={personalDetails.lastName}
+                  onChange={handlePersonalDetailsChange}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="divider"></div>
+
+              <div className="form-group">
+                <label>Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={personalDetails.email}
+                  onChange={handlePersonalDetailsChange}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="divider"></div>
+
+              <div className="form-group">
+                <label>Phone number</label>
+                <input
+                  type="tel"
+                  name="phoneNumber"
+                  value={personalDetails.phoneNumber}
+                  onChange={handlePersonalDetailsChange}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="divider"></div>
+
+              <div className="form-group">
+                <label>About</label>
+                <textarea
+                  name="about"
+                  value={personalDetails.about}
+                  onChange={handlePersonalDetailsChange}
+                  className="form-textarea"
+                  placeholder="Brief description for your profile."
+                />
+              </div>
+            </div>
+
+            <button onClick={handleSavePersonalDetails} className="save-btn">
+              Save Changes
+            </button>
           </div>
         );
       default:
@@ -136,91 +256,98 @@ const Settings = () => {
   };
 
   return (
-    <div className="settings-page">
-      <nav className="settings-nav">
-        <div className="nav-left">
-          <Link to="/" className="nav-logo">
-            AgriConnect
-          </Link>
-          <div className="nav-search">
-            <input
-              type="text"
-              placeholder="Search in AgriConnect..."
-              className="search-input"
-            />
+    <div className="settings">
+      <div className="settings-page">
+        <nav className="settings-nav">
+          <div className="nav-left">
+            <Link to="/" className="nav-logo">
+              AgriConnect
+            </Link>
+            <div className="nav-search">
+              <input
+                type="text"
+                placeholder="Search in AgriConnect..."
+                className="search-input"
+              />
+            </div>
           </div>
-        </div>
-        <div className="nav-right">
-          <Link to="/" className="nav-link">
-            Home
-          </Link>
-          <Link to="/buying" className="nav-link">
-            Buying
-          </Link>
-          <Link to="/selling" className="nav-link">
-            Selling
-          </Link>
-          <Link to="/chats" className="nav-link">
-            Chats
-          </Link>
-          <button>
-            <i className="fas fa-shopping-cart"></i>
-          </button>
-          <button>
-            <i className="fas fa-bell"></i>
-          </button>
-          <button>
-            <i className="fas fa-bars"></i>
-          </button>
-        </div>
-      </nav>
-      <div className="settings-content">
-        <aside className="settings-sidebar">
-          <h2>Settings</h2>
-          <ul>
-            <li>
-              <Link to="#personal-details">Personal Details</Link>
-            </li>
-            <li>
-              <Link to="#password-security">Password and Security</Link>
-            </li>
-            {!isVerified && (
+          <div className="nav-right">
+            <Link to="/" className="nav-link">
+              <i className="fas fa-home"></i> Home
+            </Link>
+            <Link to="/buying" className="nav-link">
+              <i className="fas fa-shopping-bag"></i> Buying
+            </Link>
+            <Link to="/selling" className="nav-link">
+              <i className="fas fa-store"></i> Selling
+            </Link>
+            <Link to="/chats" className="nav-link">
+              <i className="fas fa-comments"></i> Chats
+            </Link>
+            <button>
+              <i className="fas fa-shopping-cart"></i>
+            </button>
+            <button>
+              <i className="fas fa-bell"></i>
+            </button>
+            <button>
+              <i className="fas fa-bars"></i>
+            </button>
+          </div>
+        </nav>
+        <div className="settings-content">
+          <aside className="settings-sidebar">
+            <h2>Settings</h2>
+            <ul>
               <li>
                 <button
-                  onClick={() => setCurrentView('verifyEmail')}
-                  className="verify-email-btn"
+                  onClick={() => setCurrentView('personal-details')}
+                  className="settings-link"
                 >
-                  Verify Email
+                  Personal Details
                 </button>
               </li>
-            )}
-            <li>
-              <Link to="#accessibility">Accessibility</Link>
-            </li>
-            <li>
-              <label className="theme-label">
-                Dark Theme
-                <input type="checkbox" className="theme-checkbox" />
-              </label>
-            </li>
-            <li>
-              <Link to="#change-language">Change Language</Link>
-            </li>
-            <li>
-              <Link to="#privacy">Privacy</Link>
-            </li>
-            <li>
-              <label className="documents-label">
-                Show Seller Government Documents
-                <input type="checkbox" className="documents-checkbox" />
-              </label>
-            </li>
-            <li>
-              <Link to="#activity-log">Activity Log</Link>
-            </li>
-          </ul>
-        </aside>
-        <main className="settings-main-content">{renderContent()}</main>
+              <li>
+                <Link to="#password-security">Password and Security</Link>
+              </li>
+              {!isVerified && (
+                <li>
+                  <button
+                    onClick={() => setCurrentView('verifyEmail')}
+                    className="verify-email-btn"
+                  >
+                    Verify Email
+                  </button>
+                </li>
+              )}
+              <li>
+                <Link to="#accessibility">Accessibility</Link>
+              </li>
+              <li>
+                <label className="theme-label">
+                  Dark Theme
+                  <input type="checkbox" className="theme-checkbox" />
+                </label>
+              </li>
+              <li>
+                <Link to="#change-language">Change Language</Link>
+              </li>
+              <li>
+                <Link to="#privacy">Privacy</Link>
+              </li>
+              <li>
+                <label className="documents-label">
+                  Show Seller Government Documents
+                  <input type="checkbox" className="documents-checkbox" />
+                </label>
+              </li>
+              <li>
+                <Link to="#activity-log">Activity Log</Link>
+              </li>
+            </ul>
+          </aside>
+          <main className="settings-main-content">{renderContent()}</main>
+        </div>
       </div>
     </div>
   );

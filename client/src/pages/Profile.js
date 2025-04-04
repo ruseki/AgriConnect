@@ -5,6 +5,7 @@ import TopNavbar from '../components/top_navbar';
 import SideBar from '../components/side_bar';
 import axios from 'axios';
 import { Snackbar, Alert } from '@mui/material'; 
+import { useParams } from 'react-router-dom'; // Add this import
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -18,50 +19,89 @@ const Profile = () => {
     lastName: '',
     email: '',
     birthDate: '',
-    country: 'Philippines', 
+    country: 'Philippines',
     province: '',
     cityOrTown: '',
     barangay: '',
     phone: '',
-    bio: '', 
+    bio: '',
   });
   const [ageWarningOpen, setAgeWarningOpen] = useState(false);
   const [ageWarningMessage, setAgeWarningMessage] = useState('');
-  const [provinces, setProvinces] = useState([]); 
-  const [cities, setCities] = useState([]); 
-  const [barangays, setBarangays] = useState([]); 
+  const [provinces, setProvinces] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [barangays, setBarangays] = useState([]);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem('authToken');
-        const response = await axios.get('http://localhost:5000/api/user', {
-          headers: { Authorization: `Bearer ${token}` },
+        if (!token) {
+          console.error('No token found');
+          localStorage.removeItem('authToken');
+          window.location.href = '/login';
+          return;
+        }
+
+        console.log('Token being used:', token);
+
+        const response = await axios.get('http://localhost:5000/api/users/user', {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          validateStatus: function (status) {
+            return status < 500;
+          }
         });
 
-        if (response.status === 200) {
-          const userData = response.data;
-          setUser(userData);
+        if (response.status === 401) {
+          // Token is invalid or expired
+          console.error('Token is invalid or expired');
+          localStorage.removeItem('authToken');
+          window.location.href = '/login';
+          return;
+        }
 
+        console.log('Full API Response:', response);
+
+        if (response.status === 200) {
+          const userData = response.data.user;
+          setUser(userData);
           setFormData({
-            firstName: userData.firstName || '',
-            middleName: userData.middleName || '',
-            lastName: userData.lastName || '',
+            firstName: userData.first_name || '',
+            middleName: userData.middle_name || '',
+            lastName: userData.last_name || '',
             email: userData.email || '',
-            birthDate: userData.birthDate ? new Date(userData.birthDate).toISOString().split('T')[0] : '',
+            birthDate: userData.birthDate
+              ? new Date(userData.birthDate).toISOString().split('T')[0]
+              : '',
             country: userData.country || 'Philippines',
             province: userData.province || '',
             cityOrTown: userData.cityOrTown || '',
             barangay: userData.barangay || '',
             phone: userData.phone || '',
-            bio: userData.bio || '', 
+            bio: userData.bio || '',
           });
         } else {
-          console.error('Failed to fetch user data:', response.data.message);
+          console.error('Failed to fetch user data. Status:', response.status);
+          console.error('Response data:', response.data);
+          throw new Error(`Server responded with status ${response.status}: ${response.data.message || 'Unknown error'}`);
         }
       } catch (error) {
-        console.error('Error fetching user data:', error.message);
-      } finally {
+        console.error('Detailed error information:', {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status,
+          headers: error.response?.headers
+        });
+        
+        if (error.response?.status === 401 || error.message.includes('jwt expired')) {
+          localStorage.removeItem('authToken');
+          window.location.href = '/login';
+          return;
+        }
+        
         setLoading(false);
       }
     };
@@ -87,7 +127,7 @@ const Profile = () => {
     } else {
       setCities([]);
     }
-    setBarangays([]); 
+    setBarangays([]);
   }, [formData.province]);
 
   useEffect(() => {
@@ -123,7 +163,7 @@ const Profile = () => {
       const token = localStorage.getItem('authToken');
       const formattedFormData = {
         ...formData,
-        birthDate: formData.birthDate, 
+        birthDate: formData.birthDate,
       };
       const response = await axios.put('http://localhost:5000/api/user', formattedFormData, {
         headers: { Authorization: `Bearer ${token}` },
@@ -132,7 +172,7 @@ const Profile = () => {
       if (response.status === 200) {
         alert('Profile updated successfully!');
         setUser(response.data);
-        setFormData({ ...formData, bio: response.data.bio || '' }); 
+        setFormData({ ...formData, bio: response.data.bio || '' });
       } else {
         console.error('Failed to save profile:', response.data.message);
         alert('Failed to save profile.');
@@ -155,6 +195,8 @@ const Profile = () => {
     dateStyle: 'long',
     timeStyle: 'short',
   });
+
+
 
   return (
     <div className="profile-page">
@@ -297,7 +339,7 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Popup for age warning */}
+          {}
           <Snackbar
             open={ageWarningOpen}
             autoHideDuration={4000}
