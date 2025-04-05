@@ -1,6 +1,6 @@
 //middleware/list.js
 
-import Listing from '../models/Listing.js';
+const Listing = require('../models/Listing');
 
 function generateIdentifier() {
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -18,7 +18,7 @@ function generateIdentifier() {
   return identifier;
 }
 
-export async function addIdentifier(req, res, next) {
+const addIdentifier = async function(req, res, next) {
   try {
     console.log('Middleware: Generating identifier for new listing...');
     let identifier;
@@ -42,3 +42,5 @@ export async function addIdentifier(req, res, next) {
     res.status(500).json({ message: 'Error generating unique identifier', error: error.message });
   }
 }
+
+module.exports = { addIdentifier };

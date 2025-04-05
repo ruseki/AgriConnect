@@ -1,36 +1,20 @@
-/***const express = require('express');
+const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const { Server } = require('socket.io');
+const http = require('http');
 require('dotenv').config();
 
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
-const listingsRoute = require('./routes/listings.js'); 
+const listingsRoute = require('./routes/listings');
+const userRoutes = require('./routes/userRoutes');
 
-const app = express();*/
-
-//server.js
-
-import express from 'express';
-import cors from 'cors';
-import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
-import { Server } from 'socket.io';
-import http from 'http'; // To create HTTP server for Socket.IO
-import connectDB from './config/db.js';
-import authRoutes from './routes/authRoutes.js';
-import listingsRoute from './routes/listings.js';
-import cartRoutes from './routes/cartRoutes.js';
-import userRoutes from './routes/userRoutes.js';
-import inventoryRoutes from './routes/inventoryRoutes.js';
-import messageRoutes from './routes/messageRoutes.js';
-
-dotenv.config();
 const app = express();
-const server = http.createServer(app); // Create HTTP server
+const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000', // Replace with your frontend domain if hosted elsewhere
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST'],
   },
 });
@@ -63,10 +47,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Route mappings
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingsRoute);
-app.use('/api/cart', cartRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/inventory', inventoryRoutes);
-app.use('/api/messages', messageRoutes);
 
 // Test endpoint
 app.get('/testlamang', (req, res) => {
@@ -79,7 +60,7 @@ io.on('connection', (socket) => {
 
   // Join a chat room for a specific sender and recipient
   socket.on('joinRoom', ({ senderId, recipientId }) => {
-    const roomId = [senderId, recipientId].sort().join('-'); // Use a consistent room ID format
+    const roomId = [senderId, recipientId].sort().join('-');
     socket.join(roomId);
     console.log(`${socket.id} joined room ${roomId}`);
   });

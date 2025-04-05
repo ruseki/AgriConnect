@@ -89,7 +89,7 @@ const BuyArea = () => {
   const handleRightClick = (e, listing) => {
     e.preventDefault();
     setMenuPosition({ x: e.clientX, y: e.clientY });
-    setSelectedUser(listing.userId); // Store the seller's ID
+    setSelectedUser(listing.userId._id || listing.userId); 
     setRecipientName(listing.seller); // Store the seller's name
     setShowMenu(true);
   };

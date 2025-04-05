@@ -1,7 +1,7 @@
-import express from 'express';
-import auth from '../middleware/auth.js';
-import adminMiddleware from '../middleware/adminMiddleware.js';
-import User from '../models/User.js';
+const express = require('express');
+const auth = require('../middleware/auth');
+const adminMiddleware = require('../middleware/adminMiddleware');
+const User = require('../models/User');
 
 const router = express.Router();
 
@@ -111,4 +111,4 @@ router.put('/user', auth, async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;
