@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './css/Settings.css';
+import { useAuth } from '../components/AuthProvider'
 
 const Settings = () => {
+  const { token, isAuthenticated, logout } = useAuth();
   const [currentView, setCurrentView] = useState('default');
   const [isVerified, setIsVerified] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
@@ -19,10 +22,16 @@ const Settings = () => {
     phoneNumber: '',
   });
 
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/'); // Redirect to login page if not authenticated
+    }
+  }, [isAuthenticated, navigate]);
+
   useEffect(() => {
     const fetchUserData = async () => {
-      const token = localStorage.getItem('authToken');
-      console.log(token)
       if (token) {
         try {
           const response = await axios.get('http://localhost:5000/api/auth/user', {
@@ -31,25 +40,33 @@ const Settings = () => {
             },
           });
 
-          console.log(response)
+          console.log('User data response:', response.data);
 
-          setIsVerified(response.data.user.isVerified); // Ensure accessing nested data if necessary
-          setEmail(response.data.user.email); // Ensure accessing nested data if necessary
-          console.log('Email set in state:', response.data.user.email); // Added for debugging
+          // Set user data from response
+          setIsVerified(response.data.isVerified);
+          setEmail(response.data.email);
           setPersonalDetails({
-            firstName: response.data.user.first_name || '',
-            lastName: response.data.user.last_name || '',
-            email: response.data.user.email || '',
-            about: response.data.user.bio || '',
-            phoneNumber: response.data.user.phoneNumber || '',
+            firstName: response.data.first_name || '',
+            lastName: response.data.last_name || '',
+            email: response.data.email || '',
+            phoneNumber: response.data.phoneNumber || '09123',
+            about: response.data.bio || 'Biot'
           });
         } catch (error) {
           console.error('Error fetching user data:', error);
+          
+          // Handle token expiration or authentication errors
+          if (error.response?.status === 401) {
+            alert('Your session has expired. Please log in again.');
+            logout(); // Call logout from your auth context
+            navigate('/login');
+          }
         }
       }
     };
+    
     fetchUserData();
-  }, []);
+  }, [token, logout, navigate]);
 
   const handlePersonalDetailsChange = (e) => {
     const { name, value } = e.target;

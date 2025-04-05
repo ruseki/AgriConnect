@@ -85,8 +85,9 @@ router.patch('/remove-seller/:userId', auth, async (req, res) => {
 });
 
 router.put('/user', auth, async (req, res) => {
+  const { userId } = req.userId
   try {
-    const user = await User.findById(req.userId);
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });

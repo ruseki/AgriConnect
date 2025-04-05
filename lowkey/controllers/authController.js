@@ -72,6 +72,7 @@ const registerUser = async (req, res) => {
 };
 
 const login = async (req, res) => {
+    console.log('logging in..')
     const { email, password } = req.body;
 
     console.log('Login attempt:', { email, password });
@@ -95,6 +96,8 @@ const login = async (req, res) => {
             await tokenDocument.save();
 
             return res.status(200).json({
+                message: "Login successful",
+                token,
                 userId: user._id,
                 message: "Login successful",
                 token,
@@ -310,16 +313,17 @@ const getUser = async (req, res) => {
 
     try {
         console.log(userId)
+        console.log('getting user')
         const user = await User.findById(userId);
+        console.log(user)
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        return res.status(200).json({
-            email: user.email,
-            isVerified: user.isVerified,
-            userType: user.userType
-        });
+
+        return res.status(200).json(
+            user
+        );
     } catch (error) {
         return res.status(500).json({ message: 'Server error' });
     }

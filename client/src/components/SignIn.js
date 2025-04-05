@@ -19,21 +19,26 @@ const SignIn = ({ open, handleClose, handleOpenSignUp }) => {
         password,
       });
   
-      console.log('Login API response:', response.data); 
+      console.log('Login API response:', response.data);
   
-      const { userId, token, isAdmin } = response.data; 
+      const { userId, token, isAdmin, isVerified, userType } = response.data;
   
       if (!userId || !token) {
         throw new Error('Invalid response: Missing userId or token.');
       }
   
-      console.log('Token received:', token);
-      console.log('Admin status:', isAdmin);
+      // Create a user object with all relevant data from the response
+      const userData = {
+        _id: userId,
+        isAdmin: isAdmin || false,
+        isVerified: isVerified || false,
+        userType: userType || 'user',
+        email: email
+      };
   
-      localStorage.setItem('isAdmin', isAdmin.toString());
-      localStorage.setItem('userId', userId);
-  
-      login(token, userId); 
+      // Pass both token and complete user object to login
+      login(token, userData);
+      
       alert('Login successful');
       setEmail('');
       setPassword('');
@@ -41,11 +46,10 @@ const SignIn = ({ open, handleClose, handleOpenSignUp }) => {
       handleClose();
     } catch (error) {
       console.error('Error in handleSignIn:', error);
-  
       setError(error.response?.data?.message || 'An error occurred');
     }
   };
-
+  
   const handleSignUpClick = () => {
     handleClose();
     handleOpenSignUp();

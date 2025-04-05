@@ -6,9 +6,12 @@ import SideBar from '../components/side_bar';
 import axios from 'axios';
 import { Snackbar, Alert } from '@mui/material'; 
 import { useParams } from 'react-router-dom'; // Add this import
+import { useAuth } from '../components/AuthProvider'
+
 
 const Profile = () => {
-  const [user, setUser] = useState(null);
+  const { token, isAuthenticated, logout } = useAuth();
+  const [ user,  setUser ] = useState({})
   const [loading, setLoading] = useState(true);
   const [uploadedImage, setUploadedImage] = useState(null);
   const [cartOpen, setCartOpen] = useState(false);
@@ -35,7 +38,6 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem('authToken');
         if (!token) {
           console.error('No token found');
           localStorage.removeItem('authToken');
@@ -45,7 +47,7 @@ const Profile = () => {
 
         console.log('Token being used:', token);
 
-        const response = await axios.get('http://localhost:5000/api/users/user', {
+        const response = await axios.get('http://localhost:5000/api/auth/user', {
           headers: { 
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -54,6 +56,8 @@ const Profile = () => {
             return status < 500;
           }
         });
+
+        console.log(response)
 
         if (response.status === 401) {
           // Token is invalid or expired
@@ -66,7 +70,8 @@ const Profile = () => {
         console.log('Full API Response:', response);
 
         if (response.status === 200) {
-          const userData = response.data.user;
+          const userData = response.data
+          console.log(response.data)
           setUser(userData);
           setFormData({
             firstName: userData.first_name || '',
@@ -101,7 +106,8 @@ const Profile = () => {
           window.location.href = '/login';
           return;
         }
-        
+      
+      } finally {
         setLoading(false);
       }
     };
@@ -171,7 +177,6 @@ const Profile = () => {
 
       if (response.status === 200) {
         alert('Profile updated successfully!');
-        setUser(response.data);
         setFormData({ ...formData, bio: response.data.bio || '' });
       } else {
         console.error('Failed to save profile:', response.data.message);
