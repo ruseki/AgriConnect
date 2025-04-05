@@ -1,88 +1,118 @@
-import React, { useState } from 'react';
-import { MessageCircle, X } from 'lucide-react'; 
+import React, { useState, useEffect, useRef } from 'react';
+import { X } from 'lucide-react';
+import { io } from 'socket.io-client';
 import './css/Chatbox.css';
+import axios from 'axios';
 
-const Chatbox = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [conversations, setConversations] = useState([
-    { id: 1, name: 'Seller Ronalie', messages: ['Hi po! Send me your credit card details right now!'] },
-    { id: 2, name: 'Buyer Dyana', messages: ['Bibilhin ko ang product mo kung ibbigay mo sakin facebook account details mo'] },
-  ]);
+const socket = io('http://localhost:5000');
 
-  const toggleChatbox = () => {
-    setIsOpen(!isOpen);
-  };
+const Chatbox = ({ senderId, recipientId, recipientName, onClose }) => {
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const messagesEndRef = useRef(null);
 
-  const handleUserSelect = (userId) => {
-    setSelectedUser(conversations.find((conv) => conv.id === userId));
+  useEffect(() => {
+    const fetchMessages = async () => {
+      if (!recipientId || !senderId) return;
+
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/messages/${senderId}/${recipientId}`,
+          {
+            headers: { Authorization: `Bearer YOUR_TOKEN` },
+          }
+        );
+
+        if (response.status === 200) {
+          setMessages(response.data);
+        } else {
+          console.error('Failed to fetch messages:', response.data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching messages:', error.message);
+      }
+    };
+
+    fetchMessages();
+    socket.emit('joinRoom', { senderId, recipientId });
+
+    socket.on('receiveMessage', (message) => {
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+
+    return () => socket.disconnect();
+  }, [senderId, recipientId]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const handleSendMessage = async () => {
+    if (newMessage.trim() === '') return;
+
+    const messageData = {
+      senderId,
+      recipientId,
+      content: newMessage,
+      timestamp: new Date(),
+    };
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/messages', messageData, {
+        headers: { Authorization: `Bearer YOUR_TOKEN` },
+      });
+
+      if (response.status === 201) {
+        socket.emit('sendMessage', messageData);
+        setMessages((prevMessages) => [...prevMessages, messageData]);
+        setNewMessage('');
+      } else {
+        console.error('Failed to send message:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error sending message:', error.message);
+    }
   };
 
   return (
     <div className="chatbox-container">
-      {!isOpen && (
-        <div className="chat-icon" onClick={toggleChatbox}>
-          <MessageCircle size={24} className="icon-message" />
+      <div className="chatbox">
+        <div className="chatbox-header">
+          <h4>Chat with {recipientName || 'User'}</h4>
+          <X size={20} className="chatbox-icon-close" onClick={onClose} />
         </div>
-      )}
-
-      {isOpen && (
-        <div className="chatbox">
-          <div className="chatbox-header">
-            <h4>Chat</h4>
-            <X size={20} className="icon-close" onClick={toggleChatbox} />
-          </div>
-          <div className="chatbox-body">
-            <div className="chatbox-left">
-              <h5 className="chatbox-left-header">Chats</h5>
-              <ul className="user-list">
-                {conversations.length === 0 ? (
-                  <p className="empty-chat">You haven't messaged anyone yet.</p>
-                ) : (
-                  conversations.map((conv) => (
-                    <li
-                      key={conv.id}
-                      onClick={() => handleUserSelect(conv.id)}
-                      className={`user-item ${
-                        selectedUser?.id === conv.id ? 'active' : ''
-                      }`}
-                    >
-                      {conv.name}
-                    </li>
-                  ))
-                )}
-              </ul>
-            </div>
-            <div className="chatbox-right">
-              {selectedUser ? (
-                <>
-                  <h5 className="chatbox-right-header">{selectedUser.name}</h5>
-                  <div className="messages">
-                    {selectedUser.messages.map((message, index) => (
-                      <p key={index} className="message-bubble">
-                        {message}
-                      </p>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <p className="select-user-placeholder">Select a chat to view messages.</p>
-              )}
-            </div>
-          </div>
-          <div className="chatbox-footer">
-            <input
-              type="text"
-              placeholder="Type a message..."
-              className="message-input"
-              disabled={!selectedUser}
-            />
-            <button className="send-button" disabled={!selectedUser}>
-              Send
-            </button>
+        <div className="chatbox-body">
+          <div className="chatbox-messages">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`chatbox-message-bubble ${
+                  message.senderId === senderId ? 'outgoing' : 'incoming'
+                }`}
+              >
+                <p>{message.content}</p>
+              </div>
+            ))}
+            <div ref={messagesEndRef}></div>
           </div>
         </div>
-      )}
+        <div className="chatbox-footer">
+          <input
+            type="text"
+            placeholder="Type a message..."
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            className="chatbox-message-input"
+          />
+          <button
+            className="chatbox-send-button"
+            onClick={handleSendMessage}
+            disabled={newMessage.trim() === ''}
+          >
+            Send
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

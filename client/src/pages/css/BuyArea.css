@@ -1,3 +1,19 @@
+/* General Layout */
+.main {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  background-color: #f9f9f9;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: #ffffff;
+}
+
+/* Listings Section */
 .listings-container {
   display: flex;
   flex-wrap: wrap;
@@ -26,9 +42,36 @@
   height: 150px;
   border-radius: 8px;
   margin-bottom: 10px;
-  background-color: #DBDBDB; 
+  background-color: #dbdbdb;
 }
 
+/* Context Menu */
+.context-menu {
+  position: fixed;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 200px;
+  padding: 5px 0;
+  left: 10px;
+  transform: translateY(-50%);
+}
+
+.menu-option {
+  padding: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  transition: background-color 0.2s ease;
+}
+
+.menu-option:hover {
+  background-color: #f2f2f2;
+}
+
+/* Modal */
 .modal {
   position: fixed;
   top: 0;
@@ -61,37 +104,6 @@
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.modal-content h2 {
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-}
-
-.modal-content p {
-  margin-bottom: 0.8rem;
-}
-
-.buy-now-btn {
-  padding: 10px 20px;
-  background-color: #38a169;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 1rem;
-}
-
-.buy-now-btn:hover {
-  background-color: #2f855a;
-}
-
-.image-placeholder-modal {
-  width: 100%;
-  height: 200px;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  background-color: #f1f1f1; 
-}
-
 .close-modal-btn {
   position: absolute;
   top: 10px;
@@ -100,35 +112,25 @@
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
+  transition: color 0.3s ease;
 }
 
 .close-modal-btn:hover {
-  color: #ff0000;
+  color: red;
 }
 
-.seller-info {
-  display: flex;
-  align-items: center; 
-  gap: 0.5rem; 
-  font-size: 1rem; 
-  margin-bottom: 0.8rem; 
+/* Modal Image */
+.image-placeholder-modal {
+  width: 100%;
+  height: 200px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  background-color: #f1f1f1;
 }
 
-.seller-icon {
-  width: 1.5rem; 
-  height: 1.5rem; 
-  border-radius: 50%; 
-  background-color: #38a169; 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white; 
-  font-size: 1rem; 
-  font-weight: bold; 
-}
-
+/* Add to Cart Section */
 .add-to-cart-container {
-  background-color: #f9f9f9; 
+  background-color: #f9f9f9;
   padding: 20px;
   border-radius: 12px;
   margin-top: 15px;
@@ -142,47 +144,13 @@
   margin-bottom: 10px;
 }
 
-.user-icon-container {
-  margin-right: 10px;
-  cursor: pointer;
-}
-
-.user-icon {
-  color: #38a169; 
-  cursor: pointer; 
-  z-index: 10; 
-}
-
-.context-menu {
-  position: fixed; 
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  width: 200px;
-  padding: 5px 0;
-  left: 10px; 
-  transform: translateY(-50%); 
-}
-
-.menu-option {
-  padding: 10px;
-  cursor: pointer;
-  font-size: 14px;
-  color: #333;
-}
-
-.menu-option:hover {
-  background-color: #f2f2f2;
-}
-
+/* Quantity Selector */
 .quantity-selector {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin:20px;
+  margin: 20px;
 }
 
 .quantity-btn {
@@ -190,7 +158,7 @@
   height: 30px;
   border-radius: 50%;
   border: 1px solid #ddd;
-  background-color: #fff;
+  background-color: white;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
@@ -208,17 +176,97 @@
   transform: scale(0.95);
 }
 
-.quantity-value {
-  min-width: 30px;
-  text-align: center;
-  font-size: 16px;
-  font-weight: 500;
-  margin: 0 5px;
-}
 .quantity-input {
-  text-align: center; /* Centers the number inside */
+  text-align: center;
   font-size: 16px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  padding: 0 5px;
+  padding: 5px;
+  width: 50px;
+}
+
+/* Chatbox Integration */
+.chatbox-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1100;
+}
+
+.chatbox {
+  width: 350px;
+  height: 400px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chatbox-header {
+  background-color: #f1f1f1;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.chatbox-header h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.chatbox-body {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto; /* Allows scrolling for messages */
+  animation: scroll-in 0.3s ease-out; /* Smooth scroll effect */
+}
+
+@keyframes scroll-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chatbox-footer {
+  border-top: 1px solid #ddd;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.chatbox-message-input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.chatbox-send-button {
+  background-color: #38a169;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  margin-left: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.chatbox-send-button:hover {
+  background-color: #2f855a;
+}
+
+.chatbox-send-button:disabled {
+  background-color: #bbb;
+  cursor: not-allowed;
 }

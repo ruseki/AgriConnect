@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { User } from 'lucide-react'; 
+import { User } from 'lucide-react';
 import TopNavbar from '../components/top_navbar';
 import SideBar from '../components/side_bar';
 import { useAuth } from '../components/AuthProvider';
+import Chatbox from '../components/Chatbox';
 import './css/BuyArea.css';
 import { useNavigate } from 'react-router-dom';
 
 const BuyArea = () => {
-  const { token, userId } = useAuth(); // Ensure userId here is the correct string identifier
+  const { token, userId } = useAuth();
   const [listings, setListings] = useState([]);
   const [openBuyModal, setOpenBuyModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -16,20 +17,23 @@ const BuyArea = () => {
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [showMenu, setShowMenu] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [showChatbox, setShowChatbox] = useState(false);
+  const [recipientId, setRecipientId] = useState(null);
+  const [recipientName, setRecipientName] = useState(''); // Added to store seller's name
   const navigate = useNavigate();
 
-  const fetchListings = async () => {
+  // Fetch listings using useCallback to stabilize dependencies
+  const fetchListings = useCallback(async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/listings', {
         headers: { Authorization: `Bearer ${token}` },
       });
-  
+
       if (response.status === 200) {
         const allListings = response.data.listings.filter((listing) => {
-          return listing.userId !== userId; // Compare using schema-defined userId
+          return listing.userId !== userId; // Exclude the logged-in user's listings
         });
-  
-        console.log('Filtered Listings:', allListings);
+
         setListings(allListings);
       } else {
         console.error('Failed to fetch listings:', response.data.message);
@@ -37,14 +41,14 @@ const BuyArea = () => {
     } catch (error) {
       console.error('Error fetching listings:', error.message);
     }
-  };
+  }, [token, userId]);
 
+  // Run fetchListings when the component mounts or dependencies change
   useEffect(() => {
-    console.log('Logged-in User ID:', userId);
     if (token) {
       fetchListings();
     }
-  }, [token]);
+  }, [token, fetchListings]);
 
   const handleOpenBuyModal = (listing) => {
     setSelectedProduct(listing);
@@ -82,16 +86,11 @@ const BuyArea = () => {
     }
   };
 
-  const handleRightClick = (e, user) => {
+  const handleRightClick = (e, listing) => {
     e.preventDefault();
     setMenuPosition({ x: e.clientX, y: e.clientY });
-    setSelectedUser(user._id);
-    setShowMenu(true);
-  };
-  
-  const handleLeftClick = (e, user) => {
-    setMenuPosition({ x: e.clientX, y: e.clientY });
-    setSelectedUser(user._id);
+    setSelectedUser(listing.userId); // Store the seller's ID
+    setRecipientName(listing.seller); // Store the seller's name
     setShowMenu(true);
   };
 
@@ -101,11 +100,16 @@ const BuyArea = () => {
 
   const handleMenuOptionClick = (option) => {
     if (option === 'profile') {
-      navigate(`/view-profile/${selectedUser}`);
+      if (selectedUser) {
+        navigate(`/view-profile/${selectedUser}`); // Navigate to the user's profile
+      }
     } else if (option === 'report') {
-      alert(`Reporting ${selectedUser}`);
+      alert(`Reporting ${selectedUser}`); // Handle reporting the user
+    } else if (option === 'message') {
+      setRecipientId(selectedUser); // Set recipient for chatbox
+      setShowChatbox(true); // Open the chatbox
     }
-    setShowMenu(false);
+    setShowMenu(false); // Close the context menu
   };
 
   return (
@@ -129,7 +133,14 @@ const BuyArea = () => {
                   <h3>{listing.productName}</h3>
                   <p>Category: {listing.category}</p>
                   <p>Price: ₱{listing.price}</p>
-                  <p>Available Stocks: {listing.quantity} {listing.unit}</p>
+                  <p>
+                    Available Stocks: {listing.quantity} {listing.unit}
+                  </p>
+                  <User
+                    size={30}
+                    className="user-icon"
+                    onContextMenu={(e) => handleRightClick(e, listing)}
+                  />
                 </div>
               ))
             ) : (
@@ -153,19 +164,27 @@ const BuyArea = () => {
                   <User
                     size={30}
                     className="user-icon"
-                    onContextMenu={(e) => handleRightClick(e, selectedProduct.userId)}
-                    onClick={(e) => handleLeftClick(e, selectedProduct.userId)}
+                    onContextMenu={(e) => handleRightClick(e, selectedProduct)}
                   />
                   {showMenu && (
                     <div
                       className="context-menu"
-                      style={{ top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}
+                      style={{
+                        top: `${menuPosition.y}px`,
+                        left: `${menuPosition.x}px`,
+                      }}
                     >
                       <div
                         className="menu-option"
                         onClick={() => handleMenuOptionClick('profile')}
                       >
                         Check Profile
+                      </div>
+                      <div
+                        className="menu-option"
+                        onClick={() => handleMenuOptionClick('message')}
+                      >
+                        Send Message
                       </div>
                       <div
                         className="menu-option"
@@ -179,10 +198,19 @@ const BuyArea = () => {
                 <p className="user-info">
                   User: <strong>{selectedProduct.seller || 'Unknown'}</strong>
                 </p>
-                <p><strong>Price:</strong> ₱{selectedProduct.price}</p>
-                <p><strong>Available Stocks:</strong> {selectedProduct.quantity} {selectedProduct.unit}</p>
-                <p><strong>Description:</strong> {selectedProduct.description}</p>
-                <p><strong>Listed on:</strong> {selectedProduct.listedDate || 'N/A'}</p>
+                <p>
+                  <strong>Price:</strong> ₱{selectedProduct.price}
+                </p>
+                <p>
+                  <strong>Available Stocks:</strong> {selectedProduct.quantity}{' '}
+                  {selectedProduct.unit}
+                </p>
+                <p>
+                  <strong>Description:</strong> {selectedProduct.description}
+                </p>
+                <p>
+                  <strong>Listed on:</strong> {selectedProduct.listedDate || 'N/A'}
+                </p>
 
                 {selectedProduct.userId !== userId && (
                   <div className="add-to-cart-container">
@@ -203,7 +231,12 @@ const BuyArea = () => {
                         type="number"
                         value={cartQuantity}
                         onChange={(e) =>
-                          setCartQuantity(Math.max(selectedProduct.minimumOrder || 1, Number(e.target.value)))
+                          setCartQuantity(
+                            Math.max(
+                              selectedProduct.minimumOrder || 1,
+                              Number(e.target.value)
+                            )
+                          )
                         }
                         className="quantity-input"
                       />
@@ -214,7 +247,10 @@ const BuyArea = () => {
                         +
                       </button>
                     </div>
-                    <button className="buy-now-btn" onClick={handleAddToCart}>
+                    <button
+                      className="buy-now-btn"
+                      onClick={handleAddToCart}
+                    >
                       Add to Cart
                     </button>
                   </div>
@@ -224,6 +260,11 @@ const BuyArea = () => {
           )}
         </div>
       </main>
+
+      {/* Display Chatbox */}
+      {showChatbox && (
+        <Chatbox recipientId={recipientId} recipientName={recipientName} />
+      )}
     </>
   );
 };

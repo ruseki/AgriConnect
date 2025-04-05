@@ -206,3 +206,10 @@
 .edit-btn:hover {
   background-color: #2980B9;
 }
+
+.seller-alert-message {
+  margin-top: 1rem;
+  color: red;
+  font-size: 1rem;
+  font-weight: bold;
+}
