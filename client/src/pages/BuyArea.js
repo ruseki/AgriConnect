@@ -1,3 +1,5 @@
+//BuyArea.js
+
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { User } from 'lucide-react';
@@ -89,7 +91,7 @@ const BuyArea = () => {
   const handleRightClick = (e, listing) => {
     e.preventDefault();
     setMenuPosition({ x: e.clientX, y: e.clientY });
-    setSelectedUser(listing.userId); // Store the seller's ID
+    setSelectedUser(listing.userId._id || listing.userId); 
     setRecipientName(listing.seller); // Store the seller's name
     setShowMenu(true);
   };
@@ -121,27 +123,31 @@ const BuyArea = () => {
           <div className="listings-container">
             {listings.length > 0 ? (
               listings.map((listing) => (
-                <div
-                  key={listing._id}
-                  className="listing-card"
-                  onClick={() => handleOpenBuyModal(listing)}
-                >
-                  <div
-                    className="image-placeholder"
-                    style={{ backgroundColor: listing.color || '#f1f1f1' }}
-                  ></div>
-                  <h3>{listing.productName}</h3>
-                  <p>Category: {listing.category}</p>
-                  <p>Price: ₱{listing.price}</p>
-                  <p>
-                    Available Stocks: {listing.quantity} {listing.unit}
-                  </p>
-                  <User
-                    size={30}
-                    className="user-icon"
-                    onContextMenu={(e) => handleRightClick(e, listing)}
-                  />
-                </div>
+<div
+  key={listing._id}
+  className="listing-card"
+  onClick={() => handleOpenBuyModal(listing)}
+>
+  <div
+    className="image-placeholder"
+    style={{ backgroundColor: listing.color || '#f1f1f1' }}
+  ></div>
+
+  <div className="listing-content">
+    <h3>{listing.productName}</h3>
+    <p>Category: {listing.category}</p>
+    <p>Price: ₱{listing.price}</p>
+    <p>
+      Available Stocks: {listing.quantity} {listing.unit}
+    </p>
+    <User
+      size={30}
+      className="user-icon"
+      onContextMenu={(e) => handleRightClick(e, listing)}
+    />
+  </div>
+</div>
+
               ))
             ) : (
               <p>No products available.</p>
@@ -263,7 +269,13 @@ const BuyArea = () => {
 
       {/* Display Chatbox */}
       {showChatbox && (
-        <Chatbox recipientId={recipientId} recipientName={recipientName} />
+        <Chatbox
+        senderId={userId} // Pass the logged-in user's ID as senderId
+        recipientId={recipientId} // Ensure recipientId is set correctly
+        recipientName={recipientName}
+        onClose={() => setShowChatbox(false)}
+      />
+    
       )}
     </>
   );
