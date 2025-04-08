@@ -1,10 +1,13 @@
+//userRoutes.js
+
 import express from 'express';
 import auth from '../middleware/auth.js';
-import adminMiddleware from '../middleware/adminMiddleware.js';
 import User from '../models/User.js';
+import adminMiddleware from '../middleware/adminMiddleware.js'; // Import the admin middleware
 
 const router = express.Router();
 
+// ✅ Get user by ID
 router.get('/:userId', auth, async (req, res) => {
   const { userId } = req.params;
 
@@ -24,8 +27,13 @@ router.get('/:userId', auth, async (req, res) => {
   }
 });
 
-router.get('/users', auth, adminMiddleware, async (req, res) => {
+// ✅ Admin-only: Get all users
+router.get('/admin/users', auth, adminMiddleware, async (req, res) => {
   try {
+    if (!req.user || !req.user.isAdmin) {
+      return res.status(403).json({ message: 'Access denied. Admins only.' });
+    }
+
     const users = await User.find().select(
       'userId first_name last_name email isVerified isSeller country province cityOrTown barangay bio'
     );
@@ -36,14 +44,15 @@ router.get('/users', auth, adminMiddleware, async (req, res) => {
 
     res.status(200).json(users);
   } catch (error) {
+    console.error('Error fetching users:', error.message);
     res.status(500).json({ message: 'Error fetching users', error: error.message });
   }
 });
 
+// ✅ Approve seller (admin or owner with auth)
 router.patch('/approve-seller/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
-
     const user = await User.findOne({ userId });
 
     if (!user) {
@@ -64,10 +73,10 @@ router.patch('/approve-seller/:userId', auth, async (req, res) => {
   }
 });
 
+// ✅ Remove seller
 router.patch('/remove-seller/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
-
     const user = await User.findOne({ userId });
 
     if (!user) {
@@ -84,14 +93,15 @@ router.patch('/remove-seller/:userId', auth, async (req, res) => {
   }
 });
 
+// ✅ Update user profile
 router.put('/user', auth, async (req, res) => {
-  const { userId } = req.userId
+  const userId = req.userId;
+  console.log('User ID:', userId); // Debugging log
+  console.log('Request Body:', req.body); // Debugging log
+
   try {
     const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
+    if (!user) return res.status(404).json({ message: 'User not found' });
 
     const { country, province, cityOrTown, barangay, bio, ...rest } = req.body;
 
@@ -101,12 +111,14 @@ router.put('/user', auth, async (req, res) => {
       province: province || user.province,
       cityOrTown: cityOrTown || user.cityOrTown,
       barangay: barangay || user.barangay,
-      bio: bio || user.bio, 
+      bio: bio || user.bio,
     });
 
     await user.save();
+    console.log('Updated User:', user); // Debugging log
     res.status(200).json({ message: 'User updated successfully', user });
   } catch (error) {
+    console.error('Error updating user:', error.message);
     res.status(500).json({ message: 'Error updating user', error: error.message });
   }
 });

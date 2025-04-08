@@ -1,3 +1,5 @@
+//top_navbar.js
+
 import React, { useState, useEffect } from "react";
 import { Search, ShoppingCart, Bell, Menu } from "lucide-react";
 import { useAuth } from "./AuthProvider";

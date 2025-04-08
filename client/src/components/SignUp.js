@@ -1,3 +1,5 @@
+//SignUp.js
+
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography, IconButton, Modal, Fade, Select, MenuItem } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';

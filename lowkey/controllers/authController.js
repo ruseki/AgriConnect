@@ -220,41 +220,48 @@ const verifyEmail = async (req, res) => {
 
   const forgotPassword = async (req, res) => {
     const { email } = req.body;
+  
     try {
-        const user = await User.findOne({ email });
-        if (user) {
-            await ResetToken.deleteMany({ owner: user._id });
-
-            const token = crypto.randomBytes(32).toString('hex');
-            console.log('Generated token for user:', token);
-
-            const resetToken = new ResetToken({
-                owner: user._id,
-                token: token,
-            });
-
-            await resetToken.save();
-            console.log('Reset token saved for user:', resetToken);
-
-            const resetLink = `http://localhost:3000/reset-password?token=${encodeURIComponent(token)}&id=${user._id}`;
-            
-            await sendEmail(
-                user.email,
-                `Password Reset Request`,
-                `Please use the following link to reset your password: ${resetLink}`
-            );
-
-            return res.status(200).json({
-                message: "The password reset link has been sent to your email. Please check your spam folder.",
-            });
-        } else {
-            return res.status(404).json({ message: "User not found." });
-        }
+      if (!email) {
+        return res.status(400).json({ message: 'Email is required.' });
+      }
+  
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(404).json({ message: 'User not found.' });
+      }
+  
+      // Remove existing tokens for the user
+      await ResetToken.deleteMany({ owner: user._id });
+  
+      // Create a new reset token
+      const token = crypto.randomBytes(32).toString('hex');
+      const resetToken = new ResetToken({ owner: user._id, token });
+      await resetToken.save();
+  
+      // Log userId and token for debugging
+      console.log(`Password Reset Request: 
+      - User ID: ${user._id}
+      - Reset Token: ${token}`);
+  
+      // Generate reset link
+      const resetLink = `http://localhost:3000/reset-password?token=${encodeURIComponent(token)}&id=${user._id}`;
+  
+      // Send email with the reset link
+      await sendEmail(
+        user.email,
+        'Password Reset Request',
+        `Please use the following link to reset your password: ${resetLink}`
+      );
+  
+      return res.status(200).json({
+        message: 'The password reset link has been sent to your email. Please check your spam folder.',
+      });
     } catch (error) {
-        console.error('Error in forgotPassword:', error);
-        return res.status(500).json({ message: "An error occurred. Please try again later.", error: error.message });
+      console.error('Error in forgotPassword:', error.message);
+      res.status(500).json({ message: 'An error occurred. Please try again later.' });
     }
-};
+  };
 
 
 const resendVerificationCode = async (req, res) => {

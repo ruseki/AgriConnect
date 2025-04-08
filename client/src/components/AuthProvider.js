@@ -1,3 +1,5 @@
+/* AuthProvider.js */
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
 const AuthContext = createContext();
@@ -27,6 +29,7 @@ export const AuthProvider = ({ children }) => {
     // Store authentication data
     localStorage.setItem('authToken', authToken);
     localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('isAdmin', userData.isAdmin);
 
     // Update state
     setToken(authToken);

@@ -1,3 +1,5 @@
+//auth.js
+
 const jwt = require('jsonwebtoken');
 const Token = require('../models/tokens/login_state_token');
 const User = require('../models/User');

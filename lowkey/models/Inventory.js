@@ -1,13 +1,19 @@
+/* Inventory.js*/
+
 const mongoose = require('mongoose');
 
 const InventorySchema = new mongoose.Schema({
-  productName: { type: String, required: true }, // Name of the product
-  category: { type: String, required: true }, // Product category
-  quantity: { type: Number, required: true }, // Stock quantity
-  unit: { type: String, required: true }, // Unit of measurement (e.g., kilograms, sacks)
-  price: { type: Number, required: true }, // Price per unit
-  expirationDate: { type: Date }, // Optional for perishables
-  sellerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to User model
-}, { timestamps: true }); // Auto timestamps
+  productName: { type: String, required: true },
+  category: { type: String, required: true },
+  quantity: { type: Number, required: true },
+  unit: { type: String, required: true },
+  price: { type: Number, required: true },
+  expirationDate: { type: Date },
+  cropType: { type: String }, // Added for farming-specific crops
+  equipment: { type: [String] }, // Array for farming tools or machines
+  plantingDate: { type: Date }, // Added for tracking crop planting
+  harvestingDate: { type: Date }, // Added for tracking crop harvesting
+  sellerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+}, { timestamps: true });
 
 module.exports = mongoose.model('Inventory', InventorySchema);

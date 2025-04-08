@@ -1,3 +1,5 @@
+/* Profile.js */
+
 import React, { useState, useEffect } from 'react';
 import { User, ShoppingCart } from 'lucide-react';
 import './css/Profile.css';
@@ -166,24 +168,45 @@ const Profile = () => {
 
   const handleSaveProfile = async () => {
     try {
+      // Ensure the token is properly retrieved
       const token = localStorage.getItem('authToken');
+      if (!token) {
+        console.error('No token found in localStorage');
+        alert('You are not authorized. Please log in again.');
+        window.location.href = '/login';
+        return;
+      }
+  
+      // Ensure the data is formatted before using it
       const formattedFormData = {
         ...formData,
-        birthDate: formData.birthDate,
+        birthDate: formData.birthDate, // Optional: Ensure this is in the correct format
       };
-      const response = await axios.put('http://localhost:5000/api/user', formattedFormData, {
+  
+      console.log('Token:', token); // Debugging log
+      console.log('Formatted Data Sent to Backend:', formattedFormData); // Debugging log
+  
+      // Make the API request
+      const response = await axios.put('http://localhost:5000/api/users/user', formattedFormData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
+  
+      console.log('Response from Backend:', response); // Debugging log
+  
       if (response.status === 200) {
         alert('Profile updated successfully!');
-        setFormData({ ...formData, bio: response.data.bio || '' });
+        setFormData({ ...formData, bio: response.data.user.bio || '' });
       } else {
         console.error('Failed to save profile:', response.data.message);
         alert('Failed to save profile.');
       }
     } catch (error) {
-      console.error('Error saving profile:', error);
+      console.error('Error Details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        headers: error.response?.headers,
+      });
       alert('Failed to save profile. Please try again.');
     }
   };

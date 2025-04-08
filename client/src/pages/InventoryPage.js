@@ -1,3 +1,5 @@
+/* InventoryPage.js */
+
 import React, { useState, useEffect } from 'react';
 import './css/InventoryPage.css'; // Import the updated stylesheet
 import TopNavbar from '../components/top_navbar';
@@ -15,9 +17,13 @@ const InventoryPage = () => {
   const [formData, setFormData] = useState({
     productName: '',
     category: '',
+    cropType: '',
+    equipment: '',
     quantity: 0,
     unit: 'kilograms', // Default value
     price: 0,
+    plantingDate: '',
+    harvestingDate: '',
     expirationDate: '',
   });
 
@@ -83,9 +89,13 @@ const InventoryPage = () => {
         setFormData({
           productName: '',
           category: '',
+          cropType: '',
+          equipment: '',
           quantity: 0,
           unit: 'kilograms',
           price: 0,
+          plantingDate: '',
+          harvestingDate: '',
           expirationDate: '',
         });
       } else {
@@ -109,8 +119,16 @@ const InventoryPage = () => {
     return inventoryItems.map((item) => (
       <div key={item._id} className="inventory-item">
         <span className="inventory-item-name">{item.productName}</span>
+        <span className="inventory-item-category">{item.category}</span>
+        <span className="inventory-item-crop-type">{item.cropType}</span>
+        <span className="inventory-item-equipment">{item.equipment}</span>
         <span className="inventory-item-quantity">{item.quantity} {item.unit}</span>
         <span className="inventory-item-price">₱{item.price}</span>
+        <span className="inventory-item-dates">
+          {item.plantingDate ? `Planting: ${new Date(item.plantingDate).toLocaleDateString()}` : ''}
+          {item.harvestingDate ? ` | Harvesting: ${new Date(item.harvestingDate).toLocaleDateString()}` : ''}
+          {item.expirationDate ? ` | Expiration: ${new Date(item.expirationDate).toLocaleDateString()}` : ''}
+        </span>
         <button className="inventory-delete-btn" onClick={() => handleDelete(item._id)}>Delete</button>
       </div>
     ));
@@ -154,6 +172,24 @@ const InventoryPage = () => {
                   />
                 </label>
                 <label>
+                  Crop Type:
+                  <input
+                    type="text"
+                    name="cropType"
+                    value={formData.cropType}
+                    onChange={handleInputChange}
+                  />
+                </label>
+                <label>
+                  Equipment:
+                  <input
+                    type="text"
+                    name="equipment"
+                    value={formData.equipment}
+                    onChange={handleInputChange}
+                  />
+                </label>
+                <label>
                   Quantity:
                   <input
                     type="number"
@@ -181,6 +217,24 @@ const InventoryPage = () => {
                     value={formData.price}
                     onChange={handleInputChange}
                     required
+                  />
+                </label>
+                <label>
+                  Planting Date:
+                  <input
+                    type="date"
+                    name="plantingDate"
+                    value={formData.plantingDate}
+                    onChange={handleInputChange}
+                  />
+                </label>
+                <label>
+                  Harvesting Date:
+                  <input
+                    type="date"
+                    name="harvestingDate"
+                    value={formData.harvestingDate}
+                    onChange={handleInputChange}
                   />
                 </label>
                 <label>

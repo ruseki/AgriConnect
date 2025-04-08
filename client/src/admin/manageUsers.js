@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import SideBar from '../components/side_bar';
 import TopNavbar from '../components/top_navbar';
 import axios from 'axios';
@@ -12,44 +12,78 @@ const ManageUsers = () => {
   const [showEmails, setShowEmails] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 5;
+  const [loading, setLoading] = useState(false); // Loading state
 
   const navigate = useNavigate();
 
+  const handleExpiredSession = useCallback(() => {
+    console.log('Auth Token:', localStorage.getItem('authToken'));
+    alert('Session expired. Please log in again.');
+    navigate('/'); // Redirecting to login page directly
+  }, [navigate]);
+
   useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      handleExpiredSession();
+      return;
+    }
+
     const verifyAdmin = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/user', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+        const response = await axios.get('http://localhost:5000/api/admin/verify', {
+          headers: { Authorization: `Bearer ${token}` },
         });
-
+    
+        console.log('Verify Admin Response:', response.data); // Log backend response
+    
         if (!response.data.isAdmin) {
+          console.log('User is NOT an admin'); // Log the admin check result
+          console.log('Auth Token:', localStorage.getItem('authToken'));
           alert('You are not authorized to access this page.');
-          navigate('/');
+          navigate('/'); // Redirect to home page if not admin
+        } else {
+          console.log('User IS an admin'); // Confirm the admin status
         }
       } catch (error) {
         console.error('Error verifying admin:', error);
-        alert('Session expired. Please log in again.');
-        navigate('/login');
+        if (error.response?.status === 403) {
+          alert('You are not authorized to access this page.');
+        }
+        handleExpiredSession();
       }
     };
 
     verifyAdmin();
-  }, [navigate]);
+  }, [handleExpiredSession, navigate]);
 
   useEffect(() => {
     const fetchUsers = async () => {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        handleExpiredSession();
+        return;
+      }
+
+      setLoading(true); // Start loading state
+
       try {
-        const response = await axios.get('http://localhost:5000/api/users', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+        const response = await axios.get('http://localhost:5000/api/admin/users', {
+          headers: { Authorization: `Bearer ${token}` },
         });
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
+        if (error.response?.status === 401) {
+          handleExpiredSession();
+        }
+      } finally {
+        setLoading(false); // End loading state
       }
     };
 
     fetchUsers();
-  }, []);
+  }, [handleExpiredSession, navigate]);
 
   const handleSearch = () => {
     const userIdLength = 20;
@@ -84,11 +118,15 @@ const ManageUsers = () => {
 
   const handleApproveSeller = async (userId) => {
     try {
-      const response = await axios.patch(`http://localhost:5000/api/users/approve-seller/${userId}`, {
-        isSeller: true,
-      }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
-      });
+      const response = await axios.patch(
+        `http://localhost:5000/api/users/approve-seller/${userId}`,
+        {
+          isSeller: true,
+        },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+        }
+      );
 
       if (response.status === 200) {
         alert('Seller approved successfully!');
@@ -108,11 +146,15 @@ const ManageUsers = () => {
 
   const handleRemoveSeller = async (userId) => {
     try {
-      const response = await axios.patch(`http://localhost:5000/api/users/remove-seller/${userId}`, {
-        isSeller: false,
-      }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
-      });
+      const response = await axios.patch(
+        `http://localhost:5000/api/users/remove-seller/${userId}`,
+        {
+          isSeller: false,
+        },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+        }
+      );
 
       if (response.status === 200) {
         alert('Seller role removed successfully!');
@@ -167,6 +209,11 @@ const ManageUsers = () => {
             />
             <button onClick={handleSearch}>Search</button>
           </div>
+
+          {filteredUser === null && searchInput.trim().length === 20 && (
+            <p className="no-user-found">No user found with that ID.</p>
+          )}
+
           <div className="users-table-container">
             <table className="users-table">
               <thead>
@@ -200,7 +247,7 @@ const ManageUsers = () => {
                         </button>
                       ) : (
                         <button onClick={() => handleApproveSeller(filteredUser.userId)}>
-                          Approve
+                          Make Seller
                         </button>
                       )}
                     </td>
@@ -228,7 +275,7 @@ const ManageUsers = () => {
                           </button>
                         ) : (
                           <button onClick={() => handleApproveSeller(user.userId)}>
-                            Approve
+                            Make Seller
                           </button>
                         )}
                       </td>
@@ -240,13 +287,16 @@ const ManageUsers = () => {
               </tbody>
             </table>
           </div>
-          <div className="pageNextPrevious-buttons">
+
+          {loading && <p>Loading...</p>}
+
+          <div className="pagination-controls">
             <button onClick={goToPreviousPage} disabled={currentPage === 1}>
-              &lt; Previous
+              Previous
             </button>
-            <span>Page {currentPage} of {totalPages}</span>
+            <span>{currentPage}</span>
             <button onClick={goToNextPage} disabled={currentPage === totalPages}>
-              Next &gt;
+              Next
             </button>
           </div>
         </div>

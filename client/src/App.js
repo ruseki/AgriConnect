@@ -22,22 +22,43 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/sell-area" element={<ProtectedRoute element={SellArea} />} />
+          <Route path="/sell-area" element={
+            <ProtectedRoute>
+              <SellArea />
+            </ProtectedRoute>
+          } />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/buy-area" element={<ProtectedRoute element={BuyArea} />} />
-          <Route path="/cart" element={<ProtectedRoute element={CartArea} />} />
-          <Route path="/profile" element={<ProtectedRoute element={Profile} />} />
-          <Route path="/view-profile/:userId" element={<ProtectedRoute element={ViewProfile} />} />
+          <Route path="/buy-area" element={
+            <ProtectedRoute>
+              <BuyArea />
+            </ProtectedRoute>
+          } />
+          <Route path="/cart" element={
+            <ProtectedRoute>
+              <CartArea />
+            </ProtectedRoute>
+          } />
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          } />
+          <Route path="/view-profile/:userId" element={
+            <ProtectedRoute>
+              <ViewProfile />
+            </ProtectedRoute>
+          } />
           <Route path="/manage-users" element={<ManageUsers />} />
-          <Route path="/inventory" element={<ProtectedRoute element={InventoryPage} />} />
-          <Route
-            path="/admin"
-            element={
-              <AdminRoutes>
-                <AdminDashboard />
-              </AdminRoutes>
-            }
-          />
+          <Route path="/inventory" element={
+            <ProtectedRoute>
+              <InventoryPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin" element={
+            <AdminRoutes>
+              <AdminDashboard />
+            </AdminRoutes>
+          } />
         </Routes>
       </Router>
     </AuthProvider>

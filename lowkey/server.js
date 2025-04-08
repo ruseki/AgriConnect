@@ -16,7 +16,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import { Server } from 'socket.io';
-import http from 'http'; // To create HTTP server for Socket.IO
+import http from 'http';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import listingsRoute from './routes/listings.js';
@@ -24,13 +24,16 @@ import cartRoutes from './routes/cartRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import inventoryRoutes from './routes/inventoryRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
+import AdminRoutes from './routes/Admin.js'; // Newly imported Admin routes
+import auth from './middleware/auth.js';  // Import the auth middleware
+import jwt from 'jsonwebtoken';
 
 dotenv.config();
 const app = express();
-const server = http.createServer(app); // Create HTTP server
+const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000', // Replace with your frontend domain if hosted elsewhere
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST'],
   },
 });
@@ -57,16 +60,19 @@ app.use(
     },
   })
 );
-
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Route mappings
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingsRoute);
 app.use('/api/cart', cartRoutes);
-app.use('/api/users', userRoutes);
 app.use('/api/inventory', inventoryRoutes);
-app.use('/api/messages', messageRoutes);
+
+// Mount admin routes directly at the /api/admin endpoint
+app.use('/api/admin', AdminRoutes);
+
+app.use('/api/users', auth, userRoutes);  // Auth middleware applied
+app.use('/api/messages', auth, messageRoutes);  // Auth middleware applied
 
 // Test endpoint
 app.get('/testlamang', (req, res) => {
@@ -77,11 +83,16 @@ app.get('/testlamang', (req, res) => {
 io.on('connection', (socket) => {
   console.log(`New client connected: ${socket.id}`);
 
-  // Join a chat room for a specific sender and recipient
-  socket.on('joinRoom', ({ senderId, recipientId }) => {
-    const roomId = [senderId, recipientId].sort().join('-'); // Use a consistent room ID format
-    socket.join(roomId);
-    console.log(`${socket.id} joined room ${roomId}`);
+  // Example of protecting Socket.IO with authentication
+  socket.on('joinRoom', ({ senderId, recipientId, token }) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        socket.emit('error', 'Authentication failed');
+        return;
+      }
+      socket.join([senderId, recipientId].sort().join('-'));
+      console.log(`${socket.id} joined room ${senderId}-${recipientId}`);
+    });
   });
 
   // Handle sending a message
@@ -96,7 +107,6 @@ io.on('connection', (socket) => {
 
     // Emit the message to the specific room
     io.to(roomId).emit('receiveMessage', messageData);
-
     console.log('Message sent:', messageData);
   });
 

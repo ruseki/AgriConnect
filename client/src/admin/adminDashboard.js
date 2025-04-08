@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react';
+/* adminDashboard.js */
+
+import React, { useEffect, useState } from 'react';
 import './css/adminDashboard.css';
 import SideBar from '../components/side_bar';
 import TopNavbar from '../components/top_navbar';
@@ -9,37 +11,29 @@ import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userFromLocalStorage = JSON.parse(localStorage.getItem('user'));
+    const validateAdminAccess = async () => {
+      const userFromStorage = JSON.parse(localStorage.getItem('user'));
+      const token = localStorage.getItem('authToken');
 
-    if (!userFromLocalStorage || !userFromLocalStorage.isAdmin) {
-      console.error('User is not an admin based on localStorage. Redirecting to homepage.');
-      navigate('/');
-      return;
-    }
-
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/user', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
-        });
-
-        const user = response.data;
-
-        if (!user.isAdmin) {
-          console.error('User is not an admin based on API response. Redirecting to homepage.');
-          navigate('/');
-        } else {
-          console.log('Admin access granted.');
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
+      if (!userFromStorage || !token) {
+        console.error('Missing user or token in localStorage.');
         navigate('/');
+        return;
       }
+
+      if (!userFromStorage.isAdmin) {
+        console.warn('User is not an admin.');
+        navigate('/');
+        return;
+      }
+
+      setLoading(false); // No need to make an API call if we already have admin info from localStorage
     };
 
-    fetchUser();
+    validateAdminAccess();
   }, [navigate]);
 
   const totalUsers = 15;
@@ -48,6 +42,10 @@ const AdminDashboard = () => {
   const totalUsersPercent = 15;
   const onlineUsersPercent = 3;
   const verifiedSellersPercent = 2;
+
+  if (loading) {
+    return <div className="admin-dashboard-loading">Loading...</div>;
+  }
 
   return (
     <div className="admin-dashboard-container">
@@ -112,18 +110,11 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          {}
           <div className="admin-sections">
-            <button
-              className="admin-button"
-              onClick={() => navigate('/manage-users')}
-            >
+            <button className="admin-button" onClick={() => navigate('/manage-users')}>
               Manage Users
             </button>
-            <button
-              className="admin-button"
-              onClick={() => navigate('/manage-tickets')}
-            >
+            <button className="admin-button" onClick={() => navigate('/manage-tickets')}>
               Manage Tickets
             </button>
             <button className="admin-button">Manage Listings</button>

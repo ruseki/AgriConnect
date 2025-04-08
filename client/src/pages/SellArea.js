@@ -147,28 +147,30 @@ const SellArea = () => {
     }
   };
   
-  const handleUnlist = async (listingId) => {
+  const handleUnlist = async (listingIdentifier) => {
     try {
-      console.log(`Attempting to unlist: /api/listings/${listingId}/unlist`);
-      const response = await fetch(`http://localhost:5000/api/listings/${listingId}/unlist`, {
+      console.log(`Attempting to unlist: /api/listings/${listingIdentifier}/unlist`);
+  
+      const response = await fetch(`http://localhost:5000/api/listings/${listingIdentifier}/unlist`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`, 
+          "Authorization": `Bearer ${token}`,
         },
       });
-      console.log("Identifier Passed to Unlist:", listingId);
-console.log("Listings State After Update:", listings);
+  
+      console.log("Identifier Passed to Unlist:", listingIdentifier);
   
       if (!response.ok) {
-        throw new Error("Failed to unlist the product");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to unlist the product");
       }
   
       const data = await response.json();
+      console.log("Unlist Response Data:", data);
   
       setListings((prevListings) =>
         prevListings.map((listing) =>
-          listing.identifier === listingId ? { ...listing, status: false } : listing
+          listing.identifier === listingIdentifier ? { ...listing, status: false } : listing
         )
       );
     } catch (error) {
@@ -176,26 +178,30 @@ console.log("Listings State After Update:", listings);
     }
   };
   
-  const handleRelist = async (listingId) => {
+  const handleRelist = async (listingIdentifier) => {
     try {
-      console.log(`Attempting to relist: /api/listings/${listingId}/relist`);
-      const response = await fetch(`http://localhost:5000/api/listings/${listingId}/relist`, {
+      console.log(`Attempting to relist: /api/listings/${listingIdentifier}/relist`);
+  
+      const response = await fetch(`http://localhost:5000/api/listings/${listingIdentifier}/relist`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`, 
+          "Authorization": `Bearer ${token}`,
         },
       });
   
+      console.log("Identifier Passed to Relist:", listingIdentifier);
+  
       if (!response.ok) {
-        throw new Error("Failed to relist the product");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to relist the product");
       }
   
       const data = await response.json();
+      console.log("Relist Response Data:", data);
   
       setListings((prevListings) =>
         prevListings.map((listing) =>
-          listing.identifier === listingId ? { ...listing, status: true } : listing
+          listing.identifier === listingIdentifier ? { ...listing, status: true } : listing
         )
       );
     } catch (error) {

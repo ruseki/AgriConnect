@@ -1,3 +1,5 @@
+/* ViewProfile.js */
+
 import React, { useState, useEffect } from 'react';
 import { User } from 'lucide-react'; 
 import axios from 'axios';

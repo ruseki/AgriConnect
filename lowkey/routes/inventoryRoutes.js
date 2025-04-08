@@ -1,3 +1,5 @@
+/* inventoryRoutes.js */
+
 const express = require('express');
 const auth = require('../middleware/auth'); // Middleware to protect routes
 const Inventory = require('../models/Inventory');
