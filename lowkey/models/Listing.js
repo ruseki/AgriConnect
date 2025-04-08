@@ -1,6 +1,6 @@
 // models/Listing.js
 
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const listingSchema = new mongoose.Schema({
   identifier: {
@@ -65,4 +65,4 @@ const listingSchema = new mongoose.Schema({
 });
 
 const Listing = mongoose.model('Listing', listingSchema);
-export default Listing;
+module.exports = Listing;
