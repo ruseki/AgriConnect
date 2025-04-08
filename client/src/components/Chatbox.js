@@ -1,3 +1,5 @@
+//ChatBox.js
+
 import React, { useState, useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import { io } from 'socket.io-client';
@@ -49,30 +51,82 @@ const Chatbox = ({ senderId, recipientId, recipientName, onClose }) => {
 
   const handleSendMessage = async () => {
     if (newMessage.trim() === '') return;
-
+  
+    const token = localStorage.getItem('authToken'); // Fetch token from localStorage
+    if (!token) {
+      alert('You are not authorized. Please log in again.');
+      window.location.href = '/'; // Redirect to login if token is missing
+      return;
+    }
+  
     const messageData = {
       senderId,
       recipientId,
       content: newMessage,
       timestamp: new Date(),
     };
-
+  
     try {
       const response = await axios.post('http://localhost:5000/api/messages', messageData, {
-        headers: { Authorization: `Bearer YOUR_TOKEN` },
+        headers: { Authorization: `Bearer ${token}` }, // Pass the token
       });
-
+  
       if (response.status === 201) {
+        // Emit the message through Socket.IO and update the UI
         socket.emit('sendMessage', messageData);
         setMessages((prevMessages) => [...prevMessages, messageData]);
         setNewMessage('');
+        console.log('Message sent successfully:', response.data);
       } else {
         console.error('Failed to send message:', response.data.message);
+        alert('Failed to send message.');
       }
     } catch (error) {
-      console.error('Error sending message:', error.message);
+      console.error('Error sending message:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      alert('Failed to send message. Please try again.');
     }
   };
+  
+  useEffect(() => {
+    const token = localStorage.getItem('authToken'); // Retrieve token
+    if (!token) {
+      return;
+    }
+  
+    const fetchMessages = async () => {
+      if (!recipientId || !senderId) return;
+  
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/messages/${senderId}/${recipientId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` }, // Include the token
+          }
+        );
+  
+        if (response.status === 200) {
+          setMessages(response.data);
+        } else {
+          console.error('Failed to fetch messages:', response.data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching messages:', error.message);
+      }
+    };
+  
+    fetchMessages();
+    socket.emit('joinRoom', { senderId, recipientId, token }); // Include token for authentication
+  
+    socket.on('receiveMessage', (message) => {
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+  
+    return () => socket.disconnect();
+  }, [senderId, recipientId]);
 
   return (
     <div className="chatbox-container">
