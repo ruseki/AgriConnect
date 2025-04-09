@@ -5,15 +5,30 @@ import Listing from '../models/Listing.js';
 
 export const getCart = async (req, res) => {
   try {
-    const userId = req.user._id;
-    const cart = await Cart.findOne({ userId }).populate('items.productId');
+    const cart = await Cart.findOne({ userId: req.userId }).populate('items.productId');
     if (!cart) {
-      return res.status(200).json({ cartItems: [] }); 
+      return res.status(200).json({ cartItems: [] });
     }
-    res.status(200).json({ cartItems: cart.items });
+
+    const cartItems = cart.items.map(item => {
+      if (!item.productId) {
+        // Handle deleted products gracefully
+        return {
+          ...item.toObject(),
+          productId: null,
+          productName: 'Deleted Product', // Add this field for the frontend
+        };
+      }
+      return {
+        ...item.toObject(),
+        productName: item.productId.productName, // Use existing product name
+      };
+    });
+
+    res.status(200).json({ cartItems });
   } catch (error) {
-    console.error('Error fetching cart:', error.message);
-    res.status(500).json({ message: 'Error fetching cart', error: error.message });
+    console.error('Error fetching cart items:', error.message);
+    res.status(500).json({ message: 'Error fetching cart items.' });
   }
 };
 
@@ -58,8 +73,10 @@ export const removeFromCart = async (req, res) => {
       return res.status(404).json({ message: 'Cart not found' });
     }
 
-    cart.items = cart.items.filter((item) => !item.productId.equals(productId));
+    // Filter items, including "Deleted Product"
+    cart.items = cart.items.filter((item) => !item.productId || item.productId.equals(productId));
     await cart.save();
+
     res.status(200).json({ message: 'Item removed from cart', cartItems: cart.items });
   } catch (error) {
     console.error('Error removing from cart:', error.message);
