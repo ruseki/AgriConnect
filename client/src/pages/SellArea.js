@@ -361,7 +361,7 @@ const SellArea = () => {
           {openSellModal && (
   <div className="modal">
     <div className="modal-overlay" onClick={handleCloseSellModal}></div>
-    <div className="modal-content">
+    <div className="modal-contents">
       <h2 className="modal-title">
         {editingListing ? "Edit Listing" : "Create a New Listing"}
       </h2>

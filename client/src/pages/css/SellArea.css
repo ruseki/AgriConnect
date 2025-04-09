@@ -2,35 +2,83 @@
 .button-container {
   display: flex;
   justify-content: flex-start;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  width: 60%;
-  padding-left: 1rem;
-  min-height: 80px; /* Ensures a consistent height */
+  margin: 10px;
+  width: 100%;
+  max-width: 600px;
+  padding: 0 1rem;
+  min-height: 60px;
 }
 
 .start-selling-btn {
-  padding: 0.875rem 2rem;
-  background-color: #89AC46;
-  color: black;
+  padding: 0.55rem 1rem;
+  background-color: #5F8B4C; 
+  color: white;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  align-self: flex-start;
-  margin-left: 0;
-  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.15);
-  width: 165px; /* Fixed width */
-  height: 50px; /* Fixed height */
-  font-size: 1rem; /* Keeps text readable */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: 0;
+  box-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
+  width: auto;
+  min-width: 160px;
+  height: 48px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
   text-align: center;
-  display: flex;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.start-selling-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0));
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
 .start-selling-btn:hover {
-  background-color: #D3E671;
-  transform: scale(1.05);
-  align-items: s;
+  background-color: #5F8B4C;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+.start-selling-btn:hover::after {
+  opacity: 1;
+}
+
+.start-selling-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(76, 175, 80, 0.4);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .button-container {
+    justify-content: center;
+    padding: 0;
+    margin: 1rem auto;
+  }
+  
+  .start-selling-btn {
+    width: 100%;
+    max-width: 280px;
+    font-size: 0.9rem;
+    padding: 0.7rem 1.2rem;
+  }
+}
+
+.start-selling-btn:hover {
+  animation: none;
 }
 
 .modal {
@@ -52,20 +100,27 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
 }
 
-.modal-content {
+.modal-contents {
   background: white;
   padding: 2rem;
   border-radius: 0.5rem;
   z-index: 1001;
-  width: 400px;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
 }
 
 .modal-title {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 1rem;
+  grid-column: span 2;
 }
 
 .input-group {
@@ -76,22 +131,45 @@
 
 .icon {
   margin-right: 0.5rem;
+  color: #555;
+}
+
+.input-group.full-width {
+  grid-column: span 2;
 }
 
 .input-field {
   flex-grow: 1;
   padding: 0.5rem;
   border: 1px solid #ccc;
-  border-radius: 0.9rem;
-  width: 500px;
+  border-radius: 0.5rem;
+  width: 100%;
 }
 
-.unit-select {
+.input-select {
   margin-left: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.75rem;
+  background-color: whitesmoke;
+  color: black;
+  font-size: 1rem;
 }
 
 .textarea {
   height: 100px;
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  resize: vertical;
+}
+.modal-actions {
+  grid-column: span 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 .publish-btn {
@@ -104,29 +182,37 @@
   border-radius: 0.375rem;
   cursor: pointer;
   transition: background-color 0.3s;
+  font-weight: 500;
+  width: 50%;
 }
 
 .publish-btn:hover {
   background-color: #1d4ed8;
 }
-.item-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
-  margin-top: 32px;
-  padding: 16px;
-}
 
+.item-container {
+  display: flex;
+  flex-wrap: wrap;
+  overflow-x: auto;
+  gap: 1rem;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
 
 .item-cards {
   position: relative;
-  width: 100%;
-  min-height: 320px;
+  display: grid;
+  position: relative;
+  width: 300px;
+  min-width: 280px;
+  min-height: 300px;
   border-radius: 12px;
-  padding: 24px;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: flex-start;
   color: #2d3748;
   text-align: left;
@@ -135,7 +221,54 @@
   background: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   border: 1px solid #e2e8f0;
+  flex-shrink: 0; 
   overflow: hidden;
+}
+
+.item-cards p:nth-of-type(5) {
+  position: absolute;
+  bottom: 60px; /* this listing is active */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #255F38; 
+  color: white;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  white-space: nowrap;
+  z-index: 10;
+  line-height: 1.2;
+  letter-spacing: 0.25px;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(2px);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  width: max-content;
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-cards .image-container {
+  width: 100%;
+  height: 140px; /* Adjust height as needed. not sureee */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #f7fafc; /* Light background for empty state */
+}
+
+.item-cards .image-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* or 'cover' depending on your preference */
+  border-radius: 8px;
 }
 
 .item-cards::before {
@@ -144,14 +277,13 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 4px;
+  height: 5px;
   background: linear-gradient(90deg, #99BC85, #3F7D58);
 }
 
 .item-cards:hover {
   transform: translateY(-4px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  border-color: #cbd5e0;
 }
 
 .item-cards h3 {
@@ -190,6 +322,7 @@
   gap: 5px;
 }
 
+
 /* Base Button Styles */
 .list-btn, 
 .unlist-btn, 
@@ -200,7 +333,7 @@
   border: none;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  font-weight: 600;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-size: 0.875rem;
@@ -228,27 +361,30 @@
 .unlist-btn {
   background-color: #A62C2C;
   color: white;
-  padding: 10px 20px;
+  padding: 5px 10px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(255, 0, 0, 0.2);
-  min-width: 100px;
+  min-width: 50px;
+  position: relative;
+  margin-top: 50px;
 }
 
 .unlist-btn:hover {
   background-color: #c0392b;
   box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
-  transform: translateY(-1px);
 }
 
 /* Edit Button */
 .edit-btn {
-  background-color: #143D60;
-  color: white;
+  background-color: #9FB3DF;
+  color: black;
   width: 36px;
   height: 36px;
   border-radius: 50%;
   box-shadow: 0 2px 4px rgba(0, 0, 255, 0.2);
-  position: relative;
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 
 .edit-btn:hover {
@@ -264,6 +400,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  color:black;
 }
 
 /* Button Group Container (if buttons are grouped together) */
@@ -271,7 +408,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
+  padding: 20px;
   width: 100%;
   margin-top: 16px;
 }
@@ -283,16 +421,17 @@
   font-weight: bold;
 }
 .delete-btn {
-  background-color: #e74c3c;
+  background-color: #A62C2C;
   color: white;
   border: none;
   padding: 0.5rem 1.5rem;
   border-radius: 0.375rem;
   cursor: pointer;
   font-size: 1rem;
-  margin-top: 1rem;
+  margin-top: 5px;
   transition: background-color 0.3s ease-in-out;
   box-shadow: 0 4px 6px rgba(255, 0, 0, 0.2);
+  width:30%;
 }
 
 .delete-btn:hover {
@@ -335,4 +474,74 @@
 
 .cancel-delete-btn:hover {
   background-color: #999999;
+}
+
+
+/* === Responsive Design for Marketplace === */
+
+/* Small screens (phones) */
+@media (max-width: 600px) {
+  .button-container {
+    width: 100%;
+    flex-direction: column;
+    padding-left: 0;
+    align-items: center;
+  }
+
+  .start-selling-btn {
+    width: 90%;
+    height: auto;
+    font-size: 1rem;
+    padding: 0.75rem;
+    justify-content: center;
+  }
+
+  .item-container {
+    grid-template-columns: 1fr;
+    padding: 8px;
+  }
+
+  .modal-content {
+    width: 90%;
+    padding: 1.5rem;
+  }
+
+  .input-field {
+    width: 100%;
+  }
+
+  .button-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .list-btn, .unlist-btn, .edit-btn, .delete-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .confirmation-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* Medium screens (tablets) */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .button-container {
+    width: 80%;
+  }
+
+  .item-container {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    padding: 12px;
+  }
+
+  .modal-content {
+    width: 80%;
+  }
+
+  .input-field {
+    width: 100%;
+  }
 }
