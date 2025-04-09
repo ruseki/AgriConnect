@@ -25,16 +25,14 @@ import userRoutes from './routes/userRoutes.js';
 import inventoryRoutes from './routes/inventoryRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
 import AdminRoutes from './routes/Admin.js'; // Newly imported Admin routes
-import auth from './middleware/auth.js';  // Import the auth middleware
+import auth from './middleware/auth.js'; // Import the auth middleware
 import jwt from 'jsonwebtoken';
 
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
-const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000',
     origin: 'http://localhost:3000',
     methods: ['GET', 'POST'],
   },
@@ -73,8 +71,8 @@ app.use('/api/inventory', inventoryRoutes);
 // Mount admin routes directly at the /api/admin endpoint
 app.use('/api/admin', AdminRoutes);
 
-app.use('/api/users', auth, userRoutes);  // Auth middleware applied
-app.use('/api/messages', auth, messageRoutes);  // Auth middleware applied
+app.use('/api/users', auth, userRoutes); // Auth middleware applied
+app.use('/api/messages', auth, messageRoutes); // Auth middleware applied
 
 // Test endpoint
 app.get('/testlamang', (req, res) => {
