@@ -1,6 +1,6 @@
-/* Inventory.js*/
+// models/Inventory.js
 
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const InventorySchema = new mongoose.Schema({
   productName: { type: String, required: true },
@@ -16,4 +16,5 @@ const InventorySchema = new mongoose.Schema({
   sellerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 }, { timestamps: true });
 
-module.exports = mongoose.model('Inventory', InventorySchema);
+const Inventory = mongoose.model('Inventory', InventorySchema);
+export default Inventory;

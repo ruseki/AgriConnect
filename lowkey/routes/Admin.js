@@ -1,6 +1,8 @@
-const express = require('express');
-const auth = require('../middleware/auth');
-const User = require('../models/User');
+// routes/adminRoutes.js
+
+import express from 'express';
+import auth from '../middleware/auth.js';
+import User from '../models/User.js';
 
 const router = express.Router();
 
@@ -58,4 +60,4 @@ router.get('/verify', auth, isAdminMiddleware, (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

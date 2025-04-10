@@ -1,21 +1,20 @@
-//authController.js
+// controllers/authController.js
 
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-const User = require('../models/User');
-const sendEmail = require('../utils/email');
-const ResetToken = require('../models/tokens/reset_token');
-const VerificationToken = require('../models/tokens/verification_token'); 
-const nodemailer = require('nodemailer');
-const Token = require('../models/tokens/login_state_token');
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+import User from '../models/User.js';
+import sendEmail from '../utils/email.js';
+import ResetToken from '../models/tokens/reset_token.js';
+import VerificationToken from '../models/tokens/verification_token.js';
+import nodemailer from 'nodemailer';
+import Token from '../models/tokens/login_state_token.js';
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
-
 const registerUser = async (req, res) => {
-    console.log(req.body)
+    console.log(req.body);
     const { first_name, middle_name, last_name, email, password, confirm_password, birthDate } = req.body;
 
     if (!emailRegex.test(email)) {
@@ -160,8 +159,6 @@ const sendVerificationEmail = async (req, res) => {
     }
 };
 
-
-
 const verifyEmail = async (req, res) => {
     const { email, token: inputCode } = req.body;
   
@@ -188,37 +185,9 @@ const verifyEmail = async (req, res) => {
       console.error('Error in verifyEmail:', error.message); 
       res.status(500).json({ message: 'Error verifying email.', error: error.message });
     }
-  };
-  
+};
 
-
-
-  
-  
-  exports.verifyOTP = async (req, res) => {
-    const { email, otp } = req.body;
-  
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: "User not found" });
-  
-    console.log('Received OTP:', otp);  
-    console.log('Stored OTP:', user.otp);  
-  
-    if (user.otp !== otp) return res.status(400).json({ message: "Invalid OTP" });
-    if (user.otpExpires < Date.now()) return res.status(400).json({ message: "OTP has expired" });
-  
-    user.isActive = true; 
-    user.otp = undefined; 
-    user.otpExpires = undefined; 
-    await user.save();
-  
-    res.status(200).json({ message: "User verified successfully!" });
-  };
-  
-  
-
-
-  const forgotPassword = async (req, res) => {
+const forgotPassword = async (req, res) => {
     const { email } = req.body;
   
     try {
@@ -261,31 +230,7 @@ const verifyEmail = async (req, res) => {
       console.error('Error in forgotPassword:', error.message);
       res.status(500).json({ message: 'An error occurred. Please try again later.' });
     }
-  };
-
-
-const resendVerificationCode = async (req, res) => {
-    const { email } = req.body;
-    try {
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        const verificationCode = crypto.randomBytes(16).toString('hex');
-        user.verificationCode = verificationCode;
-        await user.save();
-
-        await sendEmail(user.email, 'Email Verification', `Please use the following code to verify your email: ${verificationCode}`);
-        
-        return res.status(200).json({ message: 'Verification code resent successfully' });
-    } catch (error) {
-        console.error('Error resending verification code:', error);
-        res.status(500).json({ message: 'Error resending verification code' });
-    }
 };
-
-module.exports = { resendVerificationCode };
 
 const resetPassword = async (req, res) => {
     const { token, userId, newPassword } = req.body;
@@ -315,25 +260,54 @@ const resetPassword = async (req, res) => {
     }
 };
 
-const getUser = async (req, res) => {
-    const userId  = req.userId;
-
+const resendVerificationCode = async (req, res) => {
+    const { email } = req.body;
     try {
-        console.log(userId)
-        console.log('getting user')
-        const user = await User.findById(userId);
-        console.log(user)
+        const user = await User.findOne({ email });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
+        const verificationCode = crypto.randomBytes(16).toString('hex');
+        user.verificationCode = verificationCode;
+        await user.save();
 
-        return res.status(200).json(
-            user
-        );
+        await sendEmail(user.email, 'Email Verification', `Please use the following code to verify your email: ${verificationCode}`);
+        
+        return res.status(200).json({ message: 'Verification code resent successfully' });
     } catch (error) {
+        console.error('Error resending verification code:', error);
+        res.status(500).json({ message: 'Error resending verification code' });
+    }
+};
+
+const getUser = async (req, res) => {
+    const userId = req.userId;
+
+    try {
+        console.log(userId);
+        console.log('getting user');
+        const user = await User.findById(userId);
+        console.log(user);
+        
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        return res.status(200).json(user);
+    } catch (error) {
+        console.error('Error retrieving user:', error);
         return res.status(500).json({ message: 'Server error' });
     }
 };
 
-module.exports = { login, registerUser, sendVerificationEmail, verifyEmail, forgotPassword, resetPassword, resendVerificationCode, getUser };
+export { 
+    registerUser, 
+    login, 
+    sendVerificationEmail, 
+    verifyEmail, 
+    forgotPassword, 
+    resetPassword, 
+    resendVerificationCode, 
+    getUser 
+};

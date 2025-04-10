@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import Message from '../models/Message.js'; // Message model
+import auth from '../middleware/auth.js'; // Middleware for authorization
+
 const router = express.Router();
-const Message = require('../models/Message'); // Message model
-const auth = require('../middleware/auth'); // Middleware for authorization
 
 // Fetch all conversations for a specific sender (list of chats for the left division)
 router.get('/:senderId/conversations', auth, async (req, res) => {
@@ -77,4 +78,4 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
