@@ -71,8 +71,8 @@
 
 @media (max-width: 600px) {
   .sidebar {
-    width: 60px;
-    padding: 0.5rem;
+    width: 50px;
+    padding: 0.2rem;
   }
 
   .sidebar .icon {

@@ -17,14 +17,14 @@
   border-radius: 12px 12px 0 0;
   margin-bottom: 80px;
   width: 80%;
-  position: relative; /* Set position to relative to position child elements */
+  position: relative; 
 }
 
 .profile-icon {
-  position: absolute; /* Change to absolute positioning */
-  top: 50%; /* Center vertically */
-  left: 55%; /* Center horizontally */
-  transform: translate(-50%, -50%); /* Adjust position to truly center */
+  position: absolute; 
+  top: 50%; 
+  left: 55%; 
+  transform: translate(-50%, -50%); 
   width: 100px;
   height: 100px;
   border-radius: 50%;
@@ -53,14 +53,14 @@
 .profile-details {
   background-color: transparent;
   padding: 20px 0;
-  margin-top: 20px;
+  margin-top: -60px;
 }
 
 .editable-name {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  margin: 20px 0; /* top and bottom spacing */
+  margin: 15px 0; 
 }
 
 label {
@@ -97,7 +97,10 @@ label {
   text-align: center;
   color: #777;
   margin-bottom: 30px;
+  margin-right: 150px; 
   font-size: 14px;
+  font-style: italic;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .profile-info {
@@ -149,17 +152,17 @@ label {
 }
 
 .profile-buttons {
-  margin-top: 20px; /* Space above the button */
-  width: 50%; /* Ensure it takes the full width */
-  text-align: left; /* Center the button */
+  margin-top: 20px; 
+  width: 50%; 
+  text-align: left; 
 }
 
 .save-profile-btn {
   background-color: #6e8efb;
   color: white;
   border: none;
-  padding: 12px 25px; /* Adjust padding for a better look */
-  border-radius: 8px; /* Same border-radius as input fields */
+  padding: 12px 25px; 
+  border-radius: 8px; 
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
@@ -172,30 +175,80 @@ label {
   transform: translateY(-1px);
 }
 
-/* Responsive Design */
+/* Extra small screens (phones under 576px) */
+@media (max-width: 576px) {
+  .profile-banner {
+    width: 100%;
+    height: 100px;
+    margin-top: -50px;
+    margin-bottom: 40px;
+  }
+
+  .profile-icon {
+    margin-top: -190px;
+    width: 90px;
+    height: 90px;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .person-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .profile-input,
+  .profile-select,
+  .profile-textarea {
+    width: 100%;
+  }
+
+  .profile-buttons {
+    width: 100%;
+    text-align: center;
+  }
+
+  .profile-date {
+    text-align: left;
+    margin: 10px 0 20px 0;
+    font-size: 13px;
+  }
+}
+
+/* Tablets (landscape and portrait) */
 @media (max-width: 768px) {
+  .profile-banner {
+    width: 100%;
+  }
+
+  .profile-date {
+    text-align: left;
+    margin: 0 0 20px 0;
+    font-size: 13px;
+  }
+
+  .profile-input,
+  .profile-select,
+  .profile-textarea {
+    width: 100%;
+  }
+
+  .profile-buttons {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Small laptops and below */
+@media (max-width: 992px) {
   .profile-page-content {
     padding: 20px;
+    max-width: 95%;
   }
-  
-  .editable-name {
-    grid-template-columns: 1fr;
-  }
-  
-  .profile-banner {
-    height: 120px;
-    margin-bottom: 60px;
-  }
-  
-  .profile-icon {
-    width: 120px;
-    height: 120px;
-    margin-top: -80px;
-  }
-  
-  .person-icon {
-    width: 50px;
-    height: 50px;
+
+  .profile-date {
+    margin-right: 0;
   }
 }
 

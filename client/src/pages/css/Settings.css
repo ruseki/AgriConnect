@@ -15,6 +15,10 @@
   align-items: center;
   padding: 1rem;
   background-color: #77B254;
+  flex-wrap: wrap; /* allow wrapping on smaller screens */
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .settings-nav .nav-left {
@@ -28,6 +32,7 @@
   margin-right: 1rem;
   color: #ffffff;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .settings-nav .nav-search {
@@ -48,6 +53,7 @@
   text-decoration: none;
   font-size: 15px;
   margin-right: 15px;
+  display: inline-block;
 }
 
 .settings-nav button {
@@ -66,8 +72,8 @@
 
 /* Sidebar */
 .settings-sidebar {
-  width: 25%;
-  padding: 2rem;
+  width: 15%;
+  padding: 1rem;
   background-color: #CAE0BC;
   box-sizing: border-box;
 }
@@ -304,6 +310,52 @@
   }
   
   .section {
-    padding: 1.25rem;
+    padding: 1.5rem;
+  }
+
+  .settings-sidebar {
+    width: 50%;
+    padding: 1rem;
+    border-bottom: 1px solid #ccc;
+  }
+  .settings-nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .settings-nav .nav-link {
+    font-size: 10px;
+    margin-right: 10px;
+    margin-bottom: 8px;
+  }
+
+  .settings-nav .nav-left {
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .settings-nav .nav-logo {
+    font-size: 1rem;
+    margin-right: 0.5rem;
+    font-size: small;
+  }
+
+  .settings-nav .nav-search {
+    flex: 1;
+    padding: 0;
+    justify-content: flex-start;
+  }
+
+  .settings-nav .nav-right {
+    margin-top: 0.5rem;
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+@media (max-width: 480px) {
+  .settings-nav .nav-link {
+    font-size: 13px;
+    margin-right: 8px;
+    margin-bottom: 6px;
+    display: block; /* stack vertically if needed */
   }
 }

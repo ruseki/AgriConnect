@@ -61,22 +61,6 @@
   box-shadow: 0 2px 6px rgba(76, 175, 80, 0.4);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .button-container {
-    justify-content: center;
-    padding: 0;
-    margin: 1rem auto;
-  }
-  
-  .start-selling-btn {
-    width: 100%;
-    max-width: 280px;
-    font-size: 0.9rem;
-    padding: 0.7rem 1.2rem;
-  }
-}
-
 .start-selling-btn:hover {
   animation: none;
 }
@@ -322,7 +306,6 @@
   gap: 5px;
 }
 
-
 /* Base Button Styles */
 .list-btn, 
 .unlist-btn, 
@@ -476,72 +459,166 @@
   background-color: #999999;
 }
 
-
-/* === Responsive Design for Marketplace === */
-
-/* Small screens (phones) */
-@media (max-width: 600px) {
+/* Media Query for Small Phones (less than 480px) */
+@media screen and (max-width: 480px) {
   .button-container {
-    width: 100%;
-    flex-direction: column;
-    padding-left: 0;
-    align-items: center;
+    justify-content: center;
+    padding: 0 0.5rem;
+    min-height: 50px;
   }
 
   .start-selling-btn {
-    width: 90%;
-    height: auto;
+    width: 50%;
+    min-width: 60px;
+    height: 30px;
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .modal-contents {
+    padding: 1rem;
+    grid-template-columns: 1fr;
+    max-width: 80%;
+    gap: 0.9rem;
+  }
+
+  .modal-title {
     font-size: 1rem;
-    padding: 0.75rem;
-    justify-content: center;
+    grid-column: span 1;
+    text-align: center;
+  }
+
+  .input-group, 
+  .input-group.full-width {
+    grid-column: span 1;
+  }
+
+  .modal-actions {
+    grid-column: span 1;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .publish-btn, 
+  .delete-btn {
+    width: 50%;
   }
 
   .item-container {
-    grid-template-columns: 1fr;
-    padding: 8px;
-  }
-
-  .modal-content {
-    width: 90%;
-    padding: 1.5rem;
-  }
-
-  .input-field {
-    width: 100%;
-  }
-
-  .button-group {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .list-btn, .unlist-btn, .edit-btn, .delete-btn {
-    width: 100%;
+    padding: 1rem;
     justify-content: center;
+  }
+
+  .item-cards {
+    width: 80%;
+    min-width: unset;
+    padding: 1rem;
+  }
+
+  .item-cards .image-container {
+    height: 120px;
+  }
+
+  .item-cards h3 {
+    font-size: 1.1rem;
+  }
+
+  .item-cards p {
+    font-size: 0.9rem;
+  }
+
+  .item-cards p:nth-of-type(5) {
+    bottom: 75px;
+    font-size: 0.75rem;
+    padding: 6px 12px;
   }
 
   .confirmation-buttons {
     flex-direction: column;
-    align-items: stretch;
+    width: 100%;
+  }
+
+  .confirm-delete-btn,
+  .cancel-delete-btn {
+    width: 100%;
+    padding: 0.5rem 1rem;
+  }
+
+  .list-btn, 
+  .unlist-btn {
+    min-width: unset;
+    padding: 8px 15px;
+    font-size: 0.8rem;
+  }
+
+  .button-group {
+    padding: 15px 10px;
+    flex-direction: column;
+  }
+
+  .edit-btn {
+    width: 32px;
+    height: 32px;
   }
 }
 
-/* Medium screens (tablets) */
-@media (min-width: 601px) and (max-width: 1024px) {
+/* Media Query for Medium Phones (481px to 767px) */
+@media screen and (min-width: 481px) and (max-width: 767px) {
   .button-container {
-    width: 80%;
+    justify-content: center;
+    max-width: 100%;
+  }
+
+  .modal-contents {
+    grid-template-columns: 1fr;
+    max-width: 90%;
+    padding: 1.75rem;
+  }
+
+  .modal-title {
+    grid-column: span 1;
+  }
+
+  .input-group, 
+  .input-group.full-width {
+    grid-column: span 1;
+  }
+
+  .modal-actions {
+    grid-column: span 1;
+    justify-content: space-between;
   }
 
   .item-container {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    padding: 12px;
+    justify-content: center;
   }
 
-  .modal-content {
-    width: 80%;
+  .item-cards {
+    width: calc(50% - 1rem);
+    min-width: 220px;
   }
 
-  .input-field {
-    width: 100%;
+  .publish-btn {
+    width: 65%;
+  }
+
+  .delete-btn {
+    width: 35%;
+  }
+}
+
+/* Media Query for Portrait Tablets (768px to 991px) */
+@media screen and (min-width: 768px) and (max-width: 991px) {
+  .modal-contents {
+    max-width: 95%;
+  }
+  
+  .item-container {
+    justify-content: space-around;
+  }
+  
+  .item-cards {
+    width: calc(33.333% - 1rem);
+    min-width: 220px;
   }
 }

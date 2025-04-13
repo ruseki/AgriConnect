@@ -1,3 +1,6 @@
+/* Original CSS with added responsiveness */
+
+/* Base Styles */
 .inventory-container {
   padding: 2rem;
   background-color: #f5f7fa;
@@ -299,4 +302,320 @@
 
 .inventory-edit-btn:hover {
   background-color: #2980B9;
+}
+
+/* Responsive styles */
+
+/* Large tablets and small desktops */
+@media screen and (max-width: 1200px) {
+  .inventory-container {
+    margin-left: 200px;
+    margin-top: 80px;
+    padding: 1.5rem;
+  }
+  
+  .inventory-title {
+    font-size: 2.2rem;
+  }
+  
+  .inventory-list-container {
+    justify-content: center;
+  }
+}
+
+/* Medium tablets */
+@media screen and (max-width: 992px) {
+  .inventory-container {
+    margin-left: 150px;
+    border-radius: 25px;
+  }
+  
+  .inventory-title {
+    font-size: 2rem;
+  }
+  
+  .inventory-item {
+    padding: 1rem 1.25rem;
+  }
+  
+  .inventory-item-name {
+    font-size: 1.1rem;
+  }
+  
+  .inventory-item-quantity, .inventory-item-price {
+    font-size: 1rem;
+  }
+  
+  .inventory-item-card {
+    width: 220px;
+    height: 280px;
+    min-height: 280px;
+  }
+  
+  .inventory-modal-content {
+    max-width: 550px;
+  }
+  
+  .inventory-modal-content h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Small tablets and large phones */
+@media screen and (max-width: 768px) {
+  .inventory-container {
+    margin-left: 0;
+    margin-top: 70px;
+    border-radius: 20px;
+    padding: 1.25rem;
+  }
+  
+  .inventory-title {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .inventory-title::after {
+    width: 80px;
+    height: 2px;
+  }
+  
+  .inventory-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    width: 100%;
+  }
+  
+  .inventory-item-name, .inventory-item-quantity, .inventory-item-price {
+    flex: 1;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .inventory-add-product-btn {
+    width: 150px;
+    height: 45px;
+    font-size: 0.9rem;
+    padding: 0.75rem 1.5rem;
+    align-self: center;
+    margin-bottom: 1rem;
+  }
+  
+  .inventory-list-container {
+    gap: 15px;
+  }
+  
+  .inventory-item-card {
+    width: calc(50% - 15px);
+    height: 250px;
+    min-height: 250px;
+    padding: 15px;
+    font-size: 16px;
+  }
+  
+  .inventory-item-card p {
+    font-size: 1.75rem;
+  }
+  
+  .inventory-modal-content {
+    padding: 1.5rem;
+    max-width: 95%;
+  }
+  
+  .inventory-modal-content form {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .inventory-submit-btn {
+    grid-column: span 1;
+    width: 100%;
+  }
+}
+
+/* Phones */
+@media screen and (max-width: 576px) {
+  .inventory-container {
+    padding: 1rem;
+    border-radius: 15px;
+    margin-top: 60px;
+  }
+  
+  .inventory-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .inventory-title::after {
+    width: 60px;
+  }
+  
+  .inventory-list {
+    gap: 0.75rem;
+  }
+  
+  .inventory-item-name {
+    font-size: 1rem;
+  }
+  
+  .inventory-item-quantity, .inventory-item-price {
+    font-size: 0.9rem;
+  }
+  
+  .inventory-list-container {
+    gap: 10px;
+  }
+  
+  .inventory-item-card {
+    width: 100%;
+    height: 220px;
+    min-height: 220px;
+    padding: 12px;
+    font-size: 15px;
+  }
+  
+  .inventory-item-card p {
+    font-size: 1.5rem;
+  }
+  
+  .inventory-delete-btn, .inventory-edit-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  .inventory-edit-btn {
+    padding: 4px;
+  }
+  
+  .inventory-edit-btn .inventory-icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .inventory-modal-content {
+    padding: 1.25rem;
+  }
+  
+  .inventory-modal-content h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .inventory-modal-content label {
+    font-size: 0.85rem;
+  }
+  
+  .inventory-modal-content input[type="text"],
+  .inventory-modal-content input[type="number"],
+  .inventory-modal-content input[type="date"] {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  .inventory-submit-btn {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Extra small phones */
+@media screen and (max-width: 375px) {
+  .inventory-container {
+    padding: 0.75rem;
+    border-radius: 10px;
+    margin-top: 50px;
+  }
+  
+  .inventory-title {
+    font-size: 1.35rem;
+    margin-bottom: 1rem;
+  }
+  
+  .inventory-title::after {
+    width: 50px;
+  }
+  
+  .inventory-add-product-btn {
+    width: 130px;
+    height: 40px;
+    font-size: 0.8rem;
+    padding: 0.6rem 1.25rem;
+  }
+  
+  .inventory-item-card {
+    height: 200px;
+    min-height: 200px;
+    padding: 10px;
+    font-size: 14px;
+  }
+  
+  .inventory-item-card p {
+    font-size: 1.25rem;
+  }
+  
+  .inventory-modal-content {
+    padding: 1rem;
+  }
+  
+  .inventory-modal-content h2 {
+    font-size: 1.15rem;
+    margin-bottom: 1.25rem;
+  }
+}
+
+/* Additional utility classes for responsive behavior */
+.inventory-mobile-only {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .inventory-desktop-only {
+    display: none;
+  }
+  
+  .inventory-mobile-only {
+    display: block;
+  }
+  
+  /* Add a mobile menu toggle button */
+  .inventory-mobile-menu-toggle {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1002;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #89AC46;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+  
+  /* For collapsible item details on mobile */
+  .inventory-details-toggle {
+    width: 100%;
+    text-align: center;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #555;
+    cursor: pointer;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+  }
+  
+  .inventory-item-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  
+  .inventory-item-details.visible {
+    max-height: 200px;
+  }
 }

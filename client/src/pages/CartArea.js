@@ -161,11 +161,6 @@ const CartArea = () => {
             <a href="/orders" className="cartarea-nav-link">Orders</a>
             <a href="/successful" className="cartarea-nav-link">Successful Orders</a>
           </div>
-
-          <div className="cartarea-header">
-            <h1>Your Cart</h1>
-            <div className="cartarea-header-divider"></div>
-          </div>
   
           <div className="cartarea-container">
             {loading ? (

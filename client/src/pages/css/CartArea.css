@@ -1,3 +1,6 @@
+/* Original CSS with added responsiveness */
+
+/* Base Styles */
 .cartarea-main {
   display: flex;
   min-height: 100vh;
@@ -22,8 +25,8 @@
 }
 
 .cartarea-nav-link {
-  margin-top:10px;
-  color: #000;
+  margin-top: 10px;
+  color: black;
   text-decoration: none;
   font-weight: 500;
   padding: 9px 20px;
@@ -32,12 +35,12 @@
 }
 
 .cartarea-nav-link:hover {
-  background-color: #e9ecef;
+  background-color: #F2EFE7;
 }
 
 .cartarea-nav-link.active {
-  background-color: #000;
-  color: #fff;
+  background-color: #5F8B4C;
+  color: white;
 }
 
 /* Container Styles */
@@ -358,4 +361,116 @@
 
 .cartarea-payment-modal-save-btn:hover {
   background-color: #005f75;
+}
+
+/* =========================
+   TABLET AND BELOW (≤ 992px)
+========================= */
+@media screen and (max-width: 992px) {
+  .cartarea-main {
+    flex-direction: column;
+  }
+
+  .cartarea-main-content {
+    margin-left: 50px;
+    margin-top: 70px;
+  }
+
+  .cartarea-table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  /* Allow hidden columns to show in responsive */
+  .cartarea-table .hide-on-mobile {
+    display: table-cell !important;
+  }
+
+  .cartarea-total {
+    width: 90%;
+    margin: 10px auto;
+    padding: 10px;
+  }
+
+  .cartarea-navigation {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 5px;
+    font-size: 15px;
+  }
+
+  .cartarea-nav-link {
+    padding: 5px 8px;
+  }
+
+  .cartarea-quantity-btn {
+    width: 22px;
+    height: 22px;
+    font-size: 14px;
+  }
+
+  .cartarea-quantity-value {
+    font-size: 14px;
+  }
+
+  .cartarea-payment-modal-content {
+    width: 90%;
+    padding: 15px;
+  }
+  .cartarea-table td {
+    font-size: 0.78rem;
+    padding: 5px;
+    white-space: normal;
+  }
+}
+
+
+/* =========================
+   MOBILE (≤ 768px)
+========================= */
+@media screen and (max-width: 768px) {
+  .cartarea-total {
+    width: 85%;
+    margin: 10px auto;
+    padding: 8px;
+    margin-left: 20px;
+  }/*oks na 2*/
+}
+
+
+/* =========================
+   SMALL MOBILE (≤ 480px)
+========================= */
+@media screen and (max-width: 480px) {
+  .cartarea-table {
+    border: 0;
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .cartarea-table tr {
+    display: block;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .cartarea-table td {
+    margin-left: 20px;
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .cartarea-table td::before {
+    content: attr(aria-label);
+    font-weight: bold;
+    flex: 1;
+    text-align: left;
+  }
+
+  .cartarea-table td {
+    flex: 1;
+    text-align: right;
+  }
 }

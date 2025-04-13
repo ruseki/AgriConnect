@@ -12,6 +12,7 @@
   flex-wrap: wrap;
   gap: 25px;
   margin-top: -10px;
+  justify-content: center; /* helps center items on small screens */
 }
 
 .listing-card {
@@ -283,4 +284,107 @@
 .chatbox-send-button:disabled {
   background-color: #bbb;
   cursor: not-allowed;
+}
+
+/* === Responsive Breakpoints === */
+
+/* Tablet view: 768px - 1024px */
+@media (max-width: 1024px) {
+  .main {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .listings-container {
+    margin-top: -60px;
+    gap: 20px;
+    justify-content: center;
+    margin-left: -200px;
+  }
+
+  .listing-card {
+    width: calc(33.333% - 20px); /* 3 cards per row with gap */
+    width: 300px; /* optional: keep from stretching too wide */
+  }
+
+  .modal-content,
+  .chatbox {
+    width: 90%;
+  }
+
+  .chatbox {
+    right: 5%;
+    bottom: 20px;
+  }
+}
+
+/* Mobile view: <= 768px */
+@media (max-width: 768px) {
+  .main {
+    flex-direction: column;
+    padding: 0.5rem;
+  }
+
+  .listings-container {
+    margin-top: -60px;
+    gap: 20px;
+    justify-content: center;
+    margin-left: 70px;
+  }
+
+  .listing-card {
+    width: 100%;
+  }
+
+  .listing-content {
+    font-size: 13px;
+  }
+
+  .modal-content {
+    width: 95%;
+    max-height: 85vh;
+  }
+
+  .add-to-cart-container {
+    padding: 10px;
+  }
+
+  .add-to-cart-title {
+    font-size: 1.1rem;
+  }
+
+  .quantity-selector {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .chatbox {
+    width: 95%;
+    height: 350px;
+    right: 2.5%;
+    bottom: 15px;
+  }
+
+  .chatbox-header h4 {
+    font-size: 0.9rem;
+  }
+
+  .chatbox-send-button {
+    padding: 8px 12px;
+  }
+}
+
+/* Small Devices: <= 480px */
+@media (max-width: 480px) {
+  .listings-container {
+    margin-top: -100px;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    margin-left: 60px;
+  }
+
+  .listing-card {
+    width: 100%;
+  }
 }
