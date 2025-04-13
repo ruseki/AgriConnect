@@ -1,10 +1,9 @@
-/* authRoutes.js */
+// routes/authRoutes.js
 
-const express = require('express');
-const { login, registerUser, verifyEmail, forgotPassword, resetPassword, resendVerificationCode, sendVerificationEmail, getUser } = require('../controllers/authController');
-const auth = require('../middleware/auth');
-const AdminRoutes = require('./Admin'); 
-
+import express from 'express';
+import { login, registerUser, verifyEmail, forgotPassword, resetPassword, resendVerificationCode, sendVerificationEmail, getUser } from '../controllers/authController.js';
+import auth from '../middleware/auth.js';
+import AdminRoutes from './Admin.js';
 
 const router = express.Router();
 
@@ -17,10 +16,6 @@ router.post('/resend-verification-code', resendVerificationCode);
 router.post('/send-verification-email', auth, sendVerificationEmail);
 router.get('/user', auth, getUser);
 
-
-
-
-
 router.use('/admin', AdminRoutes);
 
-module.exports = router;
+export default router;

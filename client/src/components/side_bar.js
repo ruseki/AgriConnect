@@ -38,6 +38,11 @@ const SideBar = ({ handleOpenSignIn }) => {
         <Box className="icon" />
         <span className="text-sm">Inventory</span>
       </Link>
+       {/* Inventory Button at the Bottom */}
+       <Link to="/manage-users" className="icon-button inventory-button">
+        <Box className="icon" />
+        <span className="text-sm">Manage-users</span>
+      </Link>
     </aside>
   );
 };

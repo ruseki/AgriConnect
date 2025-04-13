@@ -1,6 +1,6 @@
-//middleware/list.js
+// middleware/list.js
 
-const Listing = require('../models/Listing');
+import Listing from '../models/Listing.js';
 
 function generateIdentifier() {
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -43,4 +43,4 @@ const addIdentifier = async function(req, res, next) {
   }
 }
 
-module.exports = { addIdentifier };
+export { addIdentifier };

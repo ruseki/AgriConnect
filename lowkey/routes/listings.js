@@ -1,9 +1,7 @@
-//listings.js
-
-const express = require('express');
-const auth = require('../middleware/auth');
-const { addIdentifier } = require('../middleware/list');
-const Listing = require('../models/Listing');
+import express from 'express';
+import auth from '../middleware/auth.js';
+import { addIdentifier } from '../middleware/list.js';
+import Listing from '../models/Listing.js';
 
 const router = express.Router();
 
@@ -243,4 +241,4 @@ router.delete('/delete/:id', auth, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

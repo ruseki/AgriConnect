@@ -1,8 +1,6 @@
-/* inventoryRoutes.js */
-
-const express = require('express');
-const auth = require('../middleware/auth'); // Middleware to protect routes
-const Inventory = require('../models/Inventory');
+import express from 'express';
+import auth from '../middleware/auth.js'; // Middleware to protect routes
+import Inventory from '../models/Inventory.js';
 
 const router = express.Router();
 
@@ -81,4 +79,4 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -1,8 +1,8 @@
-//auth.js
+// auth.js
 
-const jwt = require('jsonwebtoken');
-const Token = require('../models/tokens/login_state_token');
-const User = require('../models/User');
+import jwt from 'jsonwebtoken';
+import Token from '../models/tokens/login_state_token.js';
+import User from '../models/User.js';
 
 const auth = async (req, res, next) => {
   const authHeader = req.header('Authorization'); 
@@ -41,4 +41,4 @@ const auth = async (req, res, next) => {
   }
 };
 
-module.exports = auth;
+export default auth;

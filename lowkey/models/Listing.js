@@ -1,6 +1,6 @@
 // models/Listing.js
 
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const listingSchema = new mongoose.Schema({
   identifier: {
@@ -51,7 +51,7 @@ const listingSchema = new mongoose.Schema({
   },
   color: {
     type: String,
-    enum: ['red', 'green', 'blue', 'yellow', 'orange', 'purple', 'pink', 'white', 'black'], // Temporary
+    enum: ['red', 'green', 'blue', 'yellow', 'orange', 'purple', 'pink', 'white', 'black'],
     default: 'white',
   },
   minimumOrder: {
@@ -65,4 +65,4 @@ const listingSchema = new mongoose.Schema({
 });
 
 const Listing = mongoose.model('Listing', listingSchema);
-module.exports = Listing;
+export default Listing;

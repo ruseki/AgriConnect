@@ -1,4 +1,4 @@
-//adminMiddleware.js
+// middleware/adminMiddleware.js
 
 const adminMiddleware = (req, res, next) => {
   const user = req.user;
@@ -10,4 +10,4 @@ const adminMiddleware = (req, res, next) => {
   next();
 };
 
-module.exports = adminMiddleware;
+export default adminMiddleware;
