@@ -27,6 +27,9 @@ import messageRoutes from './routes/messageRoutes.js';
 import AdminRoutes from './routes/Admin.js'; // Newly imported Admin routes
 import auth from './middleware/auth.js'; // Import the auth middleware
 import jwt from 'jsonwebtoken';
+import checkoutRoutes from './routes/checkoutRoutes.js';
+
+
 
 dotenv.config();
 const app = express();
@@ -73,6 +76,7 @@ app.use('/api/admin', AdminRoutes);
 
 app.use('/api/users', auth, userRoutes); // Auth middleware applied
 app.use('/api/messages', auth, messageRoutes); // Auth middleware applied
+app.use('/api/cart', checkoutRoutes); // Make sure `/api/cart` maps to `checkoutRoutes`
 
 // Test endpoint
 app.get('/testlamang', (req, res) => {
