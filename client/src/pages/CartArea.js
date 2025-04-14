@@ -138,15 +138,31 @@ const CartArea = () => {
     setUploadedImage(null);
   };
   
-  const handleSavePayment = () => {
-    console.log('Saving payment details...');
-    console.log('Bank:', bank);
-    console.log('Reference No:', refNo);
-    console.log('Uploaded Image:', uploadedImage);
+  const handleSavePayment = async () => {
+    try {
+      const token = localStorage.getItem('authToken'); // Retrieve auth token from localStorage
+      const formData = new FormData(); // Use FormData to handle file uploads
+      formData.append('bank', bank);
+      formData.append('referenceNumber', refNo);
+      formData.append('proofImage', uploadedImage);
   
-    // Add API logic here to save payment details if needed
-    alert('Payment details saved successfully!');
-    handleClosePaymentModal();
+      const response = await axios.post('http://localhost:5000/api/cart/checkout', formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      if (response.status === 201) {
+        alert('Payment details saved successfully!');
+        handleClosePaymentModal(); // Reset the form and close the modal
+      } else {
+        alert('Failed to save payment details. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error saving payment details:', error.message);
+      alert('Failed to save payment details. Please try again.');
+    }
   };
   
   return (
