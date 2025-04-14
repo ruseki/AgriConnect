@@ -117,6 +117,9 @@ const AdminDashboard = () => {
             <button className="admin-button" onClick={() => navigate('/manage-tickets')}>
               Manage Tickets
             </button>
+            <button className="admin-button" onClick={() => navigate('/manage-users-checkouts')}>
+    Manage User Checkouts
+  </button>
             <button className="admin-button">Manage Listings</button>
             <button className="admin-button">Site Settings</button>
           </div>
