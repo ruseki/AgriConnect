@@ -15,6 +15,7 @@ import { AuthProvider } from './components/AuthProvider';
 import AdminRoutes from './routes/adminRoutes';
 import AdminDashboard from './admin/adminDashboard';
 import ManageUsers from './admin/manageUsers';
+import ManageCheckouts from './admin/manageCheckouts'; // Import the new page
 
 const App = () => {
   return (
@@ -22,43 +23,73 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/sell-area" element={
-            <ProtectedRoute>
-              <SellArea />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/sell-area"
+            element={
+              <ProtectedRoute>
+                <SellArea />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/buy-area" element={
-            <ProtectedRoute>
-              <BuyArea />
-            </ProtectedRoute>
-          } />
-          <Route path="/cart" element={
-            <ProtectedRoute>
-              <CartArea />
-            </ProtectedRoute>
-          } />
-          <Route path="/profile" element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          } />
-          <Route path="/view-profile/:userId" element={
-            <ProtectedRoute>
-              <ViewProfile />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/buy-area"
+            element={
+              <ProtectedRoute>
+                <BuyArea />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute>
+                <CartArea />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/view-profile/:userId"
+            element={
+              <ProtectedRoute>
+                <ViewProfile />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/manage-users" element={<ManageUsers />} />
-          <Route path="/inventory" element={
-            <ProtectedRoute>
-              <InventoryPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin" element={
-            <AdminRoutes>
-              <AdminDashboard />
-            </AdminRoutes>
-          } />
+          <Route
+            path="/inventory"
+            element={
+              <ProtectedRoute>
+                <InventoryPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <AdminRoutes>
+                <AdminDashboard />
+              </AdminRoutes>
+            }
+          />
+          {/* New Route for Managing Checkouts */}
+          <Route
+            path="/manage-users-checkouts"
+            element={
+              <AdminRoutes>
+                <ManageCheckouts />
+              </AdminRoutes>
+            }
+          />
         </Routes>
       </Router>
     </AuthProvider>
