@@ -1,13 +1,18 @@
-//adminRoutes.js
-
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const AdminRoutes = ({ children }) => {
-  const isAdmin = localStorage.getItem('isAdmin') === 'true'; 
-  console.log('isAdmin:', isAdmin); 
+  const isAdmin = localStorage.getItem('isAdmin') === 'true'; // Check admin status
+  const navigate = useNavigate();
 
-  return isAdmin ? children : <Navigate to="/" />; 
+  useEffect(() => {
+    if (!isAdmin) {
+      console.log('Non-admin user detected. Redirecting to homepage...');
+      navigate('/', { replace: true }); // Redirect non-admin users
+    }
+  }, [isAdmin, navigate]);
+
+  return isAdmin ? children : null; // Render only if user is an admin
 };
 
 export default AdminRoutes;

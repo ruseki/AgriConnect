@@ -1,3 +1,5 @@
+//inventoryRoutes.js
+
 import express from 'express';
 import auth from '../middleware/auth.js'; // Middleware to protect routes
 import Inventory from '../models/Inventory.js';
