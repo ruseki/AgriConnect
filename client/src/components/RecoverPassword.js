@@ -1,3 +1,5 @@
+//RecoverPassword.js
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import './css/RecoverPassword.css'; // Create a CSS file for styling if needed
