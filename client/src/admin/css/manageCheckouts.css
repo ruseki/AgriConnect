@@ -1,0 +1,124 @@
+.mcheckouts-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.mcheckouts-main-content {
+  margin-top: 15rem;
+  margin-left: 250px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.mcheckouts-admin-content {
+  padding: 2rem;
+  background-color: #f5f5f5;
+  color: #333;
+  font-family: Arial, sans-serif;
+  min-height: calc(100vh - 15rem);
+}
+
+.mcheckouts-title {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #2e7d32;
+  text-align: center;
+}
+
+.mcheckouts-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.mcheckouts-table th,
+.mcheckouts-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.mcheckouts-table th {
+  background-color: #4caf50;
+  color: white;
+}
+
+.mcheckouts-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.mcheckouts-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.mcheckouts-button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  color: white;
+  background-color: #4caf50;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.mcheckouts-button:hover {
+  background-color: #45a049;
+}
+
+.mcheckouts-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.mcheckouts-approve-button {
+  margin-right: 0.5rem;
+}
+
+.mcheckouts-reject-button {
+  margin-left: 0.5rem;
+}
+
+.mcheckouts-proof-link {
+  color: #2e7d32;
+  text-decoration: underline;
+}
+
+.mcheckouts-proof-link:hover {
+  color: #45a049;
+}
+
+.mcheckouts-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.mcheckouts-modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.mcheckouts-modal-button {
+  padding: 10px 15px;
+  margin: 0 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+
+.mcheckouts-modal-button:hover {
+  background-color: #45a049;
+}
