@@ -48,7 +48,7 @@ const ManageUsers = () => {
       } catch (error) {
         console.error('Error verifying admin:', error);
         if (error.response?.status === 403) {
-          alert('You are not authorized to access this page.');
+
         }
         handleExpiredSession();
       }
