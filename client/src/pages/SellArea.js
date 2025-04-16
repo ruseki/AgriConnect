@@ -6,9 +6,11 @@ import SideBar from '../components/side_bar';
 import { Tag, Package, MapPin, Info, Edit2, Truck } from 'lucide-react';
 import { useAuth } from '../components/AuthProvider';
 import './css/SellArea.css';
+import { useNavigate } from 'react-router-dom';
 
 const SellArea = () => {
   const { isAuthenticated, token, userId } = useAuth();
+  const navigate = useNavigate();
   const [openSellModal, setOpenSellModal] = useState(false);
   const [productName, setProductName] = useState('');
   const [quantity, setQuantity] = useState('');
@@ -97,6 +99,11 @@ const SellArea = () => {
 
   const handleOpenSellModal = () => setOpenSellModal(true);
   const handleCloseSellModal = () => setOpenSellModal(false);
+
+  const handleCheckOrders = () => {
+    navigate('/seller-orders'); // Redirect to SellerOrders page
+  };
+
 
   const handlePublish = async () => {
     if (!token || !userId) {
@@ -313,6 +320,11 @@ const SellArea = () => {
           <button className="start-selling-btn" onClick={handleOpenSellModal}>
             Start Selling!
           </button>
+                    {/* Check Orders Button */}
+                    <button className="check-orders-btn" onClick={handleCheckOrders}>
+            Check Orders
+          </button>
+
   
           <div className="item-container">
             {listings.length > 0 ? (
