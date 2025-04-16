@@ -197,7 +197,7 @@ const ManageUsers = () => {
         <SideBar />
         <div className="manage-users-main">
           <button className="back-button" onClick={() => navigate('/admin')}>
-            &lt; Back to Admin Panel
+            Admin Panel
           </button>
           <h1>Manage Users</h1>
           <div className="search-bar">
