@@ -1,4 +1,3 @@
-// App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './components/HomePage';
@@ -15,7 +14,10 @@ import { AuthProvider } from './components/AuthProvider';
 import AdminRoutes from './routes/adminRoutes';
 import AdminDashboard from './admin/adminDashboard';
 import ManageUsers from './admin/manageUsers';
-import ManageCheckouts from './admin/manageCheckouts'; // Import the new page
+import ManageCheckouts from './admin/manageCheckouts';
+import OrderStatus from './pages/OrderStatus'; // Import OrderStatus for all status-related pages
+import SellerOrders from './pages/SellerOrdersArea';
+
 
 const App = () => {
   return (
@@ -64,7 +66,14 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-          <Route path="/manage-users" element={<ManageUsers />} />
+          <Route
+            path="/manage-users"
+            element={
+              <ProtectedRoute adminOnly={true}>
+                <ManageUsers />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/inventory"
             element={
@@ -81,7 +90,6 @@ const App = () => {
               </AdminRoutes>
             }
           />
-          {/* New Route for Managing Checkouts */}
           <Route
             path="/manage-users-checkouts"
             element={
@@ -90,7 +98,34 @@ const App = () => {
               </AdminRoutes>
             }
           />
+          {/* Use OrderStatus for Pending, Orders, and Successful */}
+          <Route
+            path="/pending"
+            element={
+              <ProtectedRoute>
+                <OrderStatus />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <OrderStatus />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/successful"
+            element={
+              <ProtectedRoute>
+                <OrderStatus />
+              </ProtectedRoute>
+            }
+          />
+                  <Route path="/seller-orders" element={<SellerOrders />} /> {/* Ensure this route exists */}
         </Routes>
+        
       </Router>
     </AuthProvider>
   );
