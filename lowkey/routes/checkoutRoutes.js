@@ -1,3 +1,5 @@
+//checkoutRoutes.js
+
 import express from 'express';
 import { submitCheckout, getAllCheckouts, updateCheckoutStatus } from '../controllers/checkoutController.js';
 import auth from '../middleware/auth.js';
@@ -10,7 +12,7 @@ const router = express.Router();
 router.post('/submit', auth, upload.single('proofImage'), submitCheckout);
 
 // Admin views all submissions
-router.get('/', auth, adminMiddleware, getAllCheckouts);
+router.get('/all-checkouts', auth, adminMiddleware, getAllCheckouts);
 
 // Admin updates the status of a checkout submission
 router.patch('/:id', auth, adminMiddleware, updateCheckoutStatus);
