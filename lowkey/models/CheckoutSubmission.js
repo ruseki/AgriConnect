@@ -6,6 +6,19 @@ const CheckoutSubmissionSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+  listingId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Listing',
+    required: true,
+  },
+  quantity: {
+    type: Number, // Ensure quantity is defined
+    required: true, // Make it required
+  },
+  totalPrice: {
+    type: Number, // Ensure totalPrice is defined
+    required: true, // Make it required
+  },
   bank: {
     type: String,
     required: true,
@@ -15,11 +28,12 @@ const CheckoutSubmissionSchema = new mongoose.Schema({
     required: true,
   },
   proofImage: {
-    type: String, // URL or path to the uploaded image
+    type: String,
     required: true,
   },
   status: {
-    type: String, // Pending, Approved, Rejected
+    type: String,
+    enum: ['Pending', 'Approved', 'Rejected', 'Success'],
     default: 'Pending',
   },
   submittedAt: {
@@ -32,6 +46,10 @@ const CheckoutSubmissionSchema = new mongoose.Schema({
   reviewedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+  },
+  approvalNote: {
+    type: String,
+    default: '',
   },
 });
 
