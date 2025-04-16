@@ -5,6 +5,7 @@ import axios from 'axios';
 import TopNavbar from '../components/top_navbar';
 import SideBar from '../components/side_bar';
 import './css/CartArea.css';
+import { Link } from 'react-router-dom';
 
 const CartArea = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -22,6 +23,7 @@ const CartArea = () => {
 
         if (response.status === 200 && Array.isArray(response.data.cartItems)) {
           setCartItems(response.data.cartItems);
+          console.log(response.data.cartItems);
         } else {
           setCartItems([]);
         }
@@ -140,28 +142,67 @@ const CartArea = () => {
   
   const handleSavePayment = async () => {
     try {
-      const token = localStorage.getItem('authToken'); // Retrieve auth token from localStorage
-      const formData = new FormData(); // Use FormData to handle file uploads
-      formData.append('bank', bank);
-      formData.append('referenceNumber', refNo);
-      formData.append('proofImage', uploadedImage);
+      const token = localStorage.getItem('authToken');
   
-      const response = await axios.post('http://localhost:5000/api/cart/checkout', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      if (selectedItems.length === 0) {
+        alert('Please select at least one item to proceed with payment');
+        return;
+      }
   
-      if (response.status === 201) {
-        alert('Payment details saved successfully!');
-        handleClosePaymentModal(); // Reset the form and close the modal
+      if (!uploadedImage) {
+        alert('Please upload a proof of payment image');
+        return;
+      }
+  
+      let successCount = 0;
+      let failCount = 0;
+  
+      // Process each selected item as an individual checkout
+      for (const listingId of selectedItems) {
+        const item = cartItems.find((cartItem) => cartItem.productId?._id === listingId); // Locate the item in cartItems
+        if (!item || !item.quantity) {
+          console.error(`Skipping item ${listingId}: Missing quantity.`);
+          failCount++;
+          continue;
+        }
+  
+        const formData = new FormData();
+        formData.append('bank', bank);
+        formData.append('referenceNumber', refNo);
+        formData.append('listingId', listingId);
+        formData.append('proofImage', uploadedImage);
+        formData.append('quantity', item.quantity); // Include quantity here
+  
+        try {
+          const response = await axios.post('http://localhost:5000/api/cart/submit', formData, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+  
+          if (response.status === 201) {
+            successCount++;
+          }
+        } catch (error) {
+          console.error(`Error processing checkout for item ${listingId}:`, error);
+          failCount++;
+        }
+      }
+  
+      if (successCount > 0) {
+        alert(`Successfully submitted ${successCount} checkout(s). Failed: ${failCount}`);
+        for (const listingId of selectedItems) {
+          await handleRemoveItem(listingId); // Remove items from the cart after successful checkout
+        }
+        setSelectedItems([]);
+        handleClosePaymentModal();
       } else {
-        alert('Failed to save payment details. Please try again.');
+        alert('Failed to submit any checkouts. Please try again.');
       }
     } catch (error) {
-      console.error('Error saving payment details:', error.message);
-      alert('Failed to save payment details. Please try again.');
+      console.error('Error in payment submission:', error.message);
+      alert('Failed to process payment. Please try again.');
     }
   };
   
@@ -171,13 +212,14 @@ const CartArea = () => {
       <main className="cartarea-main">
         <SideBar />
         <div className="cartarea-main-content">
-          <div className="cartarea-navigation">
-            <a href="/cart" className="cartarea-nav-link active">My Cart</a>
-            <a href="/pending" className="cartarea-nav-link">Pending</a>
-            <a href="/orders" className="cartarea-nav-link">Orders</a>
-            <a href="/successful" className="cartarea-nav-link">Successful Orders</a>
-          </div>
-  
+
+<div className="cartarea-navigation">
+  <Link to="/cart" className="cartarea-nav-link active">My Cart</Link>
+  <Link to="/pending" className="cartarea-nav-link">Pending</Link>
+  <Link to="/orders" className="cartarea-nav-link">Orders</Link>
+  <Link to="/successful" className="cartarea-nav-link">Successful Orders</Link>
+</div>
+
           <div className="cartarea-container">
             {loading ? (
               <p className="cartarea-loading-message">Loading cart items...</p>
@@ -199,7 +241,7 @@ const CartArea = () => {
                       const priceWithFee = (item.productId?.price || 0) * 1.01;
                       const isExpanded = expandedItem === item.productId?._id;
                       const isSelected = selectedItems.includes(item.productId?._id);
-  
+
                       return (
                         <React.Fragment key={item.productId?._id || Math.random()}>
                           <tr
@@ -294,7 +336,7 @@ const CartArea = () => {
             ) : (
               <p className="cartarea-empty-message">Your cart is empty.</p>
             )}
-  
+
             <div className="cartarea-total">
               <table className="cartarea-total-table">
                 <tbody>
@@ -315,7 +357,7 @@ const CartArea = () => {
           </div>
         </div>
       </main>
-  
+
       {/* Payment Modal */}
       {openPaymentModal && (
         <div className="cartarea-payment-modal-overlay">
