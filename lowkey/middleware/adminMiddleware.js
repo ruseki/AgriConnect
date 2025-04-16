@@ -1,3 +1,5 @@
+/* adminMiddleware.js */
+
 const adminMiddleware = (req, res, next) => {
   const user = req.user;
 
