@@ -24,10 +24,14 @@ import cartRoutes from './routes/cartRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import inventoryRoutes from './routes/inventoryRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
-import AdminRoutes from './routes/Admin.js'; // Newly imported Admin routes
-import auth from './middleware/auth.js'; // Import the auth middleware
+import AdminRoutes from './routes/Admin.js'; 
+import auth from './middleware/auth.js'; 
 import jwt from 'jsonwebtoken';
 import checkoutRoutes from './routes/checkoutRoutes.js';
+import checkoutStatusRoutes from './routes/checkoutStatus.js';
+import sellerOrdersRoutes from './routes/sellerOrdersRoutes.js';
+
+
 
 
 
@@ -50,7 +54,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// Configure body-parser with proper error handling
 app.use(
   bodyParser.json({
     verify: (req, res, buf) => {
@@ -65,29 +68,27 @@ app.use(
 );
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Route mappings
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingsRoute);
 app.use('/api/cart', cartRoutes);
 app.use('/api/inventory', inventoryRoutes);
 
-// Mount admin routes directly at the /api/admin endpoint
 app.use('/api/admin', AdminRoutes);
 
-app.use('/api/users', auth, userRoutes); // Auth middleware applied
-app.use('/api/messages', auth, messageRoutes); // Auth middleware applied
-app.use('/api/cart', checkoutRoutes); // Make sure `/api/cart` maps to `checkoutRoutes`
+app.use('/api/users', auth, userRoutes); 
+app.use('/api/messages', auth, messageRoutes); 
+app.use('/api/cart', checkoutRoutes); 
+app.use('/api/checkout-status', checkoutStatusRoutes);
+/*app.use('/api/seller-orders', sellerOrdersRoutes);*/
+app.use('/api/orders/seller-orders', sellerOrdersRoutes);
 
-// Test endpoint
 app.get('/testlamang', (req, res) => {
   res.send('Server is running!');
 });
 
-// Socket.IO functionality
 io.on('connection', (socket) => {
   console.log(`New client connected: ${socket.id}`);
 
-  // Example of protecting Socket.IO with authentication
   socket.on('joinRoom', ({ senderId, recipientId, token }) => {
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err) {
@@ -99,7 +100,6 @@ io.on('connection', (socket) => {
     });
   });
 
-  // Handle sending a message
   socket.on('sendMessage', ({ senderId, recipientId, content }) => {
     const roomId = [senderId, recipientId].sort().join('-');
     const messageData = {
@@ -109,12 +109,10 @@ io.on('connection', (socket) => {
       timestamp: new Date(),
     };
 
-    // Emit the message to the specific room
     io.to(roomId).emit('receiveMessage', messageData);
     console.log('Message sent:', messageData);
   });
 
-  // Handle disconnect event
   socket.on('disconnect', () => {
     console.log(`Client disconnected: ${socket.id}`);
   });
