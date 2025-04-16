@@ -459,6 +459,30 @@
   background-color: #999999;
 }
 
+.check-orders-btn {
+  margin-top: 1.5rem; /* Adds spacing from other elements */
+  padding: 10px 20px;
+  background-color: #4D7C2E; /* Matches the theme color */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adds subtle shadow */
+}
+
+.check-orders-btn:hover {
+  background-color: #3B5F24; /* Darker shade for hover effect */
+  transform: scale(1.05); /* Slightly enlarges on hover */
+}
+
+.check-orders-btn:active {
+  background-color: #2C4820; /* Even darker for pressed state */
+  transform: scale(0.95); /* Shrinks slightly when clicked */
+}
+
 /* Media Query for Small Phones (less than 480px) */
 @media screen and (max-width: 480px) {
   .button-container {
