@@ -5,159 +5,202 @@ import TopNavbar from '../components/top_navbar';
 import './css/manageCheckouts.css';
 
 const ManageCheckouts = () => {
-    const [checkouts, setCheckouts] = useState([]); // Initialize as an empty array
-    const [loading, setLoading] = useState(true);
-    const [confirmationModal, setConfirmationModal] = useState({ isVisible: false, checkoutId: null }); // Tracks modal visibility
+  const [checkouts, setCheckouts] = useState([]); // Holds paginated checkouts
+  const [loading, setLoading] = useState(true);
+  const [confirmationModal, setConfirmationModal] = useState({ isVisible: false, checkoutId: null, action: '', note: '' });
+  const [currentPage, setCurrentPage] = useState(1); // Tracks current page
+  const [totalPages, setTotalPages] = useState(1); // Total pages based on data
 
-    useEffect(() => {
-        const fetchCheckouts = async () => {
-            try {
-                const token = localStorage.getItem('authToken'); // Retrieve token
-                console.log('Auth Token:', token); // Debugging token
+  useEffect(() => {
+    const fetchCheckouts = async () => {
+      try {
+        const token = localStorage.getItem('authToken'); // Retrieve token for authentication
+        const response = await axios.get(`http://localhost:5000/api/cart/all-checkouts?page=${currentPage}&limit=20`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-                const response = await axios.get('http://localhost:5000/api/cart', {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-
-                console.log('API Response:', response.data); // Log full API response
-                console.log('Fetched Checkouts:', response.data.checkouts); // Log specifically checkouts
-
-                if (response.status === 200) {
-                    setCheckouts(response.data.cartItems || []); // Access `cartItems` in the response
-                }
-            } catch (error) {
-                console.error('Error fetching checkouts:', error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCheckouts();
-    }, []);
-
-    const handleUpdateStatus = async (id, status) => {
-        try {
-            const token = localStorage.getItem('authToken');
-            const response = await axios.patch(
-                `http://localhost:5000/api/cart/${id}`,
-                { status },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-
-            if (response.status === 200) {
-                setCheckouts((prevCheckouts) =>
-                    prevCheckouts.map((checkout) =>
-                        checkout._id === id ? { ...checkout, status } : checkout
-                    )
-                );
-            }
-            setConfirmationModal({ isVisible: false, checkoutId: null }); // Close modal after approval/rejection
-        } catch (error) {
-            console.error('Error updating checkout status:', error.message);
+        if (response.status === 200) {
+          // Sort checkouts by submittedAt (latest first)
+          const sortedCheckouts = response.data.checkouts.map(checkout => ({
+            ...checkout,
+            quantity: checkout.quantity || 0, // Ensure quantity is included
+            totalPrice: checkout.totalPrice || 0, // Ensure totalPrice is included
+          })).sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+          setCheckouts(sortedCheckouts || []);
+          setTotalPages(response.data.totalPages || 1);
         }
+      } catch (error) {
+        console.error('Error fetching checkouts:', error.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const openConfirmationModal = (checkoutId) => {
-        setConfirmationModal({ isVisible: true, checkoutId });
-    };
+    fetchCheckouts();
+  }, [currentPage]);
 
-    const closeConfirmationModal = () => {
-        setConfirmationModal({ isVisible: false, checkoutId: null });
-    };
+  const handleUpdateStatus = async () => {
+    const { checkoutId, action, note } = confirmationModal;
 
-    // Debug log to verify checkouts data before rendering
-    console.log('Checkouts to Render:', checkouts);
+    try {
+      const token = localStorage.getItem('authToken'); // Retrieve token
+      const response = await axios.patch(
+        `http://localhost:5000/api/checkout-status/${checkoutId}`, // Backend route to update status
+        { status: action, approvalNote: note }, // Send status, note, and other required fields
+        { headers: { Authorization: `Bearer ${token}` } } // Include token in headers
+      );
 
-    return (
-        <div className="mcheckouts-main">
-            <TopNavbar />
-            <main className="mcheckouts-main-content">
-                <SideBar />
-                <div className="mcheckouts-admin-content">
-                    <h1 className="mcheckouts-title">Manage User Checkouts</h1>
+      if (response.status === 200) {
+        // Update local state after successful backend response
+        setCheckouts((prevCheckouts) =>
+          prevCheckouts.map((checkout) =>
+            checkout._id === checkoutId
+              ? {
+                  ...checkout,
+                  status: action,
+                  approvedAt: new Date().toISOString(),
+                  approvalNote: response.data.checkout.approvalNote,
+                }
+              : checkout
+          )
+        );
+      }
+      setConfirmationModal({ isVisible: false, checkoutId: null, action: '', note: '' });
+    } catch (error) {
+      console.error('Error updating checkout status:', error.message);
+      alert(
+        `Failed to update checkout status.\nStatus: ${error.response?.status}\nMessage: ${error.response?.data?.message || 'An error occurred.'}`
+      ); // Provide detailed feedback to the user
+    }
+  };
 
-                    {loading ? (
-                        <p className="mcheckouts-loading-message">Loading...</p>
-                    ) : checkouts.length > 0 ? ( // Check if `checkouts` has data
-                        <table className="mcheckouts-table">
-                            <thead>
-                                <tr>
-                                    <th>User Name</th>
-                                    <th>Listing ID</th>
-                                    <th>Seller Name</th>
-                                    <th>Bank</th>
-                                    <th>Reference No</th>
-                                    <th>Proof</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {checkouts.map((checkout) => (
-                                    <tr key={checkout._id} className="mcheckouts-row">
-                                        <td>{checkout.userId ? `${checkout.userId.first_name} ${checkout.userId.last_name}` : 'Unknown User'}</td>
-                                        <td>{checkout.listingId?.listingId || 'No Listing ID'}</td>
-                                        <td>{checkout.listingId?.sellerName || 'No Seller'}</td>
-                                        <td>{checkout.bank}</td>
-                                        <td>{checkout.referenceNumber}</td>
-                                        <td>
-                                            <a
-                                                href={checkout.proofImage}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="mcheckouts-proof-link"
-                                            >
-                                                View Image
-                                            </a>
-                                        </td>
-                                        <td>{checkout.status}</td>
-                                        <td>
-                                            {checkout.status === 'Pending' && (
-                                                <>
-                                                    <button
-                                                        className="mcheckouts-button mcheckouts-approve-button"
-                                                        onClick={() => openConfirmationModal(checkout._id)}
-                                                    >
-                                                        Approve
-                                                    </button>
-                                                    <button
-                                                        className="mcheckouts-button mcheckouts-reject-button"
-                                                        onClick={() => handleUpdateStatus(checkout._id, 'Rejected')}
-                                                    >
-                                                        Reject
-                                                    </button>
-                                                </>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <p className="mcheckouts-no-data-message">No checkouts available.</p>
-                    )}
-                </div>
-            </main>
+  const openConfirmationModal = (checkoutId, action) => {
+    console.log('Opening modal for checkoutId:', checkoutId); // Debugging log
+    setConfirmationModal({ isVisible: true, checkoutId, action, note: '' });
+  };
 
-            {/* Confirmation Modal */}
-            {confirmationModal.isVisible && (
-                <div className="mcheckouts-modal-overlay">
-                    <div className="mcheckouts-modal-content">
-                        <p>Are you sure you want to approve this payment?</p>
-                        <button
-                            className="mcheckouts-modal-button"
-                            onClick={() => handleUpdateStatus(confirmationModal.checkoutId, 'Approved')}
-                        >
-                            Yes, Approve
-                        </button>
-                        <button className="mcheckouts-modal-button" onClick={closeConfirmationModal}>
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            )}
+  const closeConfirmationModal = () => {
+    setConfirmationModal({ isVisible: false, checkoutId: null, action: '', note: '' });
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) setCurrentPage((prevPage) => prevPage - 1);
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((prevPage) => prevPage + 1);
+  };
+
+  return (
+    <div className="mcheckouts-main">
+      <TopNavbar />
+      <main className="mcheckouts-main-content">
+        <SideBar />
+        <div className="mcheckouts-admin-content">
+          <h1 className="mcheckouts-title">Manage User Checkouts</h1>
+
+          {loading ? (
+            <p className="mcheckouts-loading-message">Loading...</p>
+          ) : checkouts.length > 0 ? (
+            <>
+              <div className="mcheckouts-table-container">
+                <table className="mcheckouts-table">
+                  <thead>
+                    <tr>
+                      <th>User Name</th>
+                      <th>Listing ID</th>
+                      <th>Seller Name</th>
+                      <th>Bank</th>
+                      <th>Reference No</th>
+                      <th>Proof</th>
+                      <th>Submitted At</th>
+                      <th>Approved At</th>
+                      <th>Status</th>
+                      <th>Approval Note</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {checkouts.map((checkout) => (
+                      <tr key={checkout._id}>
+                        <td>
+                          {checkout.userId ? `${checkout.userId.first_name} ${checkout.userId.last_name}` : 'Unknown User'}
+                        </td>
+                        <td>{checkout.listingId?.identifier || 'No Listing ID'}</td>
+                        <td>{checkout.listingId?.userId.first_name || 'No Seller'}</td>
+                        <td>{checkout.bank}</td>
+                        <td>{checkout.referenceNumber}</td>
+                        <td>
+                          <a href={checkout.proofImage} target="_blank" rel="noreferrer">
+                            View Image
+                          </a>
+                        </td>
+                        <td>{checkout.submittedAt ? new Date(checkout.submittedAt).toLocaleString() : 'Not Available'}</td>
+                        <td>{checkout.approvedAt ? new Date(checkout.approvedAt).toLocaleString() : 'Pending'}</td>
+                        <td>{checkout.status}</td>
+                        <td>{checkout.approvalNote || 'N/A'}</td>
+                        <td>
+                          {checkout.status === 'Pending' && (
+                            <>
+                              <button
+                                className="mcheckouts-button mcheckouts-approve-button"
+                                onClick={() => openConfirmationModal(checkout._id, 'Approved')}
+                              >
+                                Approve
+                              </button>
+                              <button
+                                className="mcheckouts-button mcheckouts-reject-button"
+                                onClick={() => openConfirmationModal(checkout._id, 'Rejected')}
+                              >
+                                Reject
+                              </button>
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="pagination-controls">
+                <button onClick={goToPreviousPage} disabled={currentPage === 1}>
+                  Previous
+                </button>
+                <span>
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button onClick={goToNextPage} disabled={currentPage === totalPages}>
+                  Next
+                </button>
+              </div>
+            </>
+          ) : (
+            <p>No checkouts available.</p>
+          )}
         </div>
-    );
+      </main>
+
+      {confirmationModal.isVisible && (
+        <div className="mcheckouts-modal-overlay">
+          <div className="mcheckouts-modal-content">
+            <p>Are you sure you want to {confirmationModal.action === 'Approved' ? 'approve' : 'reject'} this payment?</p>
+            <textarea
+              value={confirmationModal.note}
+              onChange={(e) => setConfirmationModal((prev) => ({ ...prev, note: e.target.value }))} // Note input for both actions
+              placeholder="Add a note (optional)..."
+              className="mcheckouts-note-input"
+            ></textarea>
+            <button className="mcheckouts-modal-button" onClick={handleUpdateStatus}>
+              Confirm
+            </button>
+            <button className="mcheckouts-modal-button" onClick={closeConfirmationModal}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default ManageCheckouts;
