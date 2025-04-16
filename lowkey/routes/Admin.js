@@ -1,4 +1,4 @@
-// routes/adminRoutes.js
+// routes/Admin.js
 
 import express from 'express';
 import auth from '../middleware/auth.js';
