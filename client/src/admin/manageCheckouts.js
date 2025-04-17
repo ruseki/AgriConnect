@@ -15,16 +15,17 @@ const ManageCheckouts = () => {
     const fetchCheckouts = async () => {
       try {
         const token = localStorage.getItem('authToken'); // Retrieve token for authentication
-        const response = await axios.get(`http://localhost:5000/api/cart/all-checkouts?page=${currentPage}&limit=20`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
+        const response = await axios.get(
+          `http://localhost:5000/api/cart/all-checkouts?page=${currentPage}&limit=20`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+    
         if (response.status === 200) {
-          // Sort checkouts by submittedAt (latest first)
           const sortedCheckouts = response.data.checkouts.map(checkout => ({
             ...checkout,
-            quantity: checkout.quantity || 0, // Ensure quantity is included
-            totalPrice: checkout.totalPrice || 0, // Ensure totalPrice is included
+            quantity: checkout.quantity || 0,
+            totalPrice: checkout.totalPrice || 0,
+            BuyerStatus: checkout.BuyerStatus || 'NotYetReceived', // Include BuyerStatus for admin view
           })).sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
           setCheckouts(sortedCheckouts || []);
           setTotalPages(response.data.totalPages || 1);
@@ -116,6 +117,7 @@ const ManageCheckouts = () => {
                       <th>Submitted At</th>
                       <th>Approved At</th>
                       <th>Status</th>
+                      <th>Buyer Status</th>
                       <th>Approval Note</th>
                       <th>Actions</th>
                     </tr>
@@ -138,6 +140,7 @@ const ManageCheckouts = () => {
                         <td>{checkout.submittedAt ? new Date(checkout.submittedAt).toLocaleString() : 'Not Available'}</td>
                         <td>{checkout.approvedAt ? new Date(checkout.approvedAt).toLocaleString() : 'Pending'}</td>
                         <td>{checkout.status}</td>
+                        <td>{checkout.BuyerStatus || 'NotYetReceived'}</td>
                         <td>{checkout.approvalNote || 'N/A'}</td>
                         <td>
                           {checkout.status === 'Pending' && (
