@@ -77,7 +77,12 @@ app.use('/api/admin', AdminRoutes);
 
 app.use('/api/users', auth, userRoutes); 
 app.use('/api/messages', auth, messageRoutes); 
-app.use('/api/cart', checkoutRoutes); 
+app.use('/api/cart', checkoutRoutes);
+app.use('/api/checkout', (req, res, next) => {
+  console.log('Request received:', req.method, req.url);
+  next();
+});
+
 app.use('/api/checkout-status', checkoutStatusRoutes);
 /*app.use('/api/seller-orders', sellerOrdersRoutes);*/
 app.use('/api/orders/seller-orders', sellerOrdersRoutes);
