@@ -23,7 +23,13 @@ const CartArea = () => {
 
         if (response.status === 200 && Array.isArray(response.data.cartItems)) {
           setCartItems(response.data.cartItems);
-          console.log(response.data.cartItems);
+          console.log('Fetched cart items:', response.data.cartItems.map(item => ({
+            id: item.productId?._id,
+            name: item.productId?.productName,
+            quantity: item.quantity,
+            price: item.productId?.price,
+            isValid: item.quantity > 0 && item.productId?.price > 0
+          })));
         } else {
           setCartItems([]);
         }
@@ -159,19 +165,41 @@ const CartArea = () => {
   
       // Process each selected item as an individual checkout
       for (const listingId of selectedItems) {
-        const item = cartItems.find((cartItem) => cartItem.productId?._id === listingId); // Locate the item in cartItems
-        if (!item || !item.quantity) {
-          console.error(`Skipping item ${listingId}: Missing quantity.`);
+        const item = cartItems.find((cartItem) => cartItem.productId?._id === listingId);
+        
+        // Validate item data
+        if (!item) {
+          console.error(`Item not found in cart: ${listingId}`);
           failCount++;
           continue;
         }
-  
+
+        if (!item.quantity || item.quantity <= 0) {
+          console.error(`Invalid quantity for item ${listingId}:`, item.quantity);
+          failCount++;
+          continue;
+        }
+
+        if (!item.productId?.price || item.productId.price <= 0) {
+          console.error(`Invalid price for item ${listingId}:`, item.productId?.price);
+          failCount++;
+          continue;
+        }
+
+        console.log('Submitting checkout:', {
+          listingId,
+          quantity: item.quantity,
+          price: item.productId.price,
+          totalPrice: item.productId.price * 1.01 * item.quantity
+        });
+
         const formData = new FormData();
         formData.append('bank', bank);
         formData.append('referenceNumber', refNo);
         formData.append('listingId', listingId);
         formData.append('proofImage', uploadedImage);
-        formData.append('quantity', item.quantity); // Include quantity here
+        formData.append('quantity', item.quantity);
+        formData.append('price', item.productId.price); // Explicitly include price
   
         try {
           const response = await axios.post('http://localhost:5000/api/cart/submit', formData, {
