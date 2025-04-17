@@ -1,4 +1,5 @@
-import mongoose from 'mongoose';
+/* CheckoutSubmission */
+import mongoose from "mongoose";
 
 const CheckoutSubmissionSchema = new mongoose.Schema({
   userId: {
@@ -12,12 +13,12 @@ const CheckoutSubmissionSchema = new mongoose.Schema({
     required: true,
   },
   quantity: {
-    type: Number, // Ensure quantity is defined
-    required: true, // Make it required
+    type: Number,
+    required: true,
   },
   totalPrice: {
-    type: Number, // Ensure totalPrice is defined
-    required: true, // Make it required
+    type: Number,
+    required: true,
   },
   bank: {
     type: String,
@@ -31,10 +32,15 @@ const CheckoutSubmissionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  status: {
+  status: { // Admin-specific status
     type: String,
     enum: ['Pending', 'Approved', 'Rejected', 'Success'],
     default: 'Pending',
+  },
+  BuyerStatus: { // New field for buyer-specific status
+    type: String,
+    enum: ['NotYetReceived', 'Received'],
+    default: 'NotYetReceived',
   },
   submittedAt: {
     type: Date,
