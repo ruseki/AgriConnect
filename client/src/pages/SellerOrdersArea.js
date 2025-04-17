@@ -9,79 +9,62 @@ import { useAuth } from '../components/AuthProvider';
 const SellerOrdersArea = () => {
   const { token } = useAuth();
   const [orders, setOrders] = useState([]);
+  const [status, setStatus] = useState('Pending'); // Default to "Pending"
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchSellerOrders = useCallback(async () => {
     try {
-      console.log('=== Frontend API Request ===');
-      console.log('Token:', token ? 'Present' : 'Missing');
-      
-      const response = await fetch(`http://localhost:5000/api/orders/seller-orders`, {
+      const response = await fetch(`http://localhost:5000/api/orders/seller-orders?status=${status}&BuyerStatus=NotYetReceived`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
+  
       const result = await response.json();
-      console.log('=== Frontend API Response ===');
-      console.log('Response Status:', response.status);
-      console.log('Response OK:', response.ok);
-      console.log('Raw Response Data:', result);
-
       if (response.ok) {
-        console.log('\n=== Processing Orders Data ===');
-        console.log('Number of orders received:', result.orders?.length || 0);
-        
-        // Validate that each order has required fields
-        const validatedOrders = result.orders.map(order => {
-          console.log(`\nProcessing Order ${order._id}:`);
-          console.log('Raw Order Data:', order);
-          
-          if (!order.quantity || !order.totalPrice) {
-            console.warn('Order missing required fields:', {
-              orderId: order._id,
-              quantity: order.quantity,
-              totalPrice: order.totalPrice
-            });
-          }
-          
-          const validatedOrder = {
-            ...order,
-            quantity: order.quantity || 0,
-            totalPrice: order.totalPrice || 0
-          };
-          
-          console.log('Validated Order Data:', validatedOrder);
-          return validatedOrder;
-        });
-        
-        console.log('\n=== Setting Final Orders State ===');
-        console.log('Number of validated orders:', validatedOrders.length);
-        setOrders(validatedOrders);
+        setOrders(result.orders || []);
         setError(null);
       } else {
-        console.error('Failed to fetch seller orders:', result);
+        setOrders([]);
         setError(result.message || 'Failed to fetch orders');
       }
     } catch (error) {
-      console.error('Error fetching seller orders:', error);
+      console.error('Error fetching seller orders:', error.message);
       setError('An error occurred while fetching orders');
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [status, token]);
 
   useEffect(() => {
     fetchSellerOrders();
   }, [fetchSellerOrders]);
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-PH', {
-      style: 'currency',
-      currency: 'PHP'
-    }).format(price);
+  const handleMarkAsDone = async (orderId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/orders/mark-as-done/${orderId}`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        alert('Order marked as done.');
+        setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId)); // Remove from list
+      } else {
+        alert('Failed to mark order as done.');
+      }
+    } catch (error) {
+      console.error('Error marking order as done:', error.message);
+      alert('An error occurred while marking the order as done.');
+    }
+  };
+
+  const handleNotifyBuyer = (buyerId) => {
+    alert(`Notification sent to buyer with ID: ${buyerId}`); // Mock notification
   };
 
   return (
@@ -90,13 +73,19 @@ const SellerOrdersArea = () => {
       <div className="seller-orders-area-page">
         <SideBar />
         <div className="seller-orders-main">
-          <h1>Seller Orders Area</h1>
-          
-          {error && (
-            <div className="error-message">
-              {error}
-            </div>
-          )}
+          <div className="seller-orders-navigation">
+            <button onClick={() => setStatus('Pending')} className={status === 'Pending' ? 'active' : ''}>
+              Pending
+            </button>
+            <button onClick={() => setStatus('Approved')} className={status === 'Approved' ? 'active' : ''}>
+              Approved
+            </button>
+            <button onClick={() => setStatus('Success')} className={status === 'Success' ? 'active' : ''}>
+              Successful
+            </button>
+          </div>
+
+          {error && <div className="error-message">{error}</div>}
 
           {loading ? (
             <p>Loading orders...</p>
@@ -104,11 +93,43 @@ const SellerOrdersArea = () => {
             <div className="seller-orders-container">
               {orders.map((order) => (
                 <div key={order._id} className="order-card">
-                  <p><strong>Buyer:</strong> {order.userId?.first_name} {order.userId?.last_name}</p>
-                  <p><strong>Product:</strong> {order.listingId?.productName || 'No Product Details'}</p>
-                  <p><strong>Quantity:</strong> {order.quantity || 0} {order.unit || 'units'}</p>
-                  <p><strong>Total Price:</strong> {formatPrice(order.totalPrice || 0)}</p>
-                  <p><strong>Status:</strong> {order.status || 'Unknown'}</p>
+                  <p>
+                    <strong>Buyer:</strong> {`${order.userId.first_name} ${order.userId.last_name}`}
+                  </p>
+                  <p>
+                    <strong>Product:</strong> {order.listingId?.productName || 'No Product Details'}
+                  </p>
+                  <p>
+                    <strong>Quantity:</strong> {order.quantity || 0} {order.unit || 'units'}
+                  </p>
+                  <p>
+                    <strong>Total Price:</strong> {new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(order.totalPrice || 0)}
+                  </p>
+                  <p>
+                    <strong>Status:</strong> {order.status || 'Unknown'}
+                  </p>
+                  <p>
+                    <strong>Buyer Status:</strong> {order.BuyerStatus || 'NotYetReceived'}
+                  </p>
+                  {order.BuyerStatus === 'NotYetReceived' && (
+                    <div className="order-actions">
+                      <button
+                        onClick={() => handleMarkAsDone(order._id)}
+                        className="mark-done-btn"
+                      >
+                        Mark as Done
+                      </button>
+                      <button
+                        onClick={() => handleNotifyBuyer(order.userId?._id)}
+                        className="notify-btn"
+                      >
+                        Notify Buyer
+                      </button>
+                    </div>
+                  )}
+                  {order.BuyerStatus === 'Received' && (
+                    <p className="buyer-confirmed">Buyer has confirmed receipt.</p>
+                  )}
                 </div>
               ))}
             </div>
