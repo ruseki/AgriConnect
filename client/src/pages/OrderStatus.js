@@ -1,4 +1,4 @@
-//OrderStatus.js
+// OrderStatus.js
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -11,9 +11,10 @@ const OrderStatus = () => {
   const [orders, setOrders] = useState([]);
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false); // Control modal visibility
+  const [selectedOrder, setSelectedOrder] = useState(null); // Track the order being confirmed
   const location = useLocation();
 
-  // Set the status dynamically based on the current route
   useEffect(() => {
     const path = location.pathname;
     if (path.includes('pending')) {
@@ -25,15 +26,14 @@ const OrderStatus = () => {
     }
   }, [location]);
 
-  // Fetch orders by status from the backend
   useEffect(() => {
     const fetchOrdersByStatus = async () => {
       try {
         const token = localStorage.getItem('authToken');
-        const response = await axios.get(`http://localhost:5000/api/checkout-status/${status}`, {
+        const response = await axios.get(`http://localhost:5000/api/checkout-status?BuyerStatus=${status}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
+    
         if (response.status === 200 && response.data.checkouts) {
           setOrders(response.data.checkouts);
         } else {
@@ -52,23 +52,24 @@ const OrderStatus = () => {
     }
   }, [status]);
 
-  // Handle canceling an order
-  const handleCancelOrder = async (orderId) => {
+  // Handle "Received" action
+  const handleReceivedOrder = async () => {
     try {
       const token = localStorage.getItem('authToken');
-      const response = await axios.post(`http://localhost:5000/api/checkout-status/cancel/${orderId}`, {}, {
+      const response = await axios.post(`http://localhost:5000/api/checkout/received/${selectedOrder}`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
+  
       if (response.status === 200) {
-        alert('Order canceled successfully.');
-        setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId)); // Remove from list
+        alert('Order marked as received successfully.');
+        setOrders((prevOrders) => prevOrders.filter((order) => order._id !== selectedOrder)); // Remove from "ORDERS"
+        setShowModal(false); // Close modal
       } else {
-        alert('Failed to cancel order.');
+        alert('Failed to mark order as received.');
       }
     } catch (error) {
-      console.error('Error canceling order:', error.message);
-      alert('An error occurred while trying to cancel the order.');
+      console.error('Error marking order as received:', error.message);
+      alert('An error occurred while processing your request.');
     }
   };
 
@@ -78,7 +79,6 @@ const OrderStatus = () => {
       <div className="orderstats-page">
         <SideBar />
         <div className="orderstats-main">
-          {/* Navigation Buttons */}
           <div className="orderstats-navigation">
             <button onClick={() => setStatus('Pending')} className={status === 'Pending' ? 'active' : ''}>
               Pending
@@ -91,10 +91,8 @@ const OrderStatus = () => {
             </button>
           </div>
 
-          {/* Dynamic message for Orders page */}
           {status === 'Approved' && <p className="orders-info">The seller has been notified about these orders.</p>}
 
-          {/* Orders List */}
           <div className="orderstats-container">
             {loading ? (
               <p>Loading orders...</p>
@@ -109,15 +107,21 @@ const OrderStatus = () => {
                       <strong>Product:</strong> {order.listingId?.productName || 'Removed Product'}
                     </div>
                     <div>
+  <strong>Total Price:</strong> {order.totalPrice || 'N/A'}
+</div>
+                    <div>
                       <strong>Status:</strong> {order.status}
                     </div>
-                    {status === 'Pending' && (
+                    {status === 'Approved' && order.BuyerStatus === 'NotYetReceived' && (
                       <div>
                         <button
-                          onClick={() => handleCancelOrder(order._id)}
-                          className="cancel-btn"
+                          onClick={() => {
+                            setSelectedOrder(order._id);
+                            setShowModal(true);
+                          }}
+                          className="received-btn"
                         >
-                          Cancel
+                          Received
                         </button>
                       </div>
                     )}
@@ -130,6 +134,23 @@ const OrderStatus = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal for "Received" Confirmation */}
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <p>This will release the payment to the seller. Do you want to proceed?</p>
+            <div className="modal-buttons">
+              <button onClick={handleReceivedOrder} className="confirm-btn">
+                Confirm
+              </button>
+              <button onClick={() => setShowModal(false)} className="cancel-btn">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
