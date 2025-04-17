@@ -10,11 +10,11 @@ export const submitCheckout = async (req, res) => {
   try {
     const { bank, referenceNumber, listingId, quantity } = req.body;
     const proofImage = req.file?.path; // Path to the uploaded image
-    
+
     if (!proofImage) {
       return res.status(400).json({ message: 'Proof image is required.' });
     }
-    
+
     if (!listingId) {
       return res.status(400).json({ message: 'Listing ID is required.' });
     }
@@ -22,7 +22,7 @@ export const submitCheckout = async (req, res) => {
     if (!quantity || quantity <= 0) {
       return res.status(400).json({ message: 'Valid quantity is required.' });
     }
-    
+
     // Find the listing to get the price
     const listing = await Listing.findById(listingId);
     if (!listing) {
@@ -31,7 +31,7 @@ export const submitCheckout = async (req, res) => {
 
     // Calculate total price with 1% commission fee
     const totalPrice = (quantity * listing.price) * 1.01;
-    
+
     const newCheckout = new CheckoutSubmission({
       userId: req.userId,
       listingId,
@@ -40,7 +40,8 @@ export const submitCheckout = async (req, res) => {
       proofImage,
       quantity,
       totalPrice,
-      status: 'Pending'
+      status: 'Pending', // Admin-centric status
+      BuyerStatus: 'NotYetReceived', // New BuyerStatus field
     });
 
     console.log('New Checkout Submission:', {
@@ -48,7 +49,8 @@ export const submitCheckout = async (req, res) => {
       quantity,
       price: listing.price,
       totalPrice,
-      status: 'Pending'
+      status: 'Pending',
+      BuyerStatus: 'NotYetReceived',
     });
 
     // Remove item from the cart
@@ -59,9 +61,9 @@ export const submitCheckout = async (req, res) => {
 
     await newCheckout.save();
 
-    res.status(201).json({ 
-      message: 'Payment details submitted successfully', 
-      checkout: newCheckout 
+    res.status(201).json({
+      message: 'Payment details submitted successfully',
+      checkout: newCheckout,
     });
   } catch (error) {
     console.error('Error submitting payment:', error.message);
@@ -144,5 +146,51 @@ export const fetchPaginatedCheckouts = async (page, limit) => {
     return { checkouts, totalPages };
   } catch (error) {
     throw new Error('Error fetching checkouts: ' + error.message);
+  }
+};
+
+// Buyer confirms receipt of order
+export const receivedCheckout = async (req, res) => {
+  console.log('Received endpoint hit:', req.params.id);
+  try {
+    const { id } = req.params;
+
+    const checkout = await CheckoutSubmission.findById(id);
+    if (!checkout) {
+      return res.status(404).json({ message: 'Checkout not found.' });
+    }
+
+    if (checkout.BuyerStatus === 'Received') {
+      return res.status(400).json({ message: 'Order already marked as Received.' });
+    }
+
+    // Update BuyerStatus to 'Received'
+    checkout.BuyerStatus = 'Received';
+    await checkout.save();
+
+    res.status(200).json({ message: 'Buyer marked order as Received.', checkout });
+  } catch (error) {
+    console.error('Error marking checkout as Received:', error.message);
+    res.status(500).json({ message: 'Failed to update BuyerStatus.' });
+  }
+};
+
+// Seller marks order as done
+export const markAsDone = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const sellerOrder = await SellerOrder.findById(id);
+    if (!sellerOrder || sellerOrder.status !== 'Approved') {
+      return res.status(400).json({ message: 'Order not eligible for marking as done.' });
+    }
+
+    sellerOrder.status = 'Shipped'; // Or 'Done', based on your terminology
+    await sellerOrder.save();
+
+    res.status(200).json({ message: 'Order marked as done successfully.', sellerOrder });
+  } catch (error) {
+    console.error('Error marking order as done:', error.message);
+    res.status(500).json({ message: 'Failed to mark order as done.' });
   }
 };
