@@ -30,6 +30,7 @@ import jwt from 'jsonwebtoken';
 import checkoutRoutes from './routes/checkoutRoutes.js';
 import checkoutStatusRoutes from './routes/checkoutStatus.js';
 import sellerOrdersRoutes from './routes/sellerOrdersRoutes.js';
+import withdrawalRoutes from './routes/withdrawalRoutes.js';
 
 
 
@@ -78,10 +79,8 @@ app.use('/api/admin', AdminRoutes);
 app.use('/api/users', auth, userRoutes); 
 app.use('/api/messages', auth, messageRoutes); 
 app.use('/api/cart', checkoutRoutes);
-app.use('/api/checkout', (req, res, next) => {
-  console.log('Request received:', req.method, req.url);
-  next();
-});
+app.use('/api/checkout', checkoutRoutes); 
+app.use('/api/withdraw', withdrawalRoutes); 
 
 app.use('/api/checkout-status', checkoutStatusRoutes);
 /*app.use('/api/seller-orders', sellerOrdersRoutes);*/

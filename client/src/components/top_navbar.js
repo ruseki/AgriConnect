@@ -1,7 +1,5 @@
-//top_navbar.js
-
 import React, { useState, useEffect } from "react";
-import { Search, ShoppingCart, Bell, Menu } from "lucide-react";
+import { Search, ShoppingCart, Bell, Menu, Wallet } from "lucide-react"; // Added Wallet icon for Withdraw
 import { useAuth } from "./AuthProvider";
 import { Link, useNavigate } from "react-router-dom";
 import "./css/TopNavbar.css";
@@ -34,8 +32,8 @@ const TopNavbar = ({ handleOpenSignIn }) => {
   };
 
   const handleLogout = () => {
-    logout(); 
-    navigate("/"); 
+    logout();
+    navigate("/");
   };
 
   if (isLoading) {
@@ -68,6 +66,9 @@ const TopNavbar = ({ handleOpenSignIn }) => {
               </Link>
               <button className="icon-button">
                 <Bell className="icon" />
+              </button>
+              <button className="icon-button" onClick={() => navigate("/withdraw")}> {/* New Withdraw button */}
+                <Wallet className="icon" />
               </button>
               <div className="dropdown">
                 <button className="dropdown-toggle" onClick={handleDropdownToggle}>

@@ -131,7 +131,7 @@ const Profile = () => {
     } else if (formData.province === 'La Union') {
       setCities(['San Fernando', 'Bauang']);
     } else if (formData.province === 'Nueva Ecija') {
-      setCities(['Cabanatuan', 'Palayan']);
+      setCities(['Cabanatuan', 'Palayan', 'Lupao', 'San Jose City', 'Cuyapo', 'Pantabangan']);
     } else {
       setCities([]);
     }

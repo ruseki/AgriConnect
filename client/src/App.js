@@ -1,3 +1,5 @@
+// App.js
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './components/HomePage';
@@ -17,7 +19,7 @@ import ManageUsers from './admin/manageUsers';
 import ManageCheckouts from './admin/manageCheckouts';
 import OrderStatus from './pages/OrderStatus'; // Import OrderStatus for all status-related pages
 import SellerOrders from './pages/SellerOrdersArea';
-
+import WithdrawalPage from './pages/WithdrawalPage'; // Import WithdrawPage
 
 const App = () => {
   return (
@@ -123,9 +125,16 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-                  <Route path="/seller-orders" element={<SellerOrders />} /> {/* Ensure this route exists */}
+          <Route path="/seller-orders" element={<SellerOrders />} /> 
+          <Route
+            path="/withdraw"
+            element={
+              <ProtectedRoute>
+                <WithdrawalPage /> {}
+              </ProtectedRoute>
+            }
+          />
         </Routes>
-        
       </Router>
     </AuthProvider>
   );

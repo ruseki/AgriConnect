@@ -1,14 +1,15 @@
-// side_bar.js
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Home, ShoppingCart, DollarSign, Box } from 'lucide-react'; // Added Box icon for Inventory
+import { Home, ShoppingCart, DollarSign, Box, User } from 'lucide-react';
 import { useAuth } from './AuthProvider';
 import './css/SideBar.css';
 
 const SideBar = ({ handleOpenSignIn }) => {
-  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+
+  // Properly parse user object from localStorage
+  const user = JSON.parse(localStorage.getItem('user'));
 
   const handleSellingClick = () => {
     if (isAuthenticated) {
@@ -24,25 +25,29 @@ const SideBar = ({ handleOpenSignIn }) => {
         <Home className="icon" />
         <span className="text-sm">Home</span>
       </Link>
+
       <Link to="/buy-area" className="icon-button">
         <ShoppingCart className="icon" />
         <span className="text-sm">Buying</span>
       </Link>
+
       <button className="icon-button" onClick={handleSellingClick}>
         <DollarSign className="icon" />
         <span className="text-sm">Selling</span>
       </button>
 
-      {/* Inventory Button at the Bottom */}
       <Link to="/inventory" className="icon-button inventory-button">
         <Box className="icon" />
         <span className="text-sm">Inventory</span>
       </Link>
-       {/* Inventory Button at the Bottom */}
-       <Link to="/manage-users" className="icon-button inventory-button">
-        <Box className="icon" />
-        <span className="text-sm">Manage-users</span>
-      </Link>
+
+      {/* Show "Manage Users" only if user is admin */}
+      {user?.isAdmin && (
+        <Link to="/manage-users" className="icon-button manage-users-button">
+          <User className="icon" />
+          <span className="text-sm">Manage Users</span>
+        </Link>
+      )}
     </aside>
   );
 };

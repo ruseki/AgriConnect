@@ -17,13 +17,6 @@ const Settings = () => {
   const [verificationStatus, setVerificationStatus] = useState('');
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [personalDetails, setPersonalDetails] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    about: '',
-    phoneNumber: '',
-  });
   const [passwordDetails, setPasswordDetails] = useState({
     currentPassword: '',
     newPassword: '',
@@ -84,13 +77,6 @@ const Settings = () => {
 
           setIsVerified(response.data.isVerified);
           setEmail(response.data.email);
-          setPersonalDetails({
-            firstName: response.data.first_name || '',
-            lastName: response.data.last_name || '',
-            email: response.data.email || '',
-            phoneNumber: response.data.phoneNumber || '09123',
-            about: response.data.bio || 'Biot'
-          });
         } catch (error) {
           console.error('Error fetching user data:', error);
           if (error.response?.status === 401) {
@@ -105,13 +91,6 @@ const Settings = () => {
     fetchUserData();
   }, [token, logout, navigate]);
 
-  const handlePersonalDetailsChange = (e) => {
-    const { name, value } = e.target;
-    setPersonalDetails((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
   const handlePasswordDetailsChange = (e) => {
     const { name, value } = e.target;
@@ -119,23 +98,6 @@ const Settings = () => {
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleSavePersonalDetails = async () => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      try {
-        await axios.put('http://localhost:5000/api/auth/update-profile', personalDetails, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        alert('Profile updated successfully!');
-      } catch (error) {
-        console.error('Error updating profile:', error);
-        alert('Failed to update profile.');
-      }
-    }
   };
 
   const handleChangePassword = async () => {
@@ -346,81 +308,6 @@ const Settings = () => {
               {isLoading ? 'Submitting...' : 'Confirm Verification Code'}
             </button>
             {verificationStatus && <div className="status-message">{verificationStatus}</div>}
-          </div>
-        );
-      case 'personal-details':
-        return (
-          <div className="personal-details-content">
-            <h1>Personal Information</h1>
-
-            <div className="section">
-              <h2>Profile</h2>
-
-              <div className="form-group">
-                <label>First name</label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={personalDetails.firstName}
-                  onChange={handlePersonalDetailsChange}
-                  className="form-input"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Last name</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={personalDetails.lastName}
-                  onChange={handlePersonalDetailsChange}
-                  className="form-input"
-                />
-              </div>
-
-              <div className="divider"></div>
-
-              <div className="form-group">
-                <label>Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={personalDetails.email}
-                  onChange={handlePersonalDetailsChange}
-                  className="form-input"
-                />
-              </div>
-
-              <div className="divider"></div>
-
-              <div className="form-group">
-                <label>Phone number</label>
-                <input
-                  type="tel"
-                  name="phoneNumber"
-                  value={personalDetails.phoneNumber}
-                  onChange={handlePersonalDetailsChange}
-                  className="form-input"
-                />
-              </div>
-
-              <div className="divider"></div>
-
-              <div className="form-group">
-                <label>About</label>
-                <textarea
-                  name="about"
-                  value={personalDetails.about}
-                  onChange={handlePersonalDetailsChange}
-                  className="form-textarea"
-                  placeholder="Brief description for your profile."
-                />
-              </div>
-            </div>
-
-            <button onClick={handleSavePersonalDetails} className="save-btn">
-              Save Changes
-            </button>
           </div>
         );
         case 'password-security':
@@ -836,14 +723,6 @@ const Settings = () => {
           <aside className="settings-sidebar">
             <h2>Settings</h2>
             <ul>
-            <li>
-  <button
-    onClick={() => setCurrentView('personal-details')}
-    className={`settings-link ${currentView === 'personal-details' ? 'active' : ''}`}
-  >
-    Personal Details
-  </button>
-</li>
 <li>
   <button
     onClick={() => setCurrentView('password-security')}
