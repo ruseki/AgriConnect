@@ -36,11 +36,13 @@ const CheckoutSubmissionSchema = new mongoose.Schema({
     type: String,
     enum: ['Pending', 'Approved', 'Rejected', 'Success'],
     default: 'Pending',
+    required: true,
   },
   BuyerStatus: { // New field for buyer-specific status
     type: String,
     enum: ['NotYetReceived', 'Received'],
     default: 'NotYetReceived',
+    required: true,
   },
   submittedAt: {
     type: Date,
