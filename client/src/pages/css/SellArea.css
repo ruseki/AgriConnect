@@ -1,5 +1,5 @@
 /* SellArea.css */
-.button-container {
+.sellarea-button-container {
   display: flex;
   justify-content: flex-start;
   margin: 10px;
@@ -9,7 +9,7 @@
   min-height: 60px;
 }
 
-.start-selling-btn {
+.sellarea-start-selling-btn {
   padding: 0.55rem 1rem;
   background-color: #5F8B4C; 
   color: white;
@@ -34,7 +34,7 @@
   overflow: hidden;
 }
 
-.start-selling-btn::after {
+.sellarea-start-selling-btn::after {
   content: '';
   position: absolute;
   top: 0;
@@ -46,26 +46,22 @@
   transition: opacity 0.2s ease;
 }
 
-.start-selling-btn:hover {
+.sellarea-start-selling-btn:hover {
   background-color: #5F8B4C;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
 }
 
-.start-selling-btn:hover::after {
+.sellarea-start-selling-btn:hover::after {
   opacity: 1;
 }
 
-.start-selling-btn:active {
+.sellarea-start-selling-btn:active {
   transform: translateY(0);
   box-shadow: 0 2px 6px rgba(76, 175, 80, 0.4);
 }
 
-.start-selling-btn:hover {
-  animation: none;
-}
-
-.modal {
+.sellarea-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -77,7 +73,7 @@
   z-index: 1000;
 }
 
-.modal-overlay {
+.sellarea-modal-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -87,7 +83,7 @@
   cursor: pointer;
 }
 
-.modal-contents {
+.sellarea-modal-contents {
   background: white;
   padding: 2rem;
   border-radius: 0.5rem;
@@ -100,29 +96,29 @@
   gap: 1.5rem;
 }
 
-.modal-title {
+.sellarea-modal-title {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 1rem;
   grid-column: span 2;
 }
 
-.input-group {
+.sellarea-input-group {
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
 }
 
-.icon {
+.sellarea-icon {
   margin-right: 0.5rem;
   color: #555;
 }
 
-.input-group.full-width {
+.sellarea-input-group.full-width {
   grid-column: span 2;
 }
 
-.input-field {
+.sellarea-input-field {
   flex-grow: 1;
   padding: 0.5rem;
   border: 1px solid #ccc;
@@ -130,7 +126,7 @@
   width: 100%;
 }
 
-.input-select {
+.sellarea-input-select {
   margin-left: 0.5rem;
   padding: 0.5rem;
   border: 1px solid #ccc;
@@ -140,7 +136,7 @@
   font-size: 1rem;
 }
 
-.textarea {
+.sellarea-textarea {
   height: 100px;
   width: 100%;
   padding: 0.5rem;
@@ -148,7 +144,8 @@
   border-radius: 0.5rem;
   resize: vertical;
 }
-.modal-actions {
+
+.sellarea-modal-actions {
   grid-column: span 2;
   display: flex;
   justify-content: flex-end;
@@ -156,7 +153,7 @@
   margin-top: 1rem;
 }
 
-.publish-btn {
+.sellarea-publish-btn {
   display: flex;
   align-items: center;
   padding: 0.5rem 1rem;
@@ -170,11 +167,11 @@
   width: 50%;
 }
 
-.publish-btn:hover {
+.sellarea-publish-btn:hover {
   background-color: #1d4ed8;
 }
 
-.item-container {
+.sellarea-item-container {
   display: flex;
   flex-wrap: wrap;
   overflow-x: auto;
@@ -186,7 +183,7 @@
   align-items: flex-start;
 }
 
-.item-cards {
+.sellarea-item-cards {
   position: relative;
   display: grid;
   position: relative;
@@ -209,9 +206,9 @@
   overflow: hidden;
 }
 
-.item-cards p:nth-of-type(5) {
+.sellarea-item-cards p:nth-of-type(5) {
   position: absolute;
-  bottom: 60px; /* this listing is active */
+  bottom: 60px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #255F38; 
@@ -236,26 +233,26 @@
   text-overflow: ellipsis;
 }
 
-.item-cards .image-container {
+.sellarea-item-cards .sellarea-image-container {
   width: 100%;
-  height: 140px; /* Adjust height as needed. not sureee */
+  height: 140px;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 1rem;
   overflow: hidden;
   border-radius: 8px;
-  background: #f7fafc; /* Light background for empty state */
+  background: #f7fafc;
 }
 
-.item-cards .image-container img {
+.sellarea-item-cards .sellarea-image-container img {
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain; /* or 'cover' depending on your preference */
+  object-fit: contain;
   border-radius: 8px;
 }
 
-.item-cards::before {
+.sellarea-item-cards::before {
   content: '';
   position: absolute;
   top: 0;
@@ -265,12 +262,12 @@
   background: linear-gradient(90deg, #99BC85, #3F7D58);
 }
 
-.item-cards:hover {
+.sellarea-item-cards:hover {
   transform: translateY(-4px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-.item-cards h3 {
+.sellarea-item-cards h3 {
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 12px;
@@ -281,19 +278,21 @@
   text-overflow: ellipsis;
 }
 
-.item-card:hover .listing-buttons {
+.sellarea-item-card:hover .sellarea-listing-buttons {
   opacity: 1;
   pointer-events: auto;
 }
 
-.item-cards p {
+.sellarea-item-cards p {
   font-size: 1rem;
   margin-bottom: 8px;
   color: black;
   line-height: 1.5;
 }
 
-.list-btn, .unlist-btn, .edit-btn {
+.sellarea-list-btn, 
+.sellarea-unlist-btn, 
+.sellarea-edit-btn {
   padding: 10px 15px;
   border: none;
   border-radius: 8px;
@@ -306,10 +305,9 @@
   gap: 5px;
 }
 
-/* Base Button Styles */
-.list-btn, 
-.unlist-btn, 
-.edit-btn {
+.sellarea-list-btn, 
+.sellarea-unlist-btn, 
+.sellarea-edit-btn {
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -324,8 +322,7 @@
   overflow: hidden;
 }
 
-/* List Button */
-.list-btn {
+.sellarea-list-btn {
   background-color: #4CAF50;
   color: white;
   padding: 10px 20px;
@@ -334,14 +331,13 @@
   min-width: 100px;
 }
 
-.list-btn:hover {
+.sellarea-list-btn:hover {
   background-color: #45a049;
   box-shadow: 0 4px 8px rgba(0, 128, 0, 0.3);
   transform: translateY(-1px);
 }
 
-/* Unlist Button */
-.unlist-btn {
+.sellarea-unlist-btn {
   background-color: #A62C2C;
   color: white;
   padding: 5px 10px;
@@ -352,13 +348,12 @@
   margin-top: 50px;
 }
 
-.unlist-btn:hover {
+.sellarea-unlist-btn:hover {
   background-color: #c0392b;
   box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
 }
 
-/* Edit Button */
-.edit-btn {
+.sellarea-edit-btn {
   background-color: #9FB3DF;
   color: black;
   width: 36px;
@@ -370,24 +365,23 @@
   right: 10px;
 }
 
-.edit-btn:hover {
+.sellarea-edit-btn:hover {
   background-color: #2980B9;
   box-shadow: 0 4px 8px rgba(0, 0, 255, 0.3);
   transform: translateY(-1px) scale(1.05);
 }
 
-.edit-btn .icon {
+.sellarea-edit-btn .sellarea-icon {
   width: 16px;
   height: 16px;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color:black;
+  color: black;
 }
 
-/* Button Group Container (if buttons are grouped together) */
-.button-group {
+.sellarea-button-group {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -397,13 +391,14 @@
   margin-top: 16px;
 }
 
-.seller-alert-message {
+.sellarea-seller-alert-message {
   margin-top: 1rem;
   color: red;
   font-size: 1rem;
   font-weight: bold;
 }
-.delete-btn {
+
+.sellarea-delete-btn {
   background-color: #A62C2C;
   color: white;
   border: none;
@@ -414,22 +409,22 @@
   margin-top: 5px;
   transition: background-color 0.3s ease-in-out;
   box-shadow: 0 4px 6px rgba(255, 0, 0, 0.2);
-  width:30%;
+  width: 30%;
 }
 
-.delete-btn:hover {
+.sellarea-delete-btn:hover {
   background-color: #c0392b;
 }
 
-.confirmation-buttons {
+.sellarea-confirmation-buttons {
   margin-top: 1rem;
   display: flex;
   gap: 1rem;
   justify-content: flex-start;
 }
 
-.confirm-delete-btn,
-.cancel-delete-btn {
+.sellarea-confirm-delete-btn,
+.sellarea-cancel-delete-btn {
   padding: 0.5rem 1.5rem;
   font-size: 1rem;
   border: none;
@@ -439,30 +434,30 @@
   font-weight: bold;
 }
 
-.confirm-delete-btn {
+.sellarea-confirm-delete-btn {
   background-color: #d32f2f;
   color: white;
   box-shadow: 0 4px 6px rgba(211, 47, 47, 0.2);
 }
 
-.confirm-delete-btn:hover {
+.sellarea-confirm-delete-btn:hover {
   background-color: #b71c1c;
 }
 
-.cancel-delete-btn {
+.sellarea-cancel-delete-btn {
   background-color: #cccccc;
   color: #333;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.cancel-delete-btn:hover {
+.sellarea-cancel-delete-btn:hover {
   background-color: #999999;
 }
 
-.check-orders-btn {
-  margin-top: 1.5rem; /* Adds spacing from other elements */
+.sellarea-check-orders-btn {
+  margin-top: 1.5rem;
   padding: 10px 20px;
-  background-color: #4D7C2E; /* Matches the theme color */
+  background-color: #4D7C2E;
   color: white;
   border: none;
   border-radius: 8px;
@@ -470,28 +465,126 @@
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adds subtle shadow */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.check-orders-btn:hover {
-  background-color: #3B5F24; /* Darker shade for hover effect */
-  transform: scale(1.05); /* Slightly enlarges on hover */
+.sellarea-check-orders-btn:hover {
+  background-color: #3B5F24;
+  transform: scale(1.05);
 }
 
-.check-orders-btn:active {
-  background-color: #2C4820; /* Even darker for pressed state */
-  transform: scale(0.95); /* Shrinks slightly when clicked */
+.sellarea-check-orders-btn:active {
+  background-color: #2C4820;
+  transform: scale(0.95);
 }
 
-/* Media Query for Small Phones (less than 480px) */
+/* New styles for balance and withdraw functionality */
+.sellarea-balance-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sellarea-balance-section p {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.sellarea-withdraw-btn {
+  padding: 0.5rem 1rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sellarea-withdraw-btn:hover {
+  background-color: #45a049;
+  transform: translateY(-1px);
+}
+
+.sellarea-withdraw-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.sellarea-modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.sellarea-withdraw-input {
+  width: 100%;
+  padding: 0.5rem;
+  margin: 1rem 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.sellarea-modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.sellarea-submit-btn {
+  padding: 0.5rem 1rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sellarea-submit-btn:hover {
+  background-color: #45a049;
+}
+
+.sellarea-cancel-btn {
+  padding: 0.5rem 1rem;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sellarea-cancel-btn:hover {
+  background-color: #d32f2f;
+}
+
+/* Media Queries */
 @media screen and (max-width: 480px) {
-  .button-container {
+  .sellarea-button-container {
     justify-content: center;
     padding: 0 0.5rem;
     min-height: 50px;
   }
 
-  .start-selling-btn {
+  .sellarea-start-selling-btn {
     width: 50%;
     min-width: 60px;
     height: 30px;
@@ -499,149 +592,161 @@
     padding: 0.4rem 0.8rem;
   }
 
-  .modal-contents {
+  .sellarea-modal-contents {
     padding: 1rem;
     grid-template-columns: 1fr;
     max-width: 80%;
     gap: 0.9rem;
   }
 
-  .modal-title {
+  .sellarea-modal-title {
     font-size: 1rem;
     grid-column: span 1;
     text-align: center;
   }
 
-  .input-group, 
-  .input-group.full-width {
+  .sellarea-input-group, 
+  .sellarea-input-group.full-width {
     grid-column: span 1;
   }
 
-  .modal-actions {
+  .sellarea-modal-actions {
     grid-column: span 1;
     flex-direction: column;
     gap: 0.75rem;
   }
 
-  .publish-btn, 
-  .delete-btn {
+  .sellarea-publish-btn, 
+  .sellarea-delete-btn {
     width: 50%;
   }
 
-  .item-container {
+  .sellarea-item-container {
     padding: 1rem;
     justify-content: center;
   }
 
-  .item-cards {
+  .sellarea-item-cards {
     width: 80%;
     min-width: unset;
     padding: 1rem;
   }
 
-  .item-cards .image-container {
+  .sellarea-item-cards .sellarea-image-container {
     height: 120px;
   }
 
-  .item-cards h3 {
+  .sellarea-item-cards h3 {
     font-size: 1.1rem;
   }
 
-  .item-cards p {
+  .sellarea-item-cards p {
     font-size: 0.9rem;
   }
 
-  .item-cards p:nth-of-type(5) {
+  .sellarea-item-cards p:nth-of-type(5) {
     bottom: 75px;
     font-size: 0.75rem;
     padding: 6px 12px;
   }
 
-  .confirmation-buttons {
+  .sellarea-confirmation-buttons {
     flex-direction: column;
     width: 100%;
   }
 
-  .confirm-delete-btn,
-  .cancel-delete-btn {
+  .sellarea-confirm-delete-btn,
+  .sellarea-cancel-delete-btn {
     width: 100%;
     padding: 0.5rem 1rem;
   }
 
-  .list-btn, 
-  .unlist-btn {
+  .sellarea-list-btn, 
+  .sellarea-unlist-btn {
     min-width: unset;
     padding: 8px 15px;
     font-size: 0.8rem;
   }
 
-  .button-group {
+  .sellarea-button-group {
     padding: 15px 10px;
     flex-direction: column;
   }
 
-  .edit-btn {
+  .sellarea-edit-btn {
     width: 32px;
     height: 32px;
   }
+
+  .sellarea-balance-section {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .sellarea-withdraw-modal {
+    padding: 1rem;
+  }
+
+  .sellarea-modal-content {
+    padding: 1rem;
+  }
 }
 
-/* Media Query for Medium Phones (481px to 767px) */
 @media screen and (min-width: 481px) and (max-width: 767px) {
-  .button-container {
+  .sellarea-button-container {
     justify-content: center;
     max-width: 100%;
   }
 
-  .modal-contents {
+  .sellarea-modal-contents {
     grid-template-columns: 1fr;
     max-width: 90%;
     padding: 1.75rem;
   }
 
-  .modal-title {
+  .sellarea-modal-title {
     grid-column: span 1;
   }
 
-  .input-group, 
-  .input-group.full-width {
+  .sellarea-input-group, 
+  .sellarea-input-group.full-width {
     grid-column: span 1;
   }
 
-  .modal-actions {
+  .sellarea-modal-actions {
     grid-column: span 1;
     justify-content: space-between;
   }
 
-  .item-container {
+  .sellarea-item-container {
     justify-content: center;
   }
 
-  .item-cards {
+  .sellarea-item-cards {
     width: calc(50% - 1rem);
     min-width: 220px;
   }
 
-  .publish-btn {
+  .sellarea-publish-btn {
     width: 65%;
   }
 
-  .delete-btn {
+  .sellarea-delete-btn {
     width: 35%;
   }
 }
 
-/* Media Query for Portrait Tablets (768px to 991px) */
 @media screen and (min-width: 768px) and (max-width: 991px) {
-  .modal-contents {
+  .sellarea-modal-contents {
     max-width: 95%;
   }
   
-  .item-container {
+  .sellarea-item-container {
     justify-content: space-around;
   }
   
-  .item-cards {
+  .sellarea-item-cards {
     width: calc(33.333% - 1rem);
     min-width: 220px;
   }

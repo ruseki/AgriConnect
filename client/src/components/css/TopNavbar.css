@@ -90,19 +90,19 @@
   align-items: center;
 }
 
-.dropdown-menu {
+.dropdown-menu { /*logout etc.*/
   position: absolute;
-  top: 150%;
-  right: 0;
-  color: black;
-  background-color: #EDE8DC;
-  border: 1px solid #ccc;
-  border-radius: 0.9rem;
-  padding: 0.8rem 0;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  width: 10rem;
-  text-align: center;
-  font-size: 18px;
+  top: 155%;
+  right: 1rem;
+  color: black; 
+  background-color: whitesmoke; 
+  border: 1px solid #95d5b2;
+  border-radius: 0.5rem;
+  padding: 0.8rem 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 7.6rem;
+  text-align: left;
+  font-size: 17px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -114,12 +114,10 @@
 }
 
 .dropdown-item:hover {
-  background-color: #75A47F;
-  color: white;
-  border-radius: 0.3rem;
+  background-color: white;
+  color: black;
+  border-radius: 1rem;
 }
-
-
 
 @media (max-width: 1024px) {
   .top-navbar {

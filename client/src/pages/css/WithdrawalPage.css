@@ -1,0 +1,37 @@
+.withdraw-page {
+    margin: 20px;
+    padding: 20px;
+    text-align: center;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    margin-top: 15rem; 
+    margin-left: 250px; 
+  }
+  
+  .withdraw-page h1 {
+    font-size: 24px;
+    color: #333;
+  }
+  
+  .withdraw-page input {
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .withdraw-page button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .withdraw-page button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
