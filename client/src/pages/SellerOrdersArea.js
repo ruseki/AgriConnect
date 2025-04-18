@@ -15,13 +15,13 @@ const SellerOrdersArea = () => {
 
   const fetchSellerOrders = useCallback(async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/orders/seller-orders?status=${status}&BuyerStatus=NotYetReceived`, {
+      const response = await fetch(`http://localhost:5000/api/orders/seller-orders?BuyerStatus=${status === 'Pending' ? 'NotYetReceived' : 'Received'}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       const result = await response.json();
       if (response.ok) {
         setOrders(result.orders || []);
@@ -42,29 +42,8 @@ const SellerOrdersArea = () => {
     fetchSellerOrders();
   }, [fetchSellerOrders]);
 
-  const handleMarkAsDone = async (orderId) => {
-    try {
-      const response = await fetch(`http://localhost:5000/api/orders/mark-as-done/${orderId}`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        alert('Order marked as done.');
-        setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId)); // Remove from list
-      } else {
-        alert('Failed to mark order as done.');
-      }
-    } catch (error) {
-      console.error('Error marking order as done:', error.message);
-      alert('An error occurred while marking the order as done.');
-    }
-  };
-
   const handleNotifyBuyer = (buyerId) => {
-    alert(`Notification sent to buyer with ID: ${buyerId}`); // Mock notification
+    alert(`Notification sent to buyer with ID: ${buyerId}`); // Placeholder functionality
   };
 
   return (
@@ -73,15 +52,19 @@ const SellerOrdersArea = () => {
       <div className="seller-orders-area-page">
         <SideBar />
         <div className="seller-orders-main">
+          <h1>Seller Orders</h1>
           <div className="seller-orders-navigation">
-            <button onClick={() => setStatus('Pending')} className={status === 'Pending' ? 'active' : ''}>
-              Pending
+            <button
+              onClick={() => setStatus('Pending')}
+              className={status === 'Pending' ? 'active' : ''}
+            >
+              Pending Orders
             </button>
-            <button onClick={() => setStatus('Approved')} className={status === 'Approved' ? 'active' : ''}>
-              Approved
-            </button>
-            <button onClick={() => setStatus('Success')} className={status === 'Success' ? 'active' : ''}>
-              Successful
+            <button
+              onClick={() => setStatus('Success')}
+              className={status === 'Success' ? 'active' : ''}
+            >
+              Successful Orders
             </button>
           </div>
 
@@ -100,35 +83,18 @@ const SellerOrdersArea = () => {
                     <strong>Product:</strong> {order.listingId?.productName || 'No Product Details'}
                   </p>
                   <p>
-                    <strong>Quantity:</strong> {order.quantity || 0} {order.unit || 'units'}
-                  </p>
-                  <p>
-                    <strong>Total Price:</strong> {new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(order.totalPrice || 0)}
-                  </p>
-                  <p>
-                    <strong>Status:</strong> {order.status || 'Unknown'}
+                    <strong>Price:</strong> {new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(order.totalPrice || 0)}
                   </p>
                   <p>
                     <strong>Buyer Status:</strong> {order.BuyerStatus || 'NotYetReceived'}
                   </p>
-                  {order.BuyerStatus === 'NotYetReceived' && (
-                    <div className="order-actions">
-                      <button
-                        onClick={() => handleMarkAsDone(order._id)}
-                        className="mark-done-btn"
-                      >
-                        Mark as Done
-                      </button>
-                      <button
-                        onClick={() => handleNotifyBuyer(order.userId?._id)}
-                        className="notify-btn"
-                      >
-                        Notify Buyer
-                      </button>
-                    </div>
-                  )}
-                  {order.BuyerStatus === 'Received' && (
-                    <p className="buyer-confirmed">Buyer has confirmed receipt.</p>
+                  {status === 'Pending' && (
+                    <button
+                      onClick={() => handleNotifyBuyer(order.userId?._id)}
+                      className="notify-btn"
+                    >
+                      Notify
+                    </button>
                   )}
                 </div>
               ))}
