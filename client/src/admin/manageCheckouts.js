@@ -7,7 +7,12 @@ import './css/manageCheckouts.css';
 const ManageCheckouts = () => {
   const [checkouts, setCheckouts] = useState([]); // Holds paginated checkouts
   const [loading, setLoading] = useState(true);
-  const [confirmationModal, setConfirmationModal] = useState({ isVisible: false, checkoutId: null, action: '', note: '' });
+  const [confirmationModal, setConfirmationModal] = useState({
+    isVisible: false,
+    checkoutId: null,
+    action: '',
+    note: '',
+  });
   const [currentPage, setCurrentPage] = useState(1); // Tracks current page
   const [totalPages, setTotalPages] = useState(1); // Total pages based on data
 
@@ -19,14 +24,16 @@ const ManageCheckouts = () => {
           `http://localhost:5000/api/cart/all-checkouts?page=${currentPage}&limit=20`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-    
+
         if (response.status === 200) {
-          const sortedCheckouts = response.data.checkouts.map(checkout => ({
-            ...checkout,
-            quantity: checkout.quantity || 0,
-            totalPrice: checkout.totalPrice || 0,
-            BuyerStatus: checkout.BuyerStatus || 'NotYetReceived', // Include BuyerStatus for admin view
-          })).sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+          const sortedCheckouts = response.data.checkouts
+            .map((checkout) => ({
+              ...checkout,
+              quantity: checkout.quantity || 0,
+              totalPrice: checkout.totalPrice || 0,
+              BuyerStatus: checkout.BuyerStatus || 'NotYetReceived', // Include BuyerStatus for admin view
+            }))
+            .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
           setCheckouts(sortedCheckouts || []);
           setTotalPages(response.data.totalPages || 1);
         }
@@ -59,7 +66,10 @@ const ManageCheckouts = () => {
               ? {
                   ...checkout,
                   status: action,
-                  approvedAt: new Date().toISOString(),
+                  approvedAt:
+                    action === 'Approved'
+                      ? new Date().toISOString()
+                      : checkout.approvedAt, // Update approval time only if approved
                   approvalNote: response.data.checkout.approvalNote,
                 }
               : checkout
@@ -70,7 +80,9 @@ const ManageCheckouts = () => {
     } catch (error) {
       console.error('Error updating checkout status:', error.message);
       alert(
-        `Failed to update checkout status.\nStatus: ${error.response?.status}\nMessage: ${error.response?.data?.message || 'An error occurred.'}`
+        `Failed to update checkout status.\nStatus: ${error.response?.status}\nMessage: ${
+          error.response?.data?.message || 'An error occurred.'
+        }`
       ); // Provide detailed feedback to the user
     }
   };
@@ -126,7 +138,9 @@ const ManageCheckouts = () => {
                     {checkouts.map((checkout) => (
                       <tr key={checkout._id}>
                         <td>
-                          {checkout.userId ? `${checkout.userId.first_name} ${checkout.userId.last_name}` : 'Unknown User'}
+                          {checkout.userId
+                            ? `${checkout.userId.first_name} ${checkout.userId.last_name}`
+                            : 'Unknown User'}
                         </td>
                         <td>{checkout.listingId?.identifier || 'No Listing ID'}</td>
                         <td>{checkout.listingId?.userId.first_name || 'No Seller'}</td>
@@ -137,8 +151,16 @@ const ManageCheckouts = () => {
                             View Image
                           </a>
                         </td>
-                        <td>{checkout.submittedAt ? new Date(checkout.submittedAt).toLocaleString() : 'Not Available'}</td>
-                        <td>{checkout.approvedAt ? new Date(checkout.approvedAt).toLocaleString() : 'Pending'}</td>
+                        <td>
+                          {checkout.submittedAt
+                            ? new Date(checkout.submittedAt).toLocaleString()
+                            : 'Not Available'}
+                        </td>
+                        <td>
+                          {checkout.approvedAt
+                            ? new Date(checkout.approvedAt).toLocaleString()
+                            : 'Pending'}
+                        </td>
                         <td>{checkout.status}</td>
                         <td>{checkout.BuyerStatus || 'NotYetReceived'}</td>
                         <td>{checkout.approvalNote || 'N/A'}</td>
@@ -186,10 +208,15 @@ const ManageCheckouts = () => {
       {confirmationModal.isVisible && (
         <div className="mcheckouts-modal-overlay">
           <div className="mcheckouts-modal-content">
-            <p>Are you sure you want to {confirmationModal.action === 'Approved' ? 'approve' : 'reject'} this payment?</p>
+            <p>
+              Are you sure you want to{' '}
+              {confirmationModal.action === 'Approved' ? 'approve' : 'reject'} this payment?
+            </p>
             <textarea
               value={confirmationModal.note}
-              onChange={(e) => setConfirmationModal((prev) => ({ ...prev, note: e.target.value }))} // Note input for both actions
+              onChange={(e) =>
+                setConfirmationModal((prev) => ({ ...prev, note: e.target.value }))
+              } // Note input for both actions
               placeholder="Add a note (optional)..."
               className="mcheckouts-note-input"
             ></textarea>
