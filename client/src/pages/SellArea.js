@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import TopNavbar from '../components/top_navbar';
 import SideBar from '../components/side_bar';
-import { Tag, Package, MapPin, Info, Edit2, Truck } from 'lucide-react';
+import { Tag, Package, Edit2, Truck } from 'lucide-react';
 import { useAuth } from '../components/AuthProvider';
 import './css/SellArea.css';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +25,9 @@ const SellArea = () => {
   const [productsSold, setProductsSold] = useState(0);
   const [listings, setListings] = useState([]);
   const [editingListing, setEditingListing] = useState(null);
+  const [sellerBalance, setSellerBalance] = useState(0);
+  const [withdrawModal, setWithdrawModal] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState('');
 
   const locations = [
     'San Antonio Norte, Lupao City, Pangasinan',
@@ -95,6 +98,26 @@ const SellArea = () => {
     if (token) {
       fetchListings();
     }
+  }, [token]);
+
+  useEffect(() => {
+    const fetchSellerBalance = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/balance`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const result = await response.json();
+        if (response.ok) {
+          setSellerBalance(result.sellerBalance || 0);
+        } else {
+          console.error('Failed to fetch seller balance:', result.message);
+        }
+      } catch (error) {
+        console.error('Error fetching seller balance:', error.message);
+      }
+    };
+
+    if (token) fetchSellerBalance();
   }, [token]);
 
   const handleOpenSellModal = () => setOpenSellModal(true);
@@ -311,27 +334,60 @@ const SellArea = () => {
     }
   };
 
+  const handleWithdraw = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/withdraw', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ userId, amount: withdrawAmount }),
+      });
+
+      if (response.ok) {
+        alert('Withdrawal successful!');
+        setSellerBalance((prev) => prev - parseFloat(withdrawAmount));
+        setWithdrawModal(false);
+        setWithdrawAmount('');
+      } else {
+        const result = await response.json();
+        alert(`Withdrawal failed: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error processing withdrawal:', error.message);
+    }
+  };
+
   return (
     <>
       <TopNavbar />
-      <main className="main">
+      <main className="sellarea-main">
         <SideBar />
-        <div className="main-content">
-          <button className="start-selling-btn" onClick={handleOpenSellModal}>
+        <div className="sellarea-main-content">
+          <div className="sellarea-balance-section">
+            <p>
+              <strong>Seller Balance:</strong>{' '}
+              {new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(sellerBalance)}
+            </p>
+            <button className="sellarea-withdraw-btn" onClick={() => setWithdrawModal(true)}>
+              Withdraw
+            </button>
+          </div>
+
+          <button className="sellarea-start-selling-btn" onClick={handleOpenSellModal}>
             Start Selling!
           </button>
-                    {/* Check Orders Button */}
-                    <button className="check-orders-btn" onClick={handleCheckOrders}>
+          <button className="sellarea-check-orders-btn" onClick={handleCheckOrders}>
             Check Orders
           </button>
 
-  
-          <div className="item-container">
+          <div className="sellarea-item-container">
             {listings.length > 0 ? (
               listings.map((listing) => (
                 <div
-                  key={listing.identifier} 
-                  className="item-cards"
+                  key={listing.identifier}
+                  className="sellarea-item-cards"
                   style={{
                     backgroundColor: listing.color,
                   }}
@@ -340,204 +396,219 @@ const SellArea = () => {
                   <p>Category: {listing.category}</p>
                   <p>Price: ₱{listing.price}</p>
                   <p>Details: {listing.details}</p>
-                  
-                  <p>
-                    Stocks Availability: {listing.quantity} {listing.unit}
-                  </p>
+                  <p>Stocks Availability: {listing.quantity} {listing.unit}</p>
                   <p>This listing is {listing.status ? "active" : "inactive"}.</p>
-  
+
                   <button
                     onClick={() =>
                       listing.status
                         ? handleUnlist(listing.identifier)
                         : handleRelist(listing.identifier)
                     }
-                    className={listing.status ? "unlist-btn" : "list-btn"}
+                    className={listing.status ? "sellarea-unlist-btn" : "sellarea-list-btn"}
                   >
                     {listing.status ? "Unlist" : "List Again"}
                   </button>
-  
-                  <button onClick={() => handleEdit(listing)} className="edit-btn">
-                    <Edit2 className="icon" />
-                  </button>
-  
-                  {}
 
+                  <button onClick={() => handleEdit(listing)} className="sellarea-edit-btn">
+                    <Edit2 className="sellarea-icon" />
+                  </button>
                 </div>
               ))
             ) : (
               <p>You have no listings yet.</p>
             )}
           </div>
-  
+
           {openSellModal && (
-  <div className="modal">
-    <div className="modal-overlay" onClick={handleCloseSellModal}></div>
-    <div className="modal-contents">
-      <h2 className="modal-title">
-        {editingListing ? "Edit Listing" : "Create a New Listing"}
-      </h2>
-      <div className="input-group">
-        <Tag className="icon" />
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="input-field"
-        >
-          <option value="" disabled>
-            Select a Category
-          </option>
-          {Object.keys(categories).map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="input-group">
-        <Package className="icon" />
-        <select
-          value={productName}
-          onChange={(e) => setProductName(e.target.value)}
-          className="input-field"
-          disabled={!category}
-        >
-          <option value="" disabled>
-            Select a Product
-          </option>
-          {categories[category]?.map((product) => (
-            <option key={product} value={product}>
-              {product}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="input-group">
-        <input
-          type="number"
-          placeholder="Stocks"
-          value={quantity}
-          onChange={(e) => setQuantity(e.target.value)}
-          className="input-field"
-        />
-        <select
-          value={unit}
-          onChange={(e) => setUnit(e.target.value)}
-          className="input-select"
-        >
-          <option value="sack">Sack</option>
-          <option value="kilograms">Kilograms</option>
-          <option value="cavan">Cavan</option>
-        </select>
-      </div>
-      <div className="input-group">
-        <input
-          type="number"
-          placeholder="Minimum Order"
-          value={minimumOrder}
-          onChange={(e) => setMinimumOrder(e.target.value)}
-          className="input-field"
-        />
-      </div>
-      <div className="input-group">
-        <input
-          type="text"
-          placeholder="Condition"
-          value={condition}
-          onChange={(e) => setCondition(e.target.value)}
-          className="input-field"
-        />
-      </div>
-      <div className="input-group">
-        <textarea
-          placeholder="Details"
-          value={details}
-          onChange={(e) => setDetails(e.target.value)}
-          className="input-field h-24"
-        />
-      </div>
-      <div className="input-group">
-        <select
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="input-field"
-        >
-          <option value="" disabled>
-            Select a Location
-          </option>
-          {locations.map((locationOption, index) => (
-            <option key={index} value={locationOption}>
-              {locationOption}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="input-group">
-        <input
-          type="number"
-          placeholder="Price"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          className="input-field"
-        />
-      </div>
-      <div className="input-group">
-        <select
-          value={color}
-          onChange={(e) => setColor(e.target.value)}
-          className="input-select"
-        >
-          <option value="red">Red</option>
-          <option value="green">Green</option>
-          <option value="blue">Blue</option>
-          <option value="yellow">Yellow</option>
-          <option value="orange">Orange</option>
-          <option value="purple">Purple</option>
-          <option value="pink">Pink</option>
-          <option value="white">White</option>
-          <option value="black">Black</option>
-        </select>
-      </div>
+            <div className="sellarea-modal">
+              <div className="sellarea-modal-overlay" onClick={handleCloseSellModal}></div>
+              <div className="sellarea-modal-contents">
+                <h2 className="sellarea-modal-title">
+                  {editingListing ? "Edit Listing" : "Create a New Listing"}
+                </h2>
+                <div className="input-group">
+                  <Tag className="icon" />
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="input-field"
+                  >
+                    <option value="" disabled>
+                      Select a Category
+                    </option>
+                    {Object.keys(categories).map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="input-group">
+                  <Package className="icon" />
+                  <select
+                    value={productName}
+                    onChange={(e) => setProductName(e.target.value)}
+                    className="input-field"
+                    disabled={!category}
+                  >
+                    <option value="" disabled>
+                      Select a Product
+                    </option>
+                    {categories[category]?.map((product) => (
+                      <option key={product} value={product}>
+                        {product}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="input-group">
+                  <input
+                    type="number"
+                    placeholder="Stocks"
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                    className="input-field"
+                  />
+                  <select
+                    value={unit}
+                    onChange={(e) => setUnit(e.target.value)}
+                    className="input-select"
+                  >
+                    <option value="sack">Sack</option>
+                    <option value="kilograms">Kilograms</option>
+                    <option value="cavan">Cavan</option>
+                  </select>
+                </div>
+                <div className="input-group">
+                  <input
+                    type="number"
+                    placeholder="Minimum Order"
+                    value={minimumOrder}
+                    onChange={(e) => setMinimumOrder(e.target.value)}
+                    className="input-field"
+                  />
+                </div>
+                <div className="input-group">
+                  <input
+                    type="text"
+                    placeholder="Condition"
+                    value={condition}
+                    onChange={(e) => setCondition(e.target.value)}
+                    className="input-field"
+                  />
+                </div>
+                <div className="input-group">
+                  <textarea
+                    placeholder="Details"
+                    value={details}
+                    onChange={(e) => setDetails(e.target.value)}
+                    className="input-field h-24"
+                  />
+                </div>
+                <div className="input-group">
+                  <select
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="input-field"
+                  >
+                    <option value="" disabled>
+                      Select a Location
+                    </option>
+                    {locations.map((locationOption, index) => (
+                      <option key={index} value={locationOption}>
+                        {locationOption}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="input-group">
+                  <input
+                    type="number"
+                    placeholder="Price"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    className="input-field"
+                  />
+                </div>
+                <div className="input-group">
+                  <select
+                    value={color}
+                    onChange={(e) => setColor(e.target.value)}
+                    className="input-select"
+                  >
+                    <option value="red">Red</option>
+                    <option value="green">Green</option>
+                    <option value="blue">Blue</option>
+                    <option value="yellow">Yellow</option>
+                    <option value="orange">Orange</option>
+                    <option value="purple">Purple</option>
+                    <option value="pink">Pink</option>
+                    <option value="white">White</option>
+                    <option value="black">Black</option>
+                  </select>
+                </div>
 
-      {}
-      <button
-        className="publish-btn"
-        onClick={editingListing ? handleEditSubmit : handlePublish}
-      >
-        <Truck className="mr-2" />
-        {editingListing ? "Publish Edit" : "Publish"}
-      </button>
+                <button
+                  className="publish-btn"
+                  onClick={editingListing ? handleEditSubmit : handlePublish}
+                >
+                  <Truck className="mr-2" />
+                  {editingListing ? "Publish Edit" : "Publish"}
+                </button>
 
-      {}
-      {editingListing && !showConfirmation && (
-        <button
-          className="delete-btn"
-          onClick={() => handleDeleteClick(editingListing._id)}
-        >
-          Delete
-        </button>
-      )}
+                {editingListing && !showConfirmation && (
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDeleteClick(editingListing._id)}
+                  >
+                    Delete
+                  </button>
+                )}
 
-      {}
-      {editingListing && showConfirmation && (
-        <div className="confirmation-buttons">
-          <button
-            className="confirm-delete-btn"
-            onClick={() => handleConfirmDelete(editingListing._id)}
-          >
-            Yes
-          </button>
-          <button className="cancel-delete-btn" onClick={handleCancelDelete}>
-            No
-          </button>
-        </div>
-      )}
-    </div>
-  </div>
-)}
+                {editingListing && showConfirmation && (
+                  <div className="confirmation-buttons">
+                    <button
+                      className="confirm-delete-btn"
+                      onClick={() => handleConfirmDelete(editingListing._id)}
+                    >
+                      Yes
+                    </button>
+                    <button className="cancel-delete-btn" onClick={handleCancelDelete}>
+                      No
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {withdrawModal && (
+            <div className="sellarea-withdraw-modal">
+              <div className="sellarea-modal-content">
+                <h2>Withdraw Funds</h2>
+                <input
+                  type="number"
+                  placeholder="Enter amount"
+                  value={withdrawAmount}
+                  onChange={(e) => setWithdrawAmount(e.target.value)}
+                  className="sellarea-withdraw-input"
+                />
+                <div className="sellarea-modal-buttons">
+                  <button onClick={handleWithdraw} className="sellarea-submit-btn">
+                    Submit
+                  </button>
+                  <button onClick={() => setWithdrawModal(false)} className="sellarea-cancel-btn">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </>
   );
 };
-  export default SellArea;
+
+export default SellArea;
