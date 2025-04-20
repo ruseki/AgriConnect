@@ -1,4 +1,4 @@
-/* Container */
+
 .chatbox-container {
   position: fixed;
   bottom: 20px;
@@ -6,7 +6,6 @@
   z-index: 1100;
 }
 
-/* Chatbox Icon */
 .chatbox-icon {
   background-color: black;
   border-radius: 50%;
@@ -26,7 +25,6 @@
   transform: scale(1.1);
 }
 
-/* Chatbox */
 .chatbox {
   width: 350px;
   height: 500px;
@@ -52,7 +50,6 @@
   }
 }
 
-/* Header */
 .chatbox-header {
   display: flex;
   justify-content: space-between;
@@ -76,7 +73,6 @@
   color: #f0f0f0;
 }
 
-/* Body */
 .chatbox-body {
   flex-grow: 1;
   overflow-y: auto;
@@ -84,7 +80,6 @@
   background-color: #f8f8f8;
 }
 
-/* Messages */
 .chatbox-messages {
   display: flex;
   flex-direction: column;
@@ -93,7 +88,7 @@
 
 .chatbox-message-bubble {
   border-radius: 18px;
-  padding: 10px 15px;
+  padding: 12px 16px;
   font-size: 0.9rem;
   max-width: 80%;
   word-wrap: break-word;
@@ -111,7 +106,6 @@
   align-self: flex-end;
 }
 
-/* Footer */
 .chatbox-footer {
   display: flex;
   align-items: center;
@@ -153,7 +147,6 @@
   cursor: not-allowed;
 }
 
-/* Responsive adjustments */
 @media (max-width: 480px) {
   .chatbox {
     width: 100%;
@@ -165,88 +158,56 @@
     right: 0;
     bottom: 0;
   }
-  
+
   .chatbox-container {
     bottom: 15px;
     right: 15px;
   }
 }
-/* Responsive Styles */
 
-/* For small laptops and tablets in landscape */
 @media screen and (max-width: 1024px) {
   .chatbox {
     width: 350px;
     height: 400px;
   }
-  
+
   .chatbox-message-bubble {
     max-width: 85%;
   }
 }
 
-/* For tablets in portrait mode */
 @media screen and (max-width: 768px) {
   .chatbox {
     width: 300px;
     height: 380px;
   }
-  
+
   .chatbox-header h4 {
     font-size: 1rem;
   }
-  
-  .chatbox-left-header, 
-  .chatbox-right-header {
-    font-size: 0.9rem;
-  }
-  
+
   .chatbox-message-bubble {
     font-size: 0.85rem;
   }
 }
 
-/* For mobile phones in landscape */
 @media screen and (max-width: 640px) {
   .chatbox-container {
     bottom: 10px;
     right: 10px;
   }
-  
+
   .chatbox {
     width: 280px;
     height: 350px;
   }
-  
+
   .chatbox-body {
     flex-direction: column;
   }
-  
-  .chatbox-left, 
-  .chatbox-right {
-    width: 100%;
-    height: auto;
-  }
-  
-  .chatbox-left {
-    border-right: none;
-    border-bottom: 1px solid #ddd;
-    max-height: 100px;
-  }
-  
-  .chatbox-user-item {
-    padding: 5px;
-    margin-bottom: 3px;
-  }
 }
 
-/* For mobile phones in portrait */
 @media screen and (max-width: 480px) {
-  .chatbox-container {
-    bottom: 5px;
-    right: 5px;
-  }
-  
   .chatbox {
     width: calc(100vw - 20px);
     right: 0;
@@ -254,47 +215,32 @@
     height: 400px;
     border-radius: 10px 10px 0 0;
   }
-  
+
   .chatbox-icon {
     width: 40px;
     height: 40px;
   }
-  
-  .chatbox-send-button {
-    padding: 8px;
-  }
-  
+
   .chatbox-footer {
     padding: 5px;
   }
-  
+
   .chatbox-message-input {
     padding: 6px;
   }
 }
 
-/* For extra small mobile devices */
 @media screen and (max-width: 320px) {
   .chatbox {
     height: 350px;
   }
-  
-  .chatbox-left {
-    max-height: 80px;
-    padding: 5px;
-  }
-  
-  .chatbox-right {
-    padding: 5px;
-  }
-  
+
   .chatbox-message-bubble {
     padding: 6px;
     font-size: 0.8rem;
   }
 }
 
-/* Toggle for mobile chat list visibility */
 .chatbox-mobile-toggle {
   display: none;
   padding: 5px;
@@ -310,11 +256,11 @@
   .chatbox-mobile-toggle {
     display: block;
   }
-  
+
   .chatbox-left.hidden {
     display: none;
   }
-  
+
   .chatbox-right.full-height {
     height: 100%;
   }

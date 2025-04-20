@@ -1,4 +1,4 @@
-// routes/sellerOrdersRoutes.js
+//sellerOrdersRoutes.js
 
 import express from 'express';
 import auth from '../middleware/auth.js';
@@ -6,7 +6,6 @@ import SellerOrder from '../models/SellerOrders.js';
 
 const router = express.Router();
 
-// Get orders for a specific seller
 router.get('/', auth, async (req, res) => {
   try {
     const sellerId = req.user._id;
@@ -24,7 +23,6 @@ router.get('/', auth, async (req, res) => {
       return res.status(200).json({ orders: [] });
     }
 
-    // Log the complete orders data for debugging
     console.log('=== API Response Data ===');
     console.log('Number of orders:', orders.length);
     orders.forEach((order, index) => {

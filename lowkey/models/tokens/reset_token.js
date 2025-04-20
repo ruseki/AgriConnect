@@ -1,4 +1,4 @@
-// models/tokens/reset_token.js
+// reset_token.js
 
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';

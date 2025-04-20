@@ -1,4 +1,5 @@
 /* CheckoutSubmission */
+
 import mongoose from "mongoose";
 
 const CheckoutSubmissionSchema = new mongoose.Schema({
@@ -32,13 +33,13 @@ const CheckoutSubmissionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  status: { // Admin-specific status
+  status: { 
     type: String,
     enum: ['Pending', 'Approved', 'Rejected', 'Success'],
     default: 'Pending',
     required: true,
   },
-  BuyerStatus: { // New field for buyer-specific status
+  BuyerStatus: { 
     type: String,
     enum: ['NotYetReceived', 'Received'],
     default: 'NotYetReceived',

@@ -9,18 +9,16 @@
   font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
-/* NAVBAR CHANGES */
 .settings-nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  background-color: #0a9758; /* Matches the green color in homepage */
+  background-color: #0a9758; 
   width: 100%;
   box-sizing: border-box;
   flex-wrap: nowrap;
 
-    /* Add these lines */
   position: fixed;
   top: 0;
   left: 0;
@@ -39,12 +37,11 @@
   text-decoration: none;
 }
 
-/* SEARCH BAR DESIGN TO MATCH IMAGE */
 .settings-nav .nav-search {
   display: flex;
   align-items: center;
   background: white;
-  border-radius: 999px; /* full round */
+  border-radius: 999px; 
   padding: 0.3rem 1rem;
   margin-left: 290px;
 }
@@ -70,16 +67,16 @@
 }
 
 .settings-nav .nav-link {
-  color: black;
+  color: white;
   text-decoration: none;
   font-size: 15px;
   margin-right: 15px;
-  display: flex; /* changed from inline-block to flex */
-  align-items: center; /* vertically center icon and text */
+  display: flex; 
+  align-items: center; 
 }
 
 .nav-link .icon {
-  color: black;
+  color: white;
   margin-right: 6px;
   font-size: 1.1rem;
 }
@@ -92,22 +89,21 @@
   font-size: 1.25rem;
 }
 
-/* Settings Content */
 .settings-content {
   margin-top: 100px;
-  margin-left: 13%; /* offset content to match fixed sidebar */
+  margin-left: 13%; 
   width: 85%;
 }
 
 .settings-sidebar {
   width: 150px;
   min-height: 100vh;
-  background-color: #CAE0BC;
+  background-color: white;
   box-sizing: border-box;
   position: fixed;
   top: 0;
   left: 0;
-  padding-top: 70px; /* Add padding to not overlap with navbar */
+  padding-top: 70px; 
 }
 
 .settings-sidebar h2 {
@@ -125,12 +121,12 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem; /* Increased gap for better spacing */
+  gap: 0.75rem; 
 }
 
 .settings-sidebar li {
   color: black;
-  position: relative; /* Required for positioning the pseudo-element */
+  position: relative; 
 }
 .settings-sidebar li:not(:last-child)::after {
   content: "";
@@ -139,7 +135,7 @@
   left: 1rem;
   right: 1rem;
   height: 1px;
-  background-color: #a8aca6; /* A slightly darker shade than background */
+  background-color: #a8aca6; 
 }
 .settings-sidebar li a,
 .settings-sidebar li button {
@@ -150,7 +146,7 @@
   border: none;
   cursor: pointer;
   text-decoration: none;
-  padding: 0.75rem 1rem; /* Added padding for better click area */
+  padding: 0.75rem 1rem; 
   border-radius: 6px;
   transition: background-color 0.2s ease;
   text-align: left;
@@ -166,7 +162,6 @@
   background-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Styles for checkbox labels */
 .settings-sidebar li label {
   display: flex;
   justify-content: space-between;
@@ -190,8 +185,8 @@
   margin-bottom: 2.5rem;
   background: #ffffff;
   padding: 1.5rem 2rem;
-  border-radius: 0; /* Remove rounded corners for full-width look */
-  box-shadow: none; /* Remove shadow for cleaner full-width appearance */
+  border-radius: 0; 
+  box-shadow: none; 
   border: 1px solid #eaeaea;
   border-left: none;
   border-right: none;
@@ -221,7 +216,7 @@
 
 .form-group {
   margin-bottom: 1.25rem;
-  max-width: 800px; /* Limit form width for better readability */
+  max-width: 800px; 
 }
 
 .form-group label {
@@ -308,9 +303,9 @@
   margin-top: 1rem;
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: block; /* Changed from inline-flex to block */
-  margin-left: auto; /* This pushes it to the right */
-  width: fit-content; /* Makes button only as wide as its content */
+  display: block; 
+  margin-left: auto; 
+  width: fit-content; 
 }
 
 .save-btn:hover {
@@ -339,13 +334,12 @@
 .verify-email-btn.active:hover {
   background-color: #1a7e1d;
 }
-/* Ensure the main content area takes full width */
+
 .settings-main-content {
   width: 100%;
   box-sizing: border-box;
 }
 
-/* Password and Security Section - Matching Personal Details Style */
 .password-security-content {
   padding: 2rem;
   width: 100%;
@@ -461,7 +455,6 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Toggle Switch - Updated to match design */
 .password-security-content .toggle-group {
   display: flex;
   align-items: center;
@@ -519,7 +512,6 @@
   transform: translateX(26px);
 }
 
-/* Info Text - Updated to match design */
 .password-security-content .info-text {
   color: #7f8c8d;
   font-size: 1rem;
@@ -527,7 +519,6 @@
   line-height: 1.5;
 }
 
-/* Requirements List - Updated to match design */
 .password-security-content .requirements-list {
   list-style-type: none;
   padding: 0;
@@ -552,7 +543,6 @@
   top: -0.25rem;
 }
 
-/* Status Message - Updated to match design */
 .password-security-content .status-message {
   padding: 0.75rem 1rem;
   margin: 1rem 0;
@@ -572,7 +562,7 @@
   color: #c62828;
   border: 1px solid #ffcdd2;
 }
-/* Email Verification Section Styles */
+
 .verify-email-content {
   
   max-width: 500px;
@@ -584,7 +574,7 @@
 }
 
 .verify-email-content h2 {
-  color: rgb(58, 57, 57); /* AgriConnect green */
+  color: rgb(58, 57, 57); 
   font-weight: 600;
   margin-bottom: 1.5rem;
   text-align: center;
@@ -639,7 +629,6 @@
   cursor: not-allowed;
 }
 
-/* Status Messages */
 .status-message {
   padding: 10px 15px;
   margin: 1rem 0;
@@ -659,7 +648,6 @@
   border-left: 4px solid #e74c3c;
 }
 
-/* Verification Code Input Group */
 .verification-code-group {
   margin: 1.5rem 0;
 }
@@ -671,7 +659,6 @@
   font-weight: 500;
 }
 
-/* Accessibility Section Styles */
 .accessibility-content {
   padding: 2rem;
   width: 100%;
@@ -713,7 +700,6 @@
   padding-right: 2.5rem;
 }
 
-/* Dark Mode Styles */
 .dark-mode {
   --bg-color: #1a1a1a;
   --text-color: #ffffff;
@@ -754,7 +740,6 @@
   color: #bbb;
 }
 
-/* Privacy Section Styles */
 .privacy-content {
   padding: 2rem;
   width: 100%;
@@ -819,7 +804,6 @@
   cursor: not-allowed;
 }
 
-/* Dark mode styles for privacy section */
 .dark-mode .privacy-content .section {
   background-color: #2d2d2d;
   border-color: #444;
@@ -834,7 +818,6 @@
   background-color: #4d2424;
 }
 
-/* Document Verification Dialog Styles */
 .verification-dialog-overlay {
   position: fixed;
   top: 0;
@@ -907,7 +890,6 @@
   background-color: #c0392b;
 }
 
-/* Document Display Section */
 .document-display {
   margin-top: 2rem;
   padding: 1.5rem;
@@ -929,7 +911,6 @@
   margin-top: 1rem;
 }
 
-/* Dark mode styles for dialog */
 .dark-mode .verification-dialog {
   background-color: #2d2d2d;
   color: white;
@@ -1001,13 +982,13 @@
   flex: 1;
 }
 .activity-log-content .section h2 {
-  font-size: 1.5rem; /* Title size */
+  font-size: 1.5rem; 
   margin-bottom: 0.5rem;
 }
 
 .activity-log-content .info-text {
   margin-top: 10px;
-  font-size: 1rem; /* Paragraph size */
+  font-size: 1rem; 
   color: #555;
 }
 .activity-details h3 {

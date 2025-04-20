@@ -3,15 +3,14 @@
 import CheckoutSubmission from '../models/CheckoutSubmission.js';
 import Cart from '../models/Cart.js';
 import UserBalance from '../models/UserBalance.js';
-import User from '../models/User.js'; // Ensure User model is imported
-import Listing from '../models/Listing.js'; // Ensure Listing model is imported
-import SellerOrder from '../models/SellerOrders.js'; // Ensure SellerOrders model is imported
+import User from '../models/User.js'; 
+import Listing from '../models/Listing.js'; 
+import SellerOrder from '../models/SellerOrders.js'; 
 
-// Submit a checkout (User)
 export const submitCheckout = async (req, res) => {
   try {
     const { bank, referenceNumber, listingId, quantity } = req.body;
-    const proofImage = req.file?.path; // Path to the uploaded image
+    const proofImage = req.file?.path; 
 
     if (!proofImage) {
       return res.status(400).json({ message: 'Proof image is required.' });
@@ -25,13 +24,11 @@ export const submitCheckout = async (req, res) => {
       return res.status(400).json({ message: 'Valid quantity is required.' });
     }
 
-    // Find the listing to get the price
     const listing = await Listing.findById(listingId);
     if (!listing) {
       return res.status(404).json({ message: 'Listing not found.' });
     }
 
-    // Calculate total price with 1% commission fee
     const totalPrice = (quantity * listing.price) * 1.01;
 
     const newCheckout = new CheckoutSubmission({
@@ -42,8 +39,8 @@ export const submitCheckout = async (req, res) => {
       proofImage,
       quantity,
       totalPrice,
-      status: 'Pending', // Admin-centric status
-      BuyerStatus: 'NotYetReceived', // New BuyerStatus field
+      status: 'Pending', 
+      BuyerStatus: 'NotYetReceived', 
     });
 
     console.log('New Checkout Submission:', {
@@ -55,7 +52,6 @@ export const submitCheckout = async (req, res) => {
       BuyerStatus: 'NotYetReceived',
     });
 
-    // Remove item from the cart
     await Cart.findOneAndUpdate(
       { userId: req.userId },
       { $pull: { items: { productId: listingId } } }
@@ -73,7 +69,6 @@ export const submitCheckout = async (req, res) => {
   }
 };
 
-// Get all checkouts (Admin)
 export const getAllCheckouts = async (req, res) => {
   try {
     const checkouts = await CheckoutSubmission.find()
@@ -87,7 +82,7 @@ export const getAllCheckouts = async (req, res) => {
         },
       });
 
-    console.log('Checkouts with submittedAt:', checkouts.map((c) => c.submittedAt)); // Add log
+    console.log('Checkouts with submittedAt:', checkouts.map((c) => c.submittedAt)); 
     res.status(200).json({ checkouts });
   } catch (error) {
     console.error('Error fetching checkouts:', error.message);
@@ -95,10 +90,9 @@ export const getAllCheckouts = async (req, res) => {
   }
 };
 
-// Get checkouts by status (Admin & User-specific)
 export const getCheckoutsByStatus = async (status, userId) => {
   try {
-    const checkouts = await CheckoutSubmission.find({ status, userId }) // Filter by userId and status
+    const checkouts = await CheckoutSubmission.find({ status, userId }) 
       .populate('userId', 'first_name last_name email')
       .populate({
         path: 'listingId',
@@ -111,28 +105,25 @@ export const getCheckoutsByStatus = async (status, userId) => {
   }
 };
 
-// Update checkout status (Admin/User)
 export const updateCheckoutStatus = async (req, res) => {
   try {
     const { status, approvalNote } = req.body;
 
-    // Log the incoming request data
     console.log('Incoming Request Data:', { status, approvalNote, checkoutId: req.params.id });
 
     const checkout = await CheckoutSubmission.findById(req.params.id).populate('listingId');
 
     if (!checkout) {
-      console.error('Checkout not found for ID:', req.params.id); // Debug: Log missing checkout
+      console.error('Checkout not found for ID:', req.params.id); 
       return res.status(404).json({ message: 'Checkout not found.' });
     }
     if (!status) {
-      console.error('Status is missing in the request body from checkoutcontroller.'); // Debug: Log missing status
+      console.error('Status is missing in the request body from checkoutcontroller.'); 
       return res.status(400).json({ message: 'Status is required from checkoutcontroller.' });
     }
 
-    console.log('Before Update:', checkout.status); // Debug: Log current status
+    console.log('Before Update:', checkout.status); 
 
-    // Update checkout fields
     checkout.status = status;
     if (approvalNote) {
       checkout.approvalNote = approvalNote;
@@ -145,14 +136,13 @@ export const updateCheckoutStatus = async (req, res) => {
     if (status === 'Success') {
       checkout.BuyerStatus = 'Received';
 
-      // Update seller balance
-      const sellerId = checkout.listingId.userId; // Seller ID from the listing
-      console.log('Updating seller balance for sellerId:', sellerId); // Debug: Log sellerId
+      const sellerId = checkout.listingId.userId; 
+      console.log('Updating seller balance for sellerId:', sellerId); 
 
       const sellerBalance = await UserBalance.findOne({ userId: sellerId });
 
       if (!sellerBalance) {
-        console.log('Seller balance not found, creating new record.'); // Debug
+        console.log('Seller balance not found, creating new record.'); 
         await new UserBalance({
           userId: sellerId,
           sellerBalance: checkout.totalPrice,
@@ -161,7 +151,7 @@ export const updateCheckoutStatus = async (req, res) => {
           ],
         }).save();
       } else {
-        console.log('Existing seller balance found, updating balance.'); // Debug
+        console.log('Existing seller balance found, updating balance.'); 
         sellerBalance.sellerBalance += checkout.totalPrice;
         sellerBalance.transactions.push({
           amount: checkout.totalPrice,
@@ -173,17 +163,16 @@ export const updateCheckoutStatus = async (req, res) => {
     }
 
     await checkout.save();
-    console.log('After Update:', checkout.status); // Debug: Log updated status
-    console.log('Updated Checkout:', checkout); // Debug: Log full updated checkout object
+    console.log('After Update:', checkout.status); 
+    console.log('Updated Checkout:', checkout); 
 
     res.status(200).json({ message: 'Checkout status updated successfully.', checkout });
   } catch (error) {
-    console.error('Error updating checkout:', error.message); // Debug: Log error
+    console.error('Error updating checkout:', error.message); 
     res.status(500).json({ message: 'Failed to update checkout status.', error: error.message });
   }
 };
 
-// Fetch paginated checkouts
 export const fetchPaginatedCheckouts = async (page, limit) => {
   try {
     const checkouts = await CheckoutSubmission.find({})
@@ -202,7 +191,6 @@ export const fetchPaginatedCheckouts = async (page, limit) => {
   }
 };
 
-// Buyer confirms receipt of order
 export const receivedCheckout = async (req, res) => {
   try {
     const { id } = req.params;
@@ -246,7 +234,6 @@ export const receivedCheckout = async (req, res) => {
   }
 };
 
-// Seller marks order as done
 export const markAsDone = async (req, res) => {
   try {
     const { id } = req.params;
@@ -256,7 +243,7 @@ export const markAsDone = async (req, res) => {
       return res.status(400).json({ message: 'Order not eligible for marking as done.' });
     }
 
-    sellerOrder.status = 'Shipped'; // Or 'Done', based on your terminology
+    sellerOrder.status = 'Shipped'; 
     await sellerOrder.save();
 
     res.status(200).json({ message: 'Order marked as done successfully.', sellerOrder });

@@ -1,4 +1,4 @@
-// models/tokens/verification_token.js
+// verification_token.js
 
 import mongoose from 'mongoose';
 
@@ -15,7 +15,7 @@ const verificationTokenSchema = new mongoose.Schema(
     },
     createdAt: {
       type: Date,
-      expires: 3060, // 51 minutes
+      expires: 3060, 
       default: Date.now
     }
   }

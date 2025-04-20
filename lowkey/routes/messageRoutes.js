@@ -1,27 +1,41 @@
 //messageRoutes.js
 
 import express from 'express';
-import Message from '../models/Message.js'; // Message model
-import auth from '../middleware/auth.js'; // Middleware for authorization
+import Message from '../models/Message.js'; 
+import auth from '../middleware/auth.js'; 
 
 const router = express.Router();
 
-// Fetch all conversations for a specific sender (list of chats for the left division)
+import User from '../models/User.js'; 
+
 router.get('/:senderId/conversations', auth, async (req, res) => {
   const { senderId } = req.params;
 
   try {
-    // Group by recipientId and fetch the latest message for each conversation
+    const senderObjectId = await User.findOne({ userId: senderId }).select('_id'); 
+    if (!senderObjectId) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
     const conversations = await Message.aggregate([
       {
         $match: {
-          $or: [{ senderId }, { recipientId: senderId }], // Match messages where user is sender or recipient
+          $or: [
+            { senderId: senderObjectId._id },
+            { recipientId: senderObjectId._id },
+          ],
         },
       },
       {
         $group: {
-          _id: { $cond: [{ $eq: ['$senderId', senderId] }, '$recipientId', '$senderId'] }, // Dynamically determine the other user
-          latestMessage: { $last: '$$ROOT' }, // Get the latest message for each conversation
+          _id: {
+            $cond: [
+              { $eq: ['$senderId', senderObjectId._id] },
+              '$recipientId',
+              '$senderId',
+            ],
+          },
+          latestMessage: { $last: '$$ROOT' },
         },
       },
       {
@@ -33,14 +47,37 @@ router.get('/:senderId/conversations', auth, async (req, res) => {
       },
     ]);
 
-    res.status(200).json(conversations); // Return all conversations
+    res.status(200).json(conversations);
   } catch (error) {
     console.error('Error fetching conversations:', error.message);
     res.status(500).json({ error: 'Failed to fetch conversations' });
   }
 });
 
-// Fetch all messages between sender and recipient (right side chatbox)
+router.get('/:senderId/:recipientId', auth, async (req, res) => {
+  const { senderId, recipientId } = req.params;
+
+  try {
+    const messages = await Message.find({
+      $or: [
+        {
+          senderId: new mongoose.Types.ObjectId(senderId),
+          recipientId: new mongoose.Types.ObjectId(recipientId),
+        },
+        {
+          senderId: new mongoose.Types.ObjectId(recipientId),
+          recipientId: new mongoose.Types.ObjectId(senderId),
+        },
+      ],
+    }).sort({ timestamp: 1 });
+
+    res.status(200).json(messages);
+  } catch (error) {
+    console.error('Error fetching messages:', error.message);
+    res.status(500).json({ error: 'Failed to fetch messages' });
+  }
+});
+
 router.get('/:senderId/:recipientId', auth, async (req, res) => {
   const { senderId, recipientId } = req.params;
 
@@ -48,34 +85,35 @@ router.get('/:senderId/:recipientId', auth, async (req, res) => {
     const messages = await Message.find({
       $or: [
         { senderId, recipientId },
-        { senderId: recipientId, recipientId: senderId }, // Match both sender-recipient combinations
+        { senderId: recipientId, recipientId: senderId }, 
       ],
-    }).sort({ timestamp: 1 }); // Sort messages by timestamp
+    }).sort({ timestamp: 1 }); 
 
-    res.status(200).json(messages); // Return all messages
+    res.status(200).json(messages); 
   } catch (error) {
     console.error('Error fetching messages:', error.message);
     res.status(500).json({ error: 'Failed to fetch messages' });
   }
 });
 
-// Send a new message
+
 router.post('/', auth, async (req, res) => {
   const { senderId, recipientId, content } = req.body;
 
   try {
+    console.log('Incoming message data:', { senderId, recipientId, content }); 
+
     const newMessage = new Message({
-      senderId,
-      recipientId,
-      content,
-      timestamp: new Date(), // Add timestamp for sorting
+      senderId: new mongoose.Types.ObjectId(senderId), 
+      recipientId: new mongoose.Types.ObjectId(recipientId), 
+      timestamp: new Date(),
     });
 
-    await newMessage.save(); // Save the message to the database
+    await newMessage.save(); 
 
-    res.status(201).json(newMessage); // Return the newly created message
+    res.status(201).json(newMessage); 
   } catch (error) {
-    console.error('Error sending message:', error.message);
+    console.error('Error creating message:', error.message); 
     res.status(500).json({ error: 'Failed to send message' });
   }
 });

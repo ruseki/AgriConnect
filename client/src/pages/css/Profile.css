@@ -176,7 +176,6 @@ label {
   transform: translateY(-1px);
 }
 
-/* Extra small screens (phones under 576px) */
 @media (max-width: 576px) {
   .profile-banner {
     width: 100%;
@@ -217,7 +216,6 @@ label {
   }
 }
 
-/* Tablets (landscape and portrait) */
 @media (max-width: 768px) {
   .profile-banner {
     width: 100%;
@@ -241,7 +239,6 @@ label {
   }
 }
 
-/* Small laptops and below */
 @media (max-width: 992px) {
   .profile-page-content {
     padding: 20px;
@@ -253,7 +250,6 @@ label {
   }
 }
 
-/* Animation */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }

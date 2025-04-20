@@ -1,4 +1,4 @@
-// models/Listing.js
+// Listing.js
 
 import mongoose from 'mongoose';
 

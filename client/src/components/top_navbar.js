@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, ShoppingCart, Bell, Menu, Wallet } from "lucide-react"; // Added Wallet icon for Withdraw
+import { Search, ShoppingCart, Bell, Menu, Wallet } from "lucide-react"; 
 import { useAuth } from "./AuthProvider";
 import { Link, useNavigate } from "react-router-dom";
 import "./css/TopNavbar.css";
@@ -9,7 +9,6 @@ const TopNavbar = ({ handleOpenSignIn }) => {
   const { isAuthenticated, logout, isLoading } = useAuth();
   const navigate = useNavigate();
   const [cartCount, setCartCount] = useState(0);
-  const [language, setLanguage] = useState("EN");
 
   const handleDropdownToggle = () => {
     setDropdownOpen(!dropdownOpen);
@@ -26,10 +25,6 @@ const TopNavbar = ({ handleOpenSignIn }) => {
       calculateCartCount();
     }
   }, [isAuthenticated]);
-
-  const toggleLanguage = () => {
-    setLanguage((prev) => (prev === "EN" ? "PH" : "EN"));
-  };
 
   const handleLogout = () => {
     logout();
@@ -67,7 +62,7 @@ const TopNavbar = ({ handleOpenSignIn }) => {
               <button className="icon-button">
                 <Bell className="icon" />
               </button>
-              <button className="icon-button" onClick={() => navigate("/withdraw")}> {/* New Withdraw button */}
+              <button className="icon-button" onClick={() => navigate("/withdraw")}>
                 <Wallet className="icon" />
               </button>
               <div className="dropdown">
@@ -76,39 +71,31 @@ const TopNavbar = ({ handleOpenSignIn }) => {
                 </button>
                 {dropdownOpen && (
                   <div className="dropdown-menu">
-                    <button
-                      className="dropdown-item"
-                      onClick={() => navigate("/profile")}
-                    >
-                      Profile
-                    </button>
-                    <button
-                      className="dropdown-item"
-                      onClick={() => navigate("/settings")}
-                    >
-                      Settings
-                    </button>
-                    <button className="dropdown-item" onClick={handleLogout}>
-                      Log Out
-                    </button>
+                    <div className="dropdown-section">
+                      <button
+                        className="dropdown-item"
+                        onClick={() => navigate("/profile")}
+                      >
+                        Profile
+                      </button>
+                      <button
+                        className="dropdown-item"
+                        onClick={() => navigate("/settings")}
+                      >
+                        Settings
+                      </button>
+                    </div>
+                    <div className="dropdown-divider"></div>
+                    <div className="dropdown-section">
+                      <button className="dropdown-item" onClick={handleLogout}>
+                        Log Out
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
             </div>
           )}
-          <div className="language-toggle" onClick={toggleLanguage}>
-            <span
-              className={`lang-option ${language === "EN" ? "active" : ""}`}
-            >
-              EN
-            </span>{" "}
-            |{" "}
-            <span
-              className={`lang-option ${language === "PH" ? "active" : ""}`}
-            >
-              PH
-            </span>
-          </div>
         </div>
       </div>
     </header>

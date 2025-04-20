@@ -5,7 +5,7 @@ import TopNavbar from '../components/top_navbar';
 import './css/manageCheckouts.css';
 
 const ManageCheckouts = () => {
-  const [checkouts, setCheckouts] = useState([]); // Holds paginated checkouts
+  const [checkouts, setCheckouts] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [confirmationModal, setConfirmationModal] = useState({
     isVisible: false,
@@ -13,13 +13,13 @@ const ManageCheckouts = () => {
     action: '',
     note: '',
   });
-  const [currentPage, setCurrentPage] = useState(1); // Tracks current page
-  const [totalPages, setTotalPages] = useState(1); // Total pages based on data
+  const [currentPage, setCurrentPage] = useState(1); 
+  const [totalPages, setTotalPages] = useState(1); 
 
   useEffect(() => {
     const fetchCheckouts = async () => {
       try {
-        const token = localStorage.getItem('authToken'); // Retrieve token for authentication
+        const token = localStorage.getItem('authToken'); 
         const response = await axios.get(
           `http://localhost:5000/api/cart/all-checkouts?page=${currentPage}&limit=20`,
           { headers: { Authorization: `Bearer ${token}` } }
@@ -31,7 +31,7 @@ const ManageCheckouts = () => {
               ...checkout,
               quantity: checkout.quantity || 0,
               totalPrice: checkout.totalPrice || 0,
-              BuyerStatus: checkout.BuyerStatus || 'NotYetReceived', // Include BuyerStatus for admin view
+              BuyerStatus: checkout.BuyerStatus || 'NotYetReceived', 
             }))
             .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
           setCheckouts(sortedCheckouts || []);
@@ -51,15 +51,14 @@ const ManageCheckouts = () => {
     const { checkoutId, action, note } = confirmationModal;
 
     try {
-      const token = localStorage.getItem('authToken'); // Retrieve token
+      const token = localStorage.getItem('authToken'); 
       const response = await axios.patch(
-        `http://localhost:5000/api/checkout-status/${checkoutId}`, // Backend route to update status
-        { status: action, approvalNote: note }, // Send status, note, and other required fields
-        { headers: { Authorization: `Bearer ${token}` } } // Include token in headers
+        `http://localhost:5000/api/checkout-status/${checkoutId}`, 
+        { status: action, approvalNote: note }, 
+        { headers: { Authorization: `Bearer ${token}` } } 
       );
 
       if (response.status === 200) {
-        // Update local state after successful backend response
         setCheckouts((prevCheckouts) =>
           prevCheckouts.map((checkout) =>
             checkout._id === checkoutId
@@ -69,7 +68,7 @@ const ManageCheckouts = () => {
                   approvedAt:
                     action === 'Approved'
                       ? new Date().toISOString()
-                      : checkout.approvedAt, // Update approval time only if approved
+                      : checkout.approvedAt, 
                   approvalNote: response.data.checkout.approvalNote,
                 }
               : checkout
@@ -83,12 +82,12 @@ const ManageCheckouts = () => {
         `Failed to update checkout status.\nStatus: ${error.response?.status}\nMessage: ${
           error.response?.data?.message || 'An error occurred.'
         }`
-      ); // Provide detailed feedback to the user
+      ); 
     }
   };
 
   const openConfirmationModal = (checkoutId, action) => {
-    console.log('Opening modal for checkoutId:', checkoutId); // Debugging log
+    console.log('Opening modal for checkoutId:', checkoutId); 
     setConfirmationModal({ isVisible: true, checkoutId, action, note: '' });
   };
 
@@ -216,7 +215,7 @@ const ManageCheckouts = () => {
               value={confirmationModal.note}
               onChange={(e) =>
                 setConfirmationModal((prev) => ({ ...prev, note: e.target.value }))
-              } // Note input for both actions
+              } 
               placeholder="Add a note (optional)..."
               className="mcheckouts-note-input"
             ></textarea>

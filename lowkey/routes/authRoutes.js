@@ -1,4 +1,4 @@
-// routes/authRoutes.js
+// authRoutes.js
 
 import express from 'express';
 import { login, registerUser, verifyEmail, forgotPassword, resetPassword, resendVerificationCode, sendVerificationEmail, getUser } from '../controllers/authController.js';

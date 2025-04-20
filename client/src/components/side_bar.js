@@ -8,7 +8,6 @@ const SideBar = ({ handleOpenSignIn }) => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  // Properly parse user object from localStorage
   const user = JSON.parse(localStorage.getItem('user'));
 
   const handleSellingClick = () => {
@@ -41,7 +40,7 @@ const SideBar = ({ handleOpenSignIn }) => {
         <span className="text-sm">Inventory</span>
       </Link>
 
-      {/* Show "Manage Users" only if user is admin */}
+      {}
       {user?.isAdmin && (
         <Link to="/manage-users" className="icon-button manage-users-button">
           <User className="icon" />

@@ -1,4 +1,4 @@
-//models > SellerOrders.js
+//SellerOrders.js
 
 import mongoose from 'mongoose';
 

@@ -6,8 +6,8 @@ import { getCart, addToCart, removeFromCart } from '../controllers/cartControlle
 
 const router = express.Router();
 
-router.get('/', auth, getCart); // Fetch cart items
-router.post('/add', auth, addToCart); // Add item to cart
-router.post('/remove', auth, removeFromCart); // Remove item from cart
+router.get('/', auth, getCart); 
+router.post('/add', auth, addToCart); 
+router.post('/remove', auth, removeFromCart); 
 
 export default router;

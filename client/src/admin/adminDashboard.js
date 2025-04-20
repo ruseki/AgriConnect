@@ -1,5 +1,3 @@
-/* adminDashboard.js */
-
 import React, { useEffect, useState } from 'react';
 import './css/adminDashboard.css';
 import SideBar from '../components/side_bar';
@@ -12,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const validateAdminAccess = async () => {
@@ -30,18 +29,30 @@ const AdminDashboard = () => {
         return;
       }
 
-      setLoading(false); // No need to make an API call if we already have admin info from localStorage
+      try {
+        const response = await axios.get('http://localhost:5000/api/admin/users', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUsers(response.data);
+      } catch (error) {
+        console.error('Failed to fetch user data:', error);
+        navigate('/');
+      } finally {
+        setLoading(false);
+      }
     };
 
     validateAdminAccess();
   }, [navigate]);
 
-  const totalUsers = 15;
-  const onlineUsers = 3;
-  const verifiedSellers = 2;
-  const totalUsersPercent = 15;
-  const onlineUsersPercent = 3;
-  const verifiedSellersPercent = 2;
+  const totalUsers = users.length;
+  const onlineUsers = users.filter(user => user.isOnline).length;
+  const verifiedSellers = users.filter(user => user.isSeller && user.isVerified).length;
+
+  const maxUsers = 200; 
+  const totalUsersPercent = Math.round((totalUsers / maxUsers) * 100);
+  const onlineUsersPercent = totalUsers ? Math.round((onlineUsers / totalUsers) * 100) : 0;
+  const verifiedSellersPercent = totalUsers ? Math.round((verifiedSellers / totalUsers) * 100) : 0;
 
   if (loading) {
     return <div className="admin-dashboard-loading">Loading...</div>;
@@ -55,7 +66,7 @@ const AdminDashboard = () => {
         <div className="dashboard-main">
           <div className="admin-dashboard">
             <h1>Admin Panel</h1>
-            <p>Admin privileges confirmed. Welcome!</p>
+            <p>Admin access confirmed. Welcome!</p>
           </div>
 
           {/* Statistics Section */}
@@ -118,8 +129,8 @@ const AdminDashboard = () => {
               Manage Tickets
             </button>
             <button className="admin-button" onClick={() => navigate('/manage-users-checkouts')}>
-    Manage User Checkouts
-  </button>
+              Manage User Checkouts
+            </button>
             <button className="admin-button">Manage Listings</button>
             <button className="admin-button">Site Settings</button>
           </div>

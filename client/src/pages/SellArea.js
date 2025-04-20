@@ -26,8 +26,6 @@ const SellArea = () => {
   const [listings, setListings] = useState([]);
   const [editingListing, setEditingListing] = useState(null);
   const [sellerBalance, setSellerBalance] = useState(0);
-  const [withdrawModal, setWithdrawModal] = useState(false);
-  const [withdrawAmount, setWithdrawAmount] = useState('');
 
   const locations = [
     'San Antonio Norte, Lupao City, Pangasinan',
@@ -124,9 +122,12 @@ const SellArea = () => {
   const handleCloseSellModal = () => setOpenSellModal(false);
 
   const handleCheckOrders = () => {
-    navigate('/seller-orders'); // Redirect to SellerOrders page
+    navigate('/seller-orders');
   };
 
+  const handleWithdraw = () => {
+    navigate('/withdraw');
+  };
 
   const handlePublish = async () => {
     if (!token || !userId) {
@@ -334,31 +335,6 @@ const SellArea = () => {
     }
   };
 
-  const handleWithdraw = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/withdraw', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ userId, amount: withdrawAmount }),
-      });
-
-      if (response.ok) {
-        alert('Withdrawal successful!');
-        setSellerBalance((prev) => prev - parseFloat(withdrawAmount));
-        setWithdrawModal(false);
-        setWithdrawAmount('');
-      } else {
-        const result = await response.json();
-        alert(`Withdrawal failed: ${result.message}`);
-      }
-    } catch (error) {
-      console.error('Error processing withdrawal:', error.message);
-    }
-  };
-
   return (
     <>
       <TopNavbar />
@@ -370,7 +346,7 @@ const SellArea = () => {
               <strong>Seller Balance:</strong>{' '}
               {new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(sellerBalance)}
             </p>
-            <button className="sellarea-withdraw-btn" onClick={() => setWithdrawModal(true)}>
+            <button className="sellarea-withdraw-btn" onClick={handleWithdraw}>
               Withdraw
             </button>
           </div>
@@ -579,29 +555,6 @@ const SellArea = () => {
                     </button>
                   </div>
                 )}
-              </div>
-            </div>
-          )}
-
-          {withdrawModal && (
-            <div className="sellarea-withdraw-modal">
-              <div className="sellarea-modal-content">
-                <h2>Withdraw Funds</h2>
-                <input
-                  type="number"
-                  placeholder="Enter amount"
-                  value={withdrawAmount}
-                  onChange={(e) => setWithdrawAmount(e.target.value)}
-                  className="sellarea-withdraw-input"
-                />
-                <div className="sellarea-modal-buttons">
-                  <button onClick={handleWithdraw} className="sellarea-submit-btn">
-                    Submit
-                  </button>
-                  <button onClick={() => setWithdrawModal(false)} className="sellarea-cancel-btn">
-                    Cancel
-                  </button>
-                </div>
               </div>
             </div>
           )}

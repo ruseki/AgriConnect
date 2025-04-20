@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
-import './css/RecoverPassword.css'; // Create a CSS file for styling if needed
+import './css/RecoverPassword.css'; 
 
 const RecoverPassword = ({ handleClose }) => {
 
@@ -22,7 +22,7 @@ const RecoverPassword = ({ handleClose }) => {
       const response = await axios.post('http://localhost:5000/api/auth/forgot-password', { email });
 
       if (response.status === 200) {
-        setSuccessMessage(response.data.message); // Display success message
+        setSuccessMessage(response.data.message); 
       } else {
         setErrorMessage(response.data.message || 'Failed to send password reset link.');
       }

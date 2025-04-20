@@ -44,16 +44,13 @@ const Settings = () => {
     if (!isAuthenticated) {
       navigate('/');
     }
-    // Check for saved theme preference
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
       setDarkMode(true);
       document.documentElement.classList.add('dark-mode');
     }
-    // Check for saved language preference
     const savedLanguage = localStorage.getItem('language') || 'english';
     setLanguage(savedLanguage);
-    // Load saved privacy settings
     const savedPrivacy = JSON.parse(localStorage.getItem('privacySettings')) || {
       profileVisibility: 'public',
       activityStatus: true,
@@ -579,7 +576,7 @@ const Settings = () => {
                 </div>
                 
                 <div className="activity-list">
-                  {/* Sample activity items - in a real app these would come from your API */}
+                  {}
                   <div className="activity-item">
                     <div className="activity-icon">
                       <i className="fas fa-sign-in-alt"></i>
@@ -770,7 +767,7 @@ const Settings = () => {
           <main className="settings-main-content">
             {renderContent()}
             
-            {/* Verification Dialog */}
+            {}
             {showVerificationDialog && (
               <div className="verification-dialog-overlay">
                 <div className="verification-dialog">

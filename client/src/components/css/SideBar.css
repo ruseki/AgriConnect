@@ -5,53 +5,62 @@
   top: 0;
   left: 0;
   height: 100%;
-  width: 150px;
-  background-color: #CAE0BC;
+  width: 170px;
+  background-color: #ffffff;
   padding: 0.6rem 0.8rem;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   z-index: 3;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .sidebar .icon-button {
   display: flex;
   align-items: center;
-  padding: 0.6rem 0.8rem;
+  padding: 0.8rem 1rem;
   border-radius: 8px;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   margin-top: 3rem;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: all 0.2s ease;
   cursor: pointer;
+  color: #1c1e21;
+  text-decoration: none;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .sidebar .icon {
-  color: black;
-  margin-right: 10px;
-  font-size: 2rem;
+  color: #1877f2;
+  margin-right: 12px;
+  font-size: 1.8rem;
+  min-width: 1.8rem;
 }
 
 .sidebar .icon-button:hover {
-  background-color: #A5B68D;
+  background-color: #f0f2f5;
 }
 
 .sidebar .icon-button:hover .icon {
-  color: #27391C;
+  color: #1877f2;
 }
 
 .sidebar .text-sm {
-  font-size: 1rem;
-  color: black;
+  font-size: 0.95rem;
+  color: #1c1e21;
+  font-weight: 500;
+  opacity: 1;
 }
 
 .sidebar .text-sm:hover {
-  color: white;
+  color: #1877f2;
 }
 
 /* Inventory Button - Added */
 .sidebar .inventory-button {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   margin-top: 3rem;
 }
 
@@ -62,6 +71,7 @@
 
   .sidebar .icon-button {
     justify-content: center;
+    padding: 0.8rem;
   }
 
   .sidebar .text-sm {

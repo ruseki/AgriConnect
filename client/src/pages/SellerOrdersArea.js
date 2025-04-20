@@ -9,7 +9,7 @@ import { useAuth } from '../components/AuthProvider';
 const SellerOrdersArea = () => {
   const { token } = useAuth();
   const [orders, setOrders] = useState([]);
-  const [status, setStatus] = useState('Pending'); // Default to "Pending"
+  const [status, setStatus] = useState('Pending'); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -43,7 +43,7 @@ const SellerOrdersArea = () => {
   }, [fetchSellerOrders]);
 
   const handleNotifyBuyer = (buyerId) => {
-    alert(`Notification sent to buyer with ID: ${buyerId}`); // Placeholder functionality
+    alert(`Notification sent to buyer with ID: ${buyerId}`); 
   };
 
   return (

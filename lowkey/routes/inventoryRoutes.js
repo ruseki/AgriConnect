@@ -1,12 +1,11 @@
 //inventoryRoutes.js
 
 import express from 'express';
-import auth from '../middleware/auth.js'; // Middleware to protect routes
+import auth from '../middleware/auth.js'; 
 import Inventory from '../models/Inventory.js';
 
 const router = express.Router();
 
-// Create a new inventory item
 router.post('/', auth, async (req, res) => {
   try {
     const { productName, category, quantity, unit, price, expirationDate } = req.body;
@@ -18,7 +17,7 @@ router.post('/', auth, async (req, res) => {
       unit,
       price,
       expirationDate,
-      sellerId: req.userId, // Seller is the logged-in user
+      sellerId: req.userId, 
     });
 
     await newInventory.save();
@@ -29,7 +28,6 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// Fetch all inventory items for the logged-in seller
 router.get('/', auth, async (req, res) => {
   try {
     const inventoryItems = await Inventory.find({ sellerId: req.userId });
@@ -40,7 +38,6 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// Update an inventory item
 router.put('/:id', auth, async (req, res) => {
   try {
     const { id } = req.params;
@@ -49,7 +46,7 @@ router.put('/:id', auth, async (req, res) => {
     const updatedInventory = await Inventory.findByIdAndUpdate(
       id,
       { productName, category, quantity, unit, price, expirationDate },
-      { new: true } // Return updated item
+      { new: true } 
     );
 
     if (!updatedInventory) {
@@ -63,7 +60,6 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
-// Delete an inventory item
 router.delete('/:id', auth, async (req, res) => {
   try {
     const { id } = req.params;

@@ -1,4 +1,4 @@
-// controllers/authController.js
+// authController.js
 
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -200,23 +200,18 @@ const forgotPassword = async (req, res) => {
         return res.status(404).json({ message: 'User not found.' });
       }
   
-      // Remove existing tokens for the user
       await ResetToken.deleteMany({ owner: user._id });
   
-      // Create a new reset token
       const token = crypto.randomBytes(32).toString('hex');
       const resetToken = new ResetToken({ owner: user._id, token });
       await resetToken.save();
   
-      // Log userId and token for debugging
       console.log(`Password Reset Request: 
       - User ID: ${user._id}
       - Reset Token: ${token}`);
   
-      // Generate reset link
       const resetLink = `http://localhost:3000/reset-password?token=${encodeURIComponent(token)}&id=${user._id}`;
   
-      // Send email with the reset link
       await sendEmail(
         user.email,
         'Password Reset Request',

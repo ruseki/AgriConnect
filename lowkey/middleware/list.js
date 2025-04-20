@@ -1,4 +1,4 @@
-// middleware/list.js
+// list.js
 
 import Listing from '../models/Listing.js';
 

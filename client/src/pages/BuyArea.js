@@ -21,10 +21,9 @@ const BuyArea = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showChatbox, setShowChatbox] = useState(false);
   const [recipientId, setRecipientId] = useState(null);
-  const [recipientName, setRecipientName] = useState(''); // Added to store seller's name
+  const [recipientName, setRecipientName] = useState(''); 
   const navigate = useNavigate();
 
-  // Fetch listings using useCallback to stabilize dependencies
   const fetchListings = useCallback(async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/listings', {
@@ -33,7 +32,7 @@ const BuyArea = () => {
 
       if (response.status === 200) {
         const allListings = response.data.listings.filter((listing) => {
-          return listing.userId !== userId; // Exclude the logged-in user's listings
+          return listing.userId !== userId; 
         });
 
         setListings(allListings);
@@ -45,7 +44,6 @@ const BuyArea = () => {
     }
   }, [token, userId]);
 
-  // Run fetchListings when the component mounts or dependencies change
   useEffect(() => {
     if (token) {
       fetchListings();
@@ -92,7 +90,9 @@ const BuyArea = () => {
     e.preventDefault();
     setMenuPosition({ x: e.clientX, y: e.clientY });
     setSelectedUser(listing.userId._id || listing.userId); 
-    setRecipientName(listing.seller); // Store the seller's name
+    setRecipientName(listing.seller || 'Seller'); 
+    console.log('Recipient ID:', listing.userId._id || listing.userId); 
+    console.log('Recipient Name:', listing.seller || 'Seller'); 
     setShowMenu(true);
   };
 
@@ -103,15 +103,17 @@ const BuyArea = () => {
   const handleMenuOptionClick = (option) => {
     if (option === 'profile') {
       if (selectedUser) {
-        navigate(`/view-profile/${selectedUser}`); // Navigate to the user's profile
+        navigate(`/view-profile/${selectedUser}`); 
       }
     } else if (option === 'report') {
-      alert(`Reporting ${selectedUser}`); // Handle reporting the user
+      alert(`Reporting ${selectedUser}`); 
     } else if (option === 'message') {
-      setRecipientId(selectedUser); // Set recipient for chatbox
-      setShowChatbox(true); // Open the chatbox
+      console.log('Opening chat with:', selectedUser, recipientName); 
+      setRecipientId(selectedUser); 
+      setRecipientName(recipientName); 
+      setShowChatbox(true); 
     }
-    setShowMenu(false); // Close the context menu
+    setShowMenu(false); 
   };
 
   return (
@@ -267,11 +269,11 @@ const BuyArea = () => {
         </div>
       </main>
 
-      {/* Display Chatbox */}
+      {}
       {showChatbox && (
         <Chatbox
-        senderId={userId} // Pass the logged-in user's ID as senderId
-        recipientId={recipientId} // Ensure recipientId is set correctly
+        senderId={userId} 
+        recipientId={recipientId} 
         recipientName={recipientName}
         onClose={() => setShowChatbox(false)}
       />

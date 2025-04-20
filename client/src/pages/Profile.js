@@ -62,7 +62,6 @@ const Profile = () => {
         console.log(response)
 
         if (response.status === 401) {
-          // Token is invalid or expired
           console.error('Token is invalid or expired');
           localStorage.removeItem('authToken');
           window.location.href = '/login';
@@ -168,7 +167,6 @@ const Profile = () => {
 
   const handleSaveProfile = async () => {
     try {
-      // Ensure the token is properly retrieved
       const token = localStorage.getItem('authToken');
       if (!token) {
         console.error('No token found in localStorage');
@@ -177,21 +175,19 @@ const Profile = () => {
         return;
       }
   
-      // Ensure the data is formatted before using it
       const formattedFormData = {
         ...formData,
-        birthDate: formData.birthDate, // Optional: Ensure this is in the correct format
+        birthDate: formData.birthDate, 
       };
   
-      console.log('Token:', token); // Debugging log
-      console.log('Formatted Data Sent to Backend:', formattedFormData); // Debugging log
+      console.log('Token:', token); 
+      console.log('Formatted Data Sent to Backend:', formattedFormData); 
   
-      // Make the API request
       const response = await axios.put('http://localhost:5000/api/users/user', formattedFormData, {
         headers: { Authorization: `Bearer ${token}` },
       });
   
-      console.log('Response from Backend:', response); // Debugging log
+      console.log('Response from Backend:', response); 
   
       if (response.status === 200) {
         alert('Profile updated successfully!');

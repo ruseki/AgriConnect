@@ -85,7 +85,7 @@ const InventoryPage = () => {
       if (response.status === 201) {
         setInventoryItems((prev) => [...prev, response.data.inventory]);
         alert('Inventory item added successfully!');
-        setIsModalOpen(false); // Close the modal after success
+        setIsModalOpen(false); 
         setFormData({
           productName: '',
           category: '',

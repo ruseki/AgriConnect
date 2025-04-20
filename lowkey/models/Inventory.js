@@ -1,4 +1,4 @@
-// models/Inventory.js
+// Inventory.js
 
 import mongoose from 'mongoose';
 
@@ -9,10 +9,10 @@ const InventorySchema = new mongoose.Schema({
   unit: { type: String, required: true },
   price: { type: Number, required: true },
   expirationDate: { type: Date },
-  cropType: { type: String }, // Added for farming-specific crops
-  equipment: { type: [String] }, // Array for farming tools or machines
-  plantingDate: { type: Date }, // Added for tracking crop planting
-  harvestingDate: { type: Date }, // Added for tracking crop harvesting
+  cropType: { type: String }, 
+  equipment: { type: [String] }, 
+  plantingDate: { type: Date },
+  harvestingDate: { type: Date }, 
   sellerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 }, { timestamps: true });
 

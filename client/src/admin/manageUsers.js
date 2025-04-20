@@ -12,14 +12,14 @@ const ManageUsers = () => {
   const [showEmails, setShowEmails] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 5;
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false); 
 
   const navigate = useNavigate();
 
   const handleExpiredSession = useCallback(() => {
     console.log('Auth Token:', localStorage.getItem('authToken'));
     alert('Session expired. Please log in again.');
-    navigate('/'); // Redirecting to login page directly
+    navigate('/'); 
   }, [navigate]);
 
   useEffect(() => {
@@ -35,15 +35,15 @@ const ManageUsers = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
     
-        console.log('Verify Admin Response:', response.data); // Log backend response
+        console.log('Verify Admin Response:', response.data); 
     
         if (!response.data.isAdmin) {
-          console.log('User is NOT an admin'); // Log the admin check result
+          console.log('User is NOT an admin'); 
           console.log('Auth Token:', localStorage.getItem('authToken'));
           alert('You are not authorized to access this page.');
-          navigate('/'); // Redirect to home page if not admin
+          navigate('/'); 
         } else {
-          console.log('User IS an admin'); // Confirm the admin status
+          console.log('User IS an admin'); 
         }
       } catch (error) {
         console.error('Error verifying admin:', error);
@@ -65,7 +65,7 @@ const ManageUsers = () => {
         return;
       }
 
-      setLoading(true); // Start loading state
+      setLoading(true); 
 
       try {
         const response = await axios.get('http://localhost:5000/api/admin/users', {
@@ -78,7 +78,7 @@ const ManageUsers = () => {
           handleExpiredSession();
         }
       } finally {
-        setLoading(false); // End loading state
+        setLoading(false); 
       }
     };
 

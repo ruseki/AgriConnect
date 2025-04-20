@@ -12,13 +12,11 @@ import auth from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Fetch all checkouts by status (Admin & User-specific)
 router.get('/', auth, async (req, res) => {
   try {
-    const { status } = req.query; // Extract status from query
-    const userId = req.userId; // Get the authenticated user's ID
+    const { status } = req.query; 
+    const userId = req.userId; 
 
-    // Fetch checkouts belonging to the logged-in user
     const checkouts = await CheckoutSubmission.find({ status, userId })
       .populate('userId', 'first_name last_name email')
       .populate({
@@ -38,42 +36,36 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// Update checkout status (Admin)
 router.patch('/:id', authMiddleware, async (req, res) => {
   try {
     const { status, approvalNote } = req.body;
 
-    // Debug: Log incoming request data
     console.log('Incoming Request Data:', { status, approvalNote, id: req.params.id });
 
     const checkout = await CheckoutSubmission.findById(req.params.id);
     if (!checkout) {
-      console.error('Checkout not found for ID:', req.params.id); // Debug log
+      console.error('Checkout not found for ID:', req.params.id); 
       return res.status(404).json({ message: 'Checkout not found' });
     }
 
-    // Validate status field
     if (!status) {
-      console.error('Status field missing in request body.'); // Debug log
+      console.error('Status field missing in request body.');
       return res.status(400).json({ message: 'Status is required.' });
     }
 
-    console.log('Checkout Before Update:', checkout); // Debug log for initial checkout state
+    console.log('Checkout Before Update:', checkout); 
 
-    // Update checkout fields
     checkout.status = status;
     checkout.approvalNote = approvalNote;
     checkout.reviewedAt = new Date();
     checkout.reviewedBy = req.user._id;
 
-    await checkout.save(); // Save updated checkout
-    console.log('Checkout After Update:', checkout); // Debug log for updated checkout state
+    await checkout.save(); 
+    console.log('Checkout After Update:', checkout); 
 
-    // Create a new SellerOrder if status is 'Approved'
     if (status === 'Approved') {
       const { quantity, totalPrice } = checkout;
 
-      // Validate required fields
       if (!quantity || !totalPrice) {
         console.error('Missing required fields: quantity or totalPrice.');
         return res.status(400).json({
@@ -96,18 +88,17 @@ router.patch('/:id', authMiddleware, async (req, res) => {
         status: 'Approved',
       });
 
-      await sellerOrder.save(); // Save seller order
-      console.log('SellerOrder created successfully:', sellerOrder); // Debug log
+      await sellerOrder.save(); 
+      console.log('SellerOrder created successfully:', sellerOrder); 
     }
 
     res.status(200).json({ message: 'Checkout updated successfully', checkout });
   } catch (error) {
-    console.error('Error updating checkout:', error.message); // Debug log for errors
+    console.error('Error updating checkout:', error.message); 
     res.status(500).json({ message: 'Failed to update checkout', error: error.message });
   }
 });
 
-// Cancel a checkout (Admin)
 router.post('/cancel/:id', authMiddleware, async (req, res) => {
   console.log('Order ID to Cancel:', req.params.id);
   const { id } = req.params;
@@ -127,7 +118,6 @@ router.post('/cancel/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// Fetch all checkouts with pagination (Admin)
 router.get('/all-checkouts', adminMiddleware, async (req, res) => {
   const { page = 1, limit = 20 } = req.query;
 

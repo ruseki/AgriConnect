@@ -5,13 +5,15 @@ import axios from 'axios';
 import TopNavbar from '../components/top_navbar';
 import SideBar from '../components/side_bar';
 import './css/CartArea.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { ShoppingCart, Clock, Package, CheckCircle, Trash2, Plus, Minus, CreditCard } from 'lucide-react';
 
 const CartArea = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedItems, setSelectedItems] = useState([]);
   const [expandedItem, setExpandedItem] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -130,10 +132,10 @@ const CartArea = () => {
     }, 0);
   };
 
-  const [openPaymentModal, setOpenPaymentModal] = useState(false); // Tracks modal visibility
-  const [bank, setBank] = useState(''); // Captures bank input
-  const [refNo, setRefNo] = useState(''); // Captures reference number input
-  const [uploadedImage, setUploadedImage] = useState(null); // Captures uploaded image
+  const [openPaymentModal, setOpenPaymentModal] = useState(false);
+  const [bank, setBank] = useState('');
+  const [refNo, setRefNo] = useState('');
+  const [uploadedImage, setUploadedImage] = useState(null);
 
   const handleOpenPaymentModal = () => {
     setOpenPaymentModal(true);
@@ -199,7 +201,7 @@ const CartArea = () => {
         formData.append('listingId', listingId);
         formData.append('proofImage', uploadedImage);
         formData.append('quantity', item.quantity);
-        formData.append('price', item.productId.price); // Explicitly include price
+        formData.append('price', item.productId.price);
   
         try {
           const response = await axios.post('http://localhost:5000/api/cart/submit', formData, {
@@ -221,10 +223,11 @@ const CartArea = () => {
       if (successCount > 0) {
         alert(`Successfully submitted ${successCount} checkout(s). Failed: ${failCount}`);
         for (const listingId of selectedItems) {
-          await handleRemoveItem(listingId); // Remove items from the cart after successful checkout
+          await handleRemoveItem(listingId);
         }
         setSelectedItems([]);
         handleClosePaymentModal();
+        navigate('/pending');
       } else {
         alert('Failed to submit any checkouts. Please try again.');
       }
@@ -240,153 +243,162 @@ const CartArea = () => {
       <main className="cartarea-main">
         <SideBar />
         <div className="cartarea-main-content">
+          <div className="cartarea-header">
+            <h1>My Shopping Cart</h1>
+          </div>
 
-<div className="cartarea-navigation">
-  <Link to="/cart" className="cartarea-nav-link active">My Cart</Link>
-  <Link to="/pending" className="cartarea-nav-link">Pending</Link>
-  <Link to="/orders" className="cartarea-nav-link">Orders</Link>
-  <Link to="/successful" className="cartarea-nav-link">Successful Orders</Link>
-</div>
+          <div className="cartarea-navigation">
+            <Link to="/cart" className="cartarea-nav-link active">
+              <ShoppingCart size={18} />
+              <span>My Cart</span>
+            </Link>
+            <Link to="/pending" className="cartarea-nav-link">
+              <Clock size={18} />
+              <span>Pending</span>
+            </Link>
+            <Link to="/orders" className="cartarea-nav-link">
+              <Package size={18} />
+              <span>Orders</span>
+            </Link>
+            <Link to="/successful" className="cartarea-nav-link">
+              <CheckCircle size={18} />
+              <span>Successful Orders</span>
+            </Link>
+          </div>
 
           <div className="cartarea-container">
             {loading ? (
-              <p className="cartarea-loading-message">Loading cart items...</p>
+              <div className="cartarea-loading">
+                <div className="cartarea-loading-spinner"></div>
+                <p className="cartarea-loading-message">Loading cart items...</p>
+              </div>
             ) : cartItems.length > 0 ? (
               <>
-                <table className="cartarea-table">
-                  <thead>
-                    <tr>
-                      <th>Select</th>
-                      <th>Product</th>
-                      <th>Price</th>
-                      <th>Quantity</th>
-                      <th>Total</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {cartItems.map((item) => {
-                      const priceWithFee = (item.productId?.price || 0) * 1.01;
-                      const isExpanded = expandedItem === item.productId?._id;
-                      const isSelected = selectedItems.includes(item.productId?._id);
+                <div className="cartarea-items">
+                  {cartItems.map((item) => {
+                    const priceWithFee = (item.productId?.price || 0) * 1.01;
+                    const isExpanded = expandedItem === item.productId?._id;
+                    const isSelected = selectedItems.includes(item.productId?._id);
 
-                      return (
-                        <React.Fragment key={item.productId?._id || Math.random()}>
-                          <tr
-                            className={`cartarea-item-row ${isExpanded ? 'expanded' : ''}`}
-                            onClick={(e) => handleCardClick(e, item.productId?._id)}
-                          >
-                            <td>
-                              <input
-                                type="checkbox"
-                                checked={isSelected}
-                                onChange={() => handleCheckboxChange(item.productId?._id || null)}
-                                className="cartarea-checkbox"
-                                disabled={!item.productId}
-                              />
-                            </td>
-                            <td>
-                              <div className="cartarea-product-info">
-                                <div
-                                  className="cartarea-product-image"
-                                  style={{ backgroundColor: item.productId?.color || '#ccc' }}
-                                ></div>
-                                <h3>{item.productId ? item.productId.productName : 'Deleted Product'}</h3>
-                              </div>
-                            </td>
-                            <td>₱{(item.productId?.price?.toFixed(2)) || '0.00'}</td>
-                            <td>
-                              <div className="cartarea-quantity-control">
-                                <button
-                                  className="cartarea-quantity-btn"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleQuantityChange(item.productId?._id, item.quantity - 1);
-                                  }}
-                                  disabled={item.quantity <= 1}
-                                >
-                                  -
-                                </button>
-                                <span className="cartarea-quantity-value">{item.quantity}</span>
-                                <button
-                                  className="cartarea-quantity-btn"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleQuantityChange(item.productId?._id, item.quantity + 1);
-                                  }}
-                                >
-                                  +
-                                </button>
-                              </div>
-                            </td>
-                            <td>₱{(priceWithFee * item.quantity).toFixed(2)}</td>
-                            <td>
+                    return (
+                      <div 
+                        key={item.productId?._id || Math.random()} 
+                        className={`cartarea-item-card ${isExpanded ? 'expanded' : ''} ${isSelected ? 'selected' : ''}`}
+                        onClick={(e) => handleCardClick(e, item.productId?._id)}
+                      >
+                        <div className="cartarea-item-header">
+                          <div className="cartarea-item-checkbox">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => handleCheckboxChange(item.productId?._id || null)}
+                              className="cartarea-checkbox"
+                              disabled={!item.productId}
+                            />
+                          </div>
+                          <div className="cartarea-product-info">
+                            <div
+                              className="cartarea-product-image"
+                              style={{ 
+                                backgroundColor: item.productId?.color || '#ccc',
+                                backgroundImage: item.productId?.imageUrl ? `url(${item.productId.imageUrl})` : 'none',
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center'
+                              }}
+                            ></div>
+                            <div className="cartarea-product-details">
+                              <h3>{item.productId ? item.productId.productName : 'Deleted Product'}</h3>
+                              <p className="cartarea-product-price">₱{(item.productId?.price?.toFixed(2)) || '0.00'}</p>
+                            </div>
+                          </div>
+                          <div className="cartarea-item-actions">
+                            <div className="cartarea-quantity-control">
                               <button
+                                className="cartarea-quantity-btn"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  handleRemoveItem(item.productId?._id);
+                                  handleQuantityChange(item.productId?._id, item.quantity - 1);
                                 }}
-                                className="cartarea-remove-btn"
-                                disabled={!item.productId}
+                                disabled={item.quantity <= 1}
                               >
-                                Remove
+                                <Minus size={16} />
                               </button>
-                            </td>
-                          </tr>
-                          {isExpanded && (
-                            <tr className="cartarea-expanded-details-row">
-                              <td colSpan="6">
-                                <table className="cartarea-expanded-details">
-                                  <tbody>
-                                    <tr>
-                                      <td>Product Price:</td>
-                                      <td>₱{(item.productId?.price?.toFixed(2)) || '0.00'}</td>
-                                    </tr>
-                                    <tr>
-                                      <td>Commission Fee (1%):</td>
-                                      <td>₱{((item.productId?.price || 0) * 0.01).toFixed(2)}</td>
-                                    </tr>
-                                    <tr>
-                                      <td>Total Price (with Fee):</td>
-                                      <td>₱{(priceWithFee * item.quantity).toFixed(2)}</td>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                              </td>
-                            </tr>
-                          )}
-                        </React.Fragment>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                              <span className="cartarea-quantity-value">{item.quantity}</span>
+                              <button
+                                className="cartarea-quantity-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleQuantityChange(item.productId?._id, item.quantity + 1);
+                                }}
+                              >
+                                <Plus size={16} />
+                              </button>
+                            </div>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRemoveItem(item.productId?._id);
+                              }}
+                              className="cartarea-remove-btn"
+                              disabled={!item.productId}
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
+                        </div>
+                        
+                        {isExpanded && (
+                          <div className="cartarea-expanded-details">
+                            <div className="cartarea-detail-row">
+                              <span>Product Price:</span>
+                              <span>₱{(item.productId?.price?.toFixed(2)) || '0.00'}</span>
+                            </div>
+                            <div className="cartarea-detail-row">
+                              <span>Commission Fee (1%):</span>
+                              <span>₱{((item.productId?.price || 0) * 0.01).toFixed(2)}</span>
+                            </div>
+                            <div className="cartarea-detail-row total">
+                              <span>Total Price (with Fee):</span>
+                              <span>₱{(priceWithFee * item.quantity).toFixed(2)}</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </>
             ) : (
-              <p className="cartarea-empty-message">Your cart is empty.</p>
+              <div className="cartarea-empty">
+                <ShoppingCart size={64} />
+                <p className="cartarea-empty-message">Your cart is empty.</p>
+                <Link to="/" className="cartarea-shop-link">Continue Shopping</Link>
+              </div>
             )}
 
-            <div className="cartarea-total">
-              <table className="cartarea-total-table">
-                <tbody>
-                  <tr>
-                    <td>Total Cart Price:</td>
-                    <td>₱{calculateTotal().toFixed(2)}</td>
-                  </tr>
-                </tbody>
-              </table>
-              <button
-                className="cartarea-checkout-btn"
-                disabled={selectedItems.length === 0}
-                onClick={handleOpenPaymentModal}
-              >
-                Proceed to Payment
-              </button>
-            </div>
+            {cartItems.length > 0 && (
+              <div className="cartarea-summary">
+                <div className="cartarea-total">
+                  <div className="cartarea-total-row">
+                    <span>Total Cart Price:</span>
+                    <span className="cartarea-total-amount">₱{calculateTotal().toFixed(2)}</span>
+                  </div>
+                </div>
+                <button
+                  className="cartarea-checkout-btn"
+                  disabled={selectedItems.length === 0}
+                  onClick={handleOpenPaymentModal}
+                >
+                  <CreditCard size={20} />
+                  <span>Proceed to Payment</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </main>
 
-      {/* Payment Modal */}
+      {}
       {openPaymentModal && (
         <div className="cartarea-payment-modal-overlay">
           <div className="cartarea-payment-modal-content">
@@ -417,7 +429,7 @@ const CartArea = () => {
             </div>
             <div className="cartarea-payment-modal-upload">
               <label htmlFor="cartarea-payment-modal-file-upload" className="cartarea-payment-modal-upload-label">
-                Upload an image (optional)
+                Upload the receipt / bank history
               </label>
               <input
                 type="file"

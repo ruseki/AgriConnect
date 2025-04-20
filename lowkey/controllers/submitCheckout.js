@@ -4,7 +4,6 @@ export const submitCheckout = async (req, res) => {
   try {
     const { bank, referenceNumber } = req.body;
 
-    // Multer automatically saves the uploaded file to Cloudinary
     const proofImage = req.file?.path;
 
     if (!proofImage) {
@@ -15,7 +14,7 @@ export const submitCheckout = async (req, res) => {
       userId: req.userId,
       bank,
       referenceNumber,
-      proofImage, // Save Cloudinary URL in the database
+      proofImage, 
     });
 
     await newSubmission.save();

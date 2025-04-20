@@ -14,7 +14,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   const validateToken = async (token) => {
-    // In a real app, you might want to validate the token with your backend
     return !!token;
   };
 
@@ -26,12 +25,10 @@ export const AuthProvider = ({ children }) => {
       return;
     }
 
-    // Store authentication data
     localStorage.setItem('authToken', authToken);
     localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('isAdmin', userData.isAdmin);
 
-    // Update state
     setToken(authToken);
     setUserId(userData._id);
     setUser(userData);
@@ -66,11 +63,11 @@ export const AuthProvider = ({ children }) => {
             setIsAuthenticated(true);
           } else {
             console.log('Token validation failed or invalid user data');
-            logout(); // Clear invalid auth data
+            logout(); 
           }
         } catch (error) {
           console.error('Error parsing user data:', error);
-          logout(); // Clear potentially corrupted data
+          logout(); 
         }
       } else {
         console.log('No authentication data found');

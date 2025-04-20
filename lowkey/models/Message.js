@@ -1,16 +1,16 @@
-// models/Message.js
+// Message.js
 
 import mongoose from 'mongoose';
 
 const MessageSchema = new mongoose.Schema({
   senderId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User', 
     required: true,
   },
   recipientId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User', 
     required: true,
   },
   content: {
@@ -21,7 +21,7 @@ const MessageSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-}, { timestamps: true });
+});
 
 const Message = mongoose.model('Message', MessageSchema);
 export default Message;

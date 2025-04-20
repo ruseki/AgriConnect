@@ -4,30 +4,25 @@ import express from 'express';
 import { submitCheckout, getAllCheckouts, updateCheckoutStatus, receivedCheckout, markAsDone } from '../controllers/checkoutController.js';
 import auth from '../middleware/auth.js';
 import adminMiddleware from '../middleware/adminMiddleware.js';
-import upload from '../middleware/upload.js'; // Import the upload middleware
+import upload from '../middleware/upload.js'; 
 import CheckoutSubmission from '../models/CheckoutSubmission.js';
 import UserBalance from '../models/UserBalance.js';
 import authMiddleware from '../middleware/auth.js';
 
 const router = express.Router();
 
-// User submits checkout proof
 router.post('/submit', auth, upload.single('proofImage'), submitCheckout);
 
-// Admin views all submissions
 router.get('/all-checkouts', auth, adminMiddleware, getAllCheckouts);
 
-// Admin updates the status of a checkout submission
 router.patch('/:id', auth, adminMiddleware, updateCheckoutStatus);
 
-// Buyer marks checkout as received
 router.post('/received/:id', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Fetch the checkout and populate the listing's owner
     const checkout = await CheckoutSubmission.findById(id)
-      .populate('listingId', 'userId'); // Populate listingId to get its owner
+      .populate('listingId', 'userId'); 
 
     if (!checkout) {
       console.error('Checkout not found for ID:', id);
@@ -37,7 +32,6 @@ router.post('/received/:id', authMiddleware, async (req, res) => {
     console.log('Checkout found:', checkout);
     console.log('Listing owner (userId):', checkout.listingId.userId);
 
-    // Ensure the balance is credited to the listing owner
     const sellerBalance = await UserBalance.findOne({ userId: checkout.listingId.userId });
 
     if (!sellerBalance) {
@@ -60,7 +54,6 @@ router.post('/received/:id', authMiddleware, async (req, res) => {
       await sellerBalance.save();
     }
 
-    // Mark the order as received
     checkout.BuyerStatus = 'Received';
     await checkout.save();
 
@@ -71,20 +64,17 @@ router.post('/received/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// Seller marks order as done
 router.patch('/mark-as-done/:id', auth, markAsDone);
 
-// User marks checkout as "Success"
 router.patch('/mark-success/:id', authMiddleware, async (req, res) => {
   try {
-    console.log('Request Params:', req.params); // Log incoming ID
-    console.log('Request Body:', req.body); // Log incoming body
+    console.log('Request Params:', req.params); 
+    console.log('Request Body:', req.body); 
 
     const { id } = req.params;
     const { status } = req.body;
 
-    // Fallback for missing status
-    const statusToApply = status || 'Success'; // If `status` is missing, default to "Success"
+    const statusToApply = status || 'Success'; 
 
     if (statusToApply !== 'Success') {
       console.error('Invalid status provided.');
@@ -101,7 +91,6 @@ router.patch('/mark-success/:id', authMiddleware, async (req, res) => {
       return res.status(400).json({ message: 'Checkout must be "Approved" before it can be marked as "Success".' });
     }
 
-    // Apply status and update record
     checkout.status = 'Success';
     checkout.BuyerStatus = 'Received';
     await checkout.save();

@@ -8,7 +8,7 @@ const WithdrawalSchema = new mongoose.Schema({
   method: { type: String, required: true },
   accountNumber: { type: String, required: true },
   accountName: { type: String, required: true },
-  commission: { type: Number, required: true }, // 1% commission
+  commission: { type: Number, required: true }, 
   date: { type: Date, default: Date.now },
 });
 

@@ -1,4 +1,4 @@
-// utils/product_Algorithm.js
+
 
 export const rankProducts = (listings) => {
     // ranking criteria

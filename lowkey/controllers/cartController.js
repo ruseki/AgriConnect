@@ -12,16 +12,16 @@ export const getCart = async (req, res) => {
 
     const cartItems = cart.items.map(item => {
       if (!item.productId) {
-        // Handle deleted products gracefully
+
         return {
           ...item.toObject(),
           productId: null,
-          productName: 'Deleted Product', // Add this field for the frontend
+          productName: 'Deleted Product', 
         };
       }
       return {
         ...item.toObject(),
-        productName: item.productId.productName, // Use existing product name
+        productName: item.productId.productName, 
       };
     });
 
@@ -73,7 +73,6 @@ export const removeFromCart = async (req, res) => {
       return res.status(404).json({ message: 'Cart not found' });
     }
 
-    // Filter items, including "Deleted Product"
     cart.items = cart.items.filter((item) => !item.productId || item.productId.equals(productId));
     await cart.save();
 
