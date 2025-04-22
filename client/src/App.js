@@ -19,9 +19,22 @@ import ManageCheckouts from './admin/manageCheckouts';
 import OrderStatus from './pages/OrderStatus'; 
 import SellerOrders from './pages/SellerOrdersArea';
 import WithdrawalPage from './pages/WithdrawalPage'; 
+import axios from 'axios';
 
 const App = () => {
   const loggedInUserId = localStorage.getItem('userId') || 'default-user-id';
+
+  // ✅ API Route for Inventory
+  const fetchInventory = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/inventory', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      console.log("Inventory fetched successfully:", response.data);
+    } catch (error) {
+      console.error("Error fetching inventory:", error);
+    }
+  };
 
   return (
     <AuthProvider>
@@ -102,7 +115,6 @@ const App = () => {
                 </AdminRoutes>
               }
             />
-            {}
             <Route
               path="/pending"
               element={
@@ -138,7 +150,6 @@ const App = () => {
             />
           </Routes>
 
-          {}
           <Chatbox senderId={loggedInUserId} />
         </div>
       </Router>
