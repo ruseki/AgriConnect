@@ -1,5 +1,3 @@
-/* SellerOrdersArea.js */
-
 import React, { useState, useEffect, useCallback } from 'react';
 import TopNavbar from '../components/top_navbar';
 import SideBar from '../components/side_bar';
@@ -15,7 +13,7 @@ const SellerOrdersArea = () => {
 
   const fetchSellerOrders = useCallback(async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/orders/seller-orders?BuyerStatus=${status === 'Pending' ? 'NotYetReceived' : 'Received'}`, {
+      const response = await fetch('http://localhost:5000/api/orders/seller-orders', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -24,7 +22,20 @@ const SellerOrdersArea = () => {
 
       const result = await response.json();
       if (response.ok) {
-        setOrders(result.orders || []);
+        console.log('Orders fetched:', result.orders);
+        
+        let filteredOrders = [];
+        if (status === 'Success') {
+          filteredOrders = (result.orders || []).filter(order => 
+             order.status === 'Success'
+          );
+        } else {
+          filteredOrders = (result.orders || []).filter(order => 
+            order.status === 'Pending' || order.status === 'Rejected' ||  order.status === 'Approved'
+          );
+        }
+        
+        setOrders(filteredOrders);
         setError(null);
       } else {
         setOrders([]);
@@ -44,6 +55,19 @@ const SellerOrdersArea = () => {
 
   const handleNotifyBuyer = (buyerId) => {
     alert(`Notification sent to buyer with ID: ${buyerId}`); 
+  };
+
+  const getStatusBadgeClass = (status) => {
+    switch (status) {
+      case 'Approved':
+      case 'Success':
+        return 'status-badge approved';
+      case 'Rejected':
+        return 'status-badge rejected';
+      case 'Pending':
+      default:
+        return 'status-badge pending';
+    }
   };
 
   return (
@@ -76,31 +100,61 @@ const SellerOrdersArea = () => {
             <div className="seller-orders-container">
               {orders.map((order) => (
                 <div key={order._id} className="order-card">
-                  <p>
-                    <strong>Buyer:</strong> {`${order.userId.first_name} ${order.userId.last_name}`}
-                  </p>
-                  <p>
-                    <strong>Product:</strong> {order.listingId?.productName || 'No Product Details'}
-                  </p>
-                  <p>
-                    <strong>Price:</strong> {new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(order.totalPrice || 0)}
-                  </p>
-                  <p>
-                    <strong>Buyer Status:</strong> {order.BuyerStatus || 'NotYetReceived'}
-                  </p>
-                  {status === 'Pending' && (
-                    <button
-                      onClick={() => handleNotifyBuyer(order.userId?._id)}
-                      className="notify-btn"
-                    >
-                      Notify
-                    </button>
+                  <div className="order-header">
+                    <h3>{order.productName}</h3>
+                    <span className={getStatusBadgeClass(order.status)}>
+                      {order.status}
+                    </span>
+                  </div>
+                  
+                  <div className="order-details">
+                    <p>
+                      <strong>Buyer:</strong> {order.buyerName}
+                    </p>
+                    <p>
+                      <strong>Quantity:</strong> {order.quantity} {order.unit}
+                    </p>
+                    <p>
+                      <strong>Price:</strong> {new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(order.totalPrice || 0)}
+                    </p>
+                    <p>
+                      <strong>Buyer Status:</strong> {order.buyerStatus === 'NotYetReceived' ? 'Not Yet Received' : 'Received'}
+                    </p>
+                    
+                    {order.approvalNote && (
+                      <p className="approval-note">
+                        <strong>Note:</strong> {order.approvalNote}
+                      </p>
+                    )}
+                    
+                    {order.reviewedAt && (
+                      <p className="reviewed-date">
+                        <strong>Reviewed:</strong> {new Date(order.reviewedAt).toLocaleDateString()}
+                      </p>
+                    )}
+                    
+                    {order.submittedAt && (
+                      <p className="submitted-date">
+                        <strong>Submitted:</strong> {new Date(order.submittedAt).toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
+                  
+                  {status === 'Pending' && order.buyerStatus === 'NotYetReceived' && (
+                    <div className="order-actions">
+                      <button
+                        onClick={() => handleNotifyBuyer(order.buyerId || order.buyerEmail)}
+                        className="notify-btn"
+                      >
+                        Notify Buyer
+                      </button>
+                    </div>
                   )}
                 </div>
               ))}
             </div>
           ) : (
-            <p>No orders found.</p>
+            <p className="no-orders">No orders found.</p>
           )}
         </div>
       </div>

@@ -36,22 +36,22 @@ const SellArea = () => {
   ];
 
   const categories = {
-    'Cereal Crops': ['Wheat', 'Rice', 'Corn', 'Barley', 'Oats', 'Millet'],
-    'Vegetables': ['Tomatoes', 'Carrots', 'Lettuce', 'Spinach', 'Broccoli', 'Potatoes'],
-    'Fruits': ['Apples', 'Bananas', 'Oranges', 'Grapes', 'Mangoes', 'Strawberries'],
-    'Legumes': ['Beans', 'Peas', 'Lentils', 'Soybeans'],
-    'Root Crops': ['Potatoes', 'Carrots', 'Beets', 'Sweet Potatoes'],
-    'Tuber Crops': ['Potatoes', 'Yams'],
-    'Oilseeds': ['Sunflower', 'Soybean', 'Canola', 'Peanut'],
-    'Fiber Crops': ['Cotton', 'Hemp', 'Flax'],
-    'Spices': ['Black Pepper', 'Ginger', 'Turmeric', 'Chili'],
+    'Cereal Crops': ['Barley', 'Black Rice', 'Brown Rice', 'Corn', 'Millet', 'Oats', 'Sorghum', 'Wheat', 'White Rice'],
+    'Vegetables': ['Asparagus', 'Beets', 'Bell Peppers', 'Broccoli', 'Brussels Sprouts', 'Cabbage', 'Carrots', 'Cauliflower', 'Celery', 'Chard', 'Cucumber', 'Eggplant', 'Garlic', 'Green Beans', 'Kale', 'Leeks', 'Lettuce', 'Mushrooms', 'Okra', 'Onions', 'Parsnips', 'Peas', 'Potatoes', 'Pumpkin', 'Radishes', 'Spinach', 'Squash', 'Sweet Corn', 'Sweet Potatoes', 'Tomatoes', 'Turnips', 'Zucchini'],
+    'Fruits': ['Apples', 'Avocado', 'Bananas', 'Blueberries', 'Cherries', 'Dragon Fruit', 'Grapes', 'Kiwi', 'Lemon', 'Lychee', 'Mangoes', 'Melon', 'Oranges', 'Papaya', 'Peach', 'Pear', 'Pineapple', 'Plum', 'Raspberry', 'Strawberries', 'Watermelon'],
+    'Legumes': ['Beans', 'Lentils', 'Peas', 'Soybeans'],
+    'Root Crops': ['Beets', 'Carrots', 'Cassava', 'Ginger', 'Parsnips', 'Potatoes', 'Radishes', 'Sweet Potatoes', 'Turnips', 'Yams'],
+    'Tuber Crops': ['Arrowroot', 'Cassava', 'Potatoes', 'Sweet Potatoes', 'Taro', 'Turnips', 'Yams'],
+    'Oilseeds': ['Canola', 'Castor', 'Coconut', 'Cottonseed', 'Flaxseed', 'Groundnut', 'Linseed', 'Mustard', 'Palm Kernel', 'Peanut', 'Rapeseed', 'Sesame', 'Soybean', 'Sunflower'],
+    'Fiber Crops': ['Cotton', 'Flax', 'Hemp'],
+    'Spices': ['Black Pepper', 'Chili', 'Ginger', 'Turmeric'],
     'Forage Crops': ['Alfalfa', 'Clover', 'Ryegrass'],
     'Medicinal Crops': ['Aloe Vera', 'Ginseng', 'Lavender'],
-    'Timber/Forestry Crops': ['Pine', 'Oak', 'Eucalyptus', 'Bamboo'],
+    'Timber/Forestry Crops': ['Bamboo', 'Eucalyptus', 'Oak', 'Pine'],
     'Cover Crops': ['Clover', 'Rye', 'Vetch'],
-    'Cash Crops': ['Coffee', 'Tea', 'Sugarcane', 'Tobacco'],
-    'Horticultural Crops': ['Fruits', 'Vegetables', 'Flowers'],
-    'Seed Crops': ['Sunflower Seeds', 'Canola Seeds', 'Vegetable Seeds'],
+    'Cash Crops': ['Coffee', 'Sugarcane', 'Tea', 'Tobacco'],
+    'Horticultural Crops': ['Flowers', 'Fruits', 'Vegetables'],
+    'Seed Crops': ['Canola Seeds', 'Sunflower Seeds', 'Vegetable Seeds'],
   };
 
   
