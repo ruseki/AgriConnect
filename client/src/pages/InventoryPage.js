@@ -1,138 +1,222 @@
-/* InventoryPage.js */
-
 import React, { useState, useEffect } from 'react';
-import './css/InventoryPage.css'; // Import the updated stylesheet
+import './css/InventoryPage.css';
 import TopNavbar from '../components/top_navbar';
 import SideBar from '../components/side_bar';
 import { useAuth } from '../components/AuthProvider';
 import axios from 'axios';
 
+const categories = {
+  'Cereal Crops': ['Barley', 'Black Rice', 'Brown Rice', 'Corn', 'Millet', 'Oats', 'Sorghum', 'Wheat', 'White Rice'],
+  'Vegetables': ['Asparagus', 'Beets', 'Bell Peppers', 'Broccoli', 'Brussels Sprouts', 'Cabbage', 'Carrots', 'Cauliflower', 'Celery', 'Chard', 'Cucumber', 'Eggplant', 'Garlic', 'Green Beans', 'Kale', 'Leeks', 'Lettuce', 'Mushrooms', 'Okra', 'Onions', 'Parsnips', 'Peas', 'Potatoes', 'Pumpkin', 'Radishes', 'Spinach', 'Squash', 'Sweet Corn', 'Sweet Potatoes', 'Tomatoes', 'Turnips', 'Zucchini'],
+  'Fruits': ['Apples', 'Avocado', 'Bananas', 'Blueberries', 'Cherries', 'Dragon Fruit', 'Grapes', 'Kiwi', 'Lemon', 'Lychee', 'Mangoes', 'Melon', 'Oranges', 'Papaya', 'Peach', 'Pear', 'Pineapple', 'Plum', 'Raspberry', 'Strawberries', 'Watermelon'],
+  'Legumes': ['Beans', 'Lentils', 'Peas', 'Soybeans'],
+};
+
 const InventoryPage = () => {
   const { token } = useAuth();
   const [inventoryItems, setInventoryItems] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // State for the modal and form
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedProduct, setSelectedProduct] = useState('');
+  const [showOtherDetails, setShowOtherDetails] = useState(false);
+  const [breakEvenPrices, setBreakEvenPrices] = useState([]);
+
   const [formData, setFormData] = useState({
     productName: '',
     category: '',
-    cropType: '',
-    equipment: '',
-    quantity: 0,
-    unit: 'kilograms', // Default value
-    price: 0,
+    price: '',
+    unit: 'kilograms',
+    quantity: '',
+    expirationDate: '',
     plantingDate: '',
     harvestingDate: '',
-    expirationDate: '',
+    supplySchedule: 'weekly',
+    stockThreshold: 10,
+    supplyCapacityDaily: '',
+    supplyCapacityWeekly: '',
+    stockAvailability: '',
   });
 
-  useEffect(() => {
-    const fetchInventory = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/inventory', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+  const [additionalDetails, setAdditionalDetails] = useState({
+    storageTemp: '',
+    humidity: '',
+    packagingType: '',
+    certificationType: '',
+    processingMethod: '',
+    packagingSize: '',
+    preferredSoil: '',
+    bestClimate: '',
+    batchNumber: '',
+    qrCodeUrl: '',
+    supplierInfo: '',
+    deliveryOptions: '',
+  });
 
-        if (response.status === 200) {
-          setInventoryItems(response.data.inventoryItems || []);
-        } else {
-          console.error('Failed to fetch inventory:', response.data.message);
-        }
-      } catch (error) {
-        console.error('Error fetching inventory:', error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (token) {
-      fetchInventory();
-    }
-  }, [token]);
-
-  const handleDelete = async (id) => {
+  const fetchInventory = async () => {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/inventory/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const response = await axios.get('http://localhost:5000/api/inventory', {
+        headers: { Authorization: `Bearer ${token}` }
       });
-
-      if (response.status === 200) {
-        setInventoryItems((prev) => prev.filter((item) => item._id !== id));
-        alert('Inventory item deleted successfully!');
-      } else {
-        console.error('Failed to delete inventory item:', response.data.message);
-      }
+  
+      console.log('Fetched inventory response:', response.data); 
+      setInventoryItems(response.data.inventoryItems || []);
     } catch (error) {
-      console.error('Error deleting inventory item:', error.message);
-      alert('Failed to delete inventory item.');
+      console.error('❌ Error fetching inventory:', error.response ? error.response.data : error.message);
     }
   };
+
+  useEffect(() => {
+    fetchInventory();
+  }, [token]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if (additionalDetails.hasOwnProperty(name)) {
+      setAdditionalDetails(prev => ({ ...prev, [name]: value }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
-  const handleAddProduct = async () => {
+  const handleCategoryChange = (e) => {
+    const category = e.target.value;
+    setSelectedCategory(category);
+    setSelectedProduct('');
+    setFormData(prev => ({ ...prev, category }));
+  };
+
+  const handleProductChange = (e) => {
+    const product = e.target.value;
+    setSelectedProduct(product);
+    setFormData(prev => ({ ...prev, productName: product }));
+  };
+
+  const handleAddBreakEvenPrice = () => {
+    if (
+      breakEvenPrices.length === 0 ||
+      (breakEvenPrices.at(-1).price && breakEvenPrices.at(-1).startDate && breakEvenPrices.at(-1).endDate)
+    ) {
+      setBreakEvenPrices([...breakEvenPrices, { price: '', startDate: '', endDate: '' }]);
+    } else {
+      alert('Please fill in the previous Break-Even Price before adding another.');
+    }
+  };
+
+  const handleBreakEvenPriceChange = (index, field, value) => {
+    const updated = [...breakEvenPrices];
+    updated[index][field] = value;
+    setBreakEvenPrices(updated);
+  };
+
+  const toggleOtherDetails = () => setShowOtherDetails(prev => !prev);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+  if (!formData.productName || !formData.category) {
+    alert('❌ Product Name and Category are required.');
+    return;
+  }
+
+  if (isNaN(formData.price) || formData.price <= 0) {
+    alert('❌ Price must be a positive number.');
+    return;
+  }
+
+  if (isNaN(formData.quantity) || formData.quantity <= 0) {
+    alert('❌ Quantity must be a positive number.');
+    return;
+  }
+
+  if (isNaN(formData.stockThreshold) || formData.stockThreshold < 0) {
+    alert('❌ Stock Threshold must be a non-negative number.');
+    return;
+  }
+
+  if (isNaN(formData.supplyCapacityDaily) || formData.supplyCapacityDaily < 0) {
+    alert('❌ Supply Capacity Daily must be a non-negative number.');
+    return;
+  }
+
+  if (isNaN(formData.supplyCapacityWeekly) || formData.supplyCapacityWeekly < 0) {
+    alert('❌ Supply Capacity Weekly must be a non-negative number.');
+    return;
+  }
+
+  for (const [index, entry] of breakEvenPrices.entries()) {
+    if (!entry.price || isNaN(entry.price) || entry.price <= 0) {
+      alert(`❌ Break-Even Price at row ${index + 1} must be a positive number.`);
+      return;
+    }
+    if (!entry.startDate || !entry.endDate) {
+      alert(`❌ Start Date and End Date are required for Break-Even Price at row ${index + 1}.`);
+      return;
+    }
+    if (new Date(entry.startDate) > new Date(entry.endDate)) {
+      alert(`❌ Start Date cannot be later than End Date for Break-Even Price at row ${index + 1}.`);
+      return;
+    }
+  }
     try {
-      const response = await axios.post(
-        'http://localhost:5000/api/inventory',
-        { ...formData },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      if (response.status === 201) {
-        setInventoryItems((prev) => [...prev, response.data.inventory]);
-        alert('Inventory item added successfully!');
-        setIsModalOpen(false); 
-        setFormData({
-          productName: '',
-          category: '',
-          cropType: '',
-          equipment: '',
-          quantity: 0,
-          unit: 'kilograms',
-          price: 0,
-          plantingDate: '',
-          harvestingDate: '',
-          expirationDate: '',
-        });
-      } else {
-        console.error('Failed to add inventory item:', response.data.message);
-      }
-    } catch (error) {
-      console.error('Error adding inventory item:', error.message);
-      alert('Failed to add inventory item.');
+      const payload = {
+        ...formData,
+        breakEvenPrices,
+        additionalDetails,
+        userId: localStorage.getItem('userId'),
+      };
+  
+      payload.quantity = Number(payload.quantity);
+  
+      await axios.post('http://localhost:5000/api/inventory', payload, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+  
+      alert('✅ Product added successfully!');
+      setIsModalOpen(false);
+      resetForm();
+      fetchInventory(); 
+    } catch (err) {
+      console.error('❌ Submission error:', err);
+      alert('Failed to add product.');
     }
   };
 
-  const renderInventoryItems = () => {
-    if (isLoading) {
-      return <p>Loading inventory...</p>;
-    }
-
-    if (!inventoryItems.length) {
-      return <p className="inventory-empty">No inventory items available.</p>;
-    }
-
-    return inventoryItems.map((item) => (
-      <div key={item._id} className="inventory-item">
-        <span className="inventory-item-name">{item.productName}</span>
-        <span className="inventory-item-category">{item.category}</span>
-        <span className="inventory-item-crop-type">{item.cropType}</span>
-        <span className="inventory-item-equipment">{item.equipment}</span>
-        <span className="inventory-item-quantity">{item.quantity} {item.unit}</span>
-        <span className="inventory-item-price">₱{item.price}</span>
-        <span className="inventory-item-dates">
-          {item.plantingDate ? `Planting: ${new Date(item.plantingDate).toLocaleDateString()}` : ''}
-          {item.harvestingDate ? ` | Harvesting: ${new Date(item.harvestingDate).toLocaleDateString()}` : ''}
-          {item.expirationDate ? ` | Expiration: ${new Date(item.expirationDate).toLocaleDateString()}` : ''}
-        </span>
-        <button className="inventory-delete-btn" onClick={() => handleDelete(item._id)}>Delete</button>
-      </div>
-    ));
+  const resetForm = () => {
+    setFormData({
+      productName: '',
+      category: '',
+      price: '',
+      unit: 'kilograms',
+      quantity: '',
+      expirationDate: '',
+      plantingDate: '',
+      harvestingDate: '',
+      supplySchedule: 'weekly',
+      stockThreshold: 10,
+      supplyCapacityDaily: '',
+      supplyCapacityWeekly: '',
+      stockAvailability: '',
+    });
+    setAdditionalDetails({
+      storageTemp: '',
+      humidity: '',
+      packagingType: '',
+      certificationType: '',
+      processingMethod: '',
+      packagingSize: '',
+      preferredSoil: '',
+      bestClimate: '',
+      batchNumber: '',
+      qrCodeUrl: '',
+      supplierInfo: '',
+      deliveryOptions: '',
+    });
+    setBreakEvenPrices([]);
+    setSelectedCategory('');
+    setSelectedProduct('');
+    setShowOtherDetails(false);
   };
+  
 
   return (
     <>
@@ -140,120 +224,152 @@ const InventoryPage = () => {
       <SideBar />
       <div className="inventory-container">
         <h1 className="inventory-title">Inventory Management</h1>
-        <div className="inventory-list">
-          {renderInventoryItems()}
-        </div>
         <button className="inventory-add-product-btn" onClick={() => setIsModalOpen(true)}>Add Product</button>
-
+  
+        {}
+        <div className="inventory-table-container" style={{ overflowX: 'auto' }}>
+          <table className="inventory-table">
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Unit</th>
+                <th>Quantity</th>
+                <th>Expiration Date</th>
+                <th>Planting Date</th>
+                <th>Harvesting Date</th>
+                <th>Supply Schedule</th>
+                <th>Stock Threshold</th>
+                <th>Supply Capacity Daily</th>
+                <th>Supply Capacity Weekly</th>
+                <th>Stock Availability</th>
+                <th>Storage Temp</th>
+                <th>Humidity</th>
+                <th>Packaging Type</th>
+                <th>Certification Type</th>
+                <th>Processing Method</th>
+                <th>Packaging Size</th>
+                <th>Preferred Soil</th>
+                <th>Best Climate</th>
+                <th>Batch Number</th>
+                <th>QR Code URL</th>
+                <th>Supplier Info</th>
+                <th>Delivery Options</th>
+                <th>Created At</th>
+              </tr>
+            </thead>
+            <tbody>
+              {inventoryItems.length > 0 ? (
+                inventoryItems.map((item) => (
+                  <tr key={item._id}>
+                    <td>{item.productName}</td>
+                    <td>{item.category}</td>
+                    <td>{item.price}</td>
+                    <td>{item.unit}</td>
+                    <td>{item.quantity}</td>
+                    <td>{item.expirationDate}</td>
+                    <td>{item.plantingDate}</td>
+                    <td>{item.harvestingDate}</td>
+                    <td>{item.supplySchedule}</td>
+                    <td>{item.stockThreshold}</td>
+                    <td>{item.supplyCapacityDaily}</td>
+                    <td>{item.supplyCapacityWeekly}</td>
+                    <td>{item.stockAvailability}</td>
+                    <td>{item.additionalDetails?.storageTemp}</td>
+                    <td>{item.additionalDetails?.humidity}</td>
+                    <td>{item.additionalDetails?.packagingType}</td>
+                    <td>{item.additionalDetails?.certificationType}</td>
+                    <td>{item.additionalDetails?.processingMethod}</td>
+                    <td>{item.additionalDetails?.packagingSize}</td>
+                    <td>{item.additionalDetails?.preferredSoil}</td>
+                    <td>{item.additionalDetails?.bestClimate}</td>
+                    <td>{item.additionalDetails?.batchNumber}</td>
+                    <td>{item.additionalDetails?.qrCodeUrl}</td>
+                    <td>{item.additionalDetails?.supplierInfo}</td>
+                    <td>{item.additionalDetails?.deliveryOptions}</td>
+                    <td>{new Date(item.createdAt).toLocaleDateString()}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr><td colSpan="26">No inventory items found.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+  
         {isModalOpen && (
           <div className="inventory-modal">
             <div className="inventory-modal-overlay" onClick={() => setIsModalOpen(false)}></div>
-            <div className="inventory-modal-content">
+            <div className="inventory-modal-content" style={{ overflowY: 'auto', maxHeight: '80vh' }}>
               <h2>Add New Product</h2>
-              <form>
-                <label>
-                  Product Name:
-                  <input
-                    type="text"
-                    name="productName"
-                    value={formData.productName}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </label>
-                <label>
-                  Category:
-                  <input
-                    type="text"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </label>
-                <label>
-                  Crop Type:
-                  <input
-                    type="text"
-                    name="cropType"
-                    value={formData.cropType}
-                    onChange={handleInputChange}
-                  />
-                </label>
-                <label>
-                  Equipment:
-                  <input
-                    type="text"
-                    name="equipment"
-                    value={formData.equipment}
-                    onChange={handleInputChange}
-                  />
-                </label>
-                <label>
-                  Quantity:
-                  <input
-                    type="number"
-                    name="quantity"
-                    value={formData.quantity}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </label>
-                <label>
-                  Unit:
-                  <input
-                    type="text"
-                    name="unit"
-                    value={formData.unit}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </label>
-                <label>
-                  Price:
-                  <input
-                    type="number"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </label>
-                <label>
-                  Planting Date:
-                  <input
-                    type="date"
-                    name="plantingDate"
-                    value={formData.plantingDate}
-                    onChange={handleInputChange}
-                  />
-                </label>
-                <label>
-                  Harvesting Date:
-                  <input
-                    type="date"
-                    name="harvestingDate"
-                    value={formData.harvestingDate}
-                    onChange={handleInputChange}
-                  />
-                </label>
-                <label>
-                  Expiration Date:
-                  <input
-                    type="date"
-                    name="expirationDate"
-                    value={formData.expirationDate}
-                    onChange={handleInputChange}
-                  />
-                </label>
-                <button type="button" className="inventory-submit-btn" onClick={handleAddProduct}>Submit</button>
+              <form onSubmit={handleSubmit}>
+                <label>Category:</label>
+                <select name="category" value={selectedCategory} onChange={handleCategoryChange} required>
+                  <option value="">Select Category</option>
+                  {Object.keys(categories).map((cat) => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+  
+                {selectedCategory && (
+                  <>
+                    <label>Product:</label>
+                    <select name="productName" value={selectedProduct} onChange={handleProductChange} required>
+                      <option value="">Select Product</option>
+                      {categories[selectedCategory].map((prod) => (
+                        <option key={prod} value={prod}>{prod}</option>
+                      ))}
+                    </select>
+                  </>
+                )}
+  
+                {Object.keys(formData).map((field) =>
+                  field !== 'category' && field !== 'productName' && (
+                    <div key={field}>
+                      <label>{field.replace(/([A-Z])/g, ' $1')}</label>
+                      <input
+                        type={
+                          ['expirationDate', 'plantingDate', 'harvestingDate'].includes(field)
+                            ? 'date'
+                            : typeof formData[field] === 'number'
+                            ? 'number'
+                            : 'text'
+                        }
+                        name={field}
+                        value={formData[field]}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  )
+                )}
+  
+                <button type="button" onClick={handleAddBreakEvenPrice} className="custom-btn green">Add Break-Even Price</button>
+  
+                {breakEvenPrices.map((entry, index) => (
+                  <div key={index} className="break-even-field">
+                    <input type="number" placeholder="Price" value={entry.price} onChange={(e) => handleBreakEvenPriceChange(index, 'price', e.target.value)} />
+                    <input type="date" placeholder="Start Date" value={entry.startDate} onChange={(e) => handleBreakEvenPriceChange(index, 'startDate', e.target.value)} />
+                    <input type="date" placeholder="End Date" value={entry.endDate} onChange={(e) => handleBreakEvenPriceChange(index, 'endDate', e.target.value)} />
+                  </div>
+                ))}
+  
+                <button type="button" onClick={toggleOtherDetails} className="custom-btn blue">Add Additional Details</button>
+  
+                {showOtherDetails && Object.keys(additionalDetails).map((field) => (
+                  <div key={field}>
+                    <label>{field.replace(/([A-Z])/g, ' $1')}</label>
+                    <input type="text" name={field} value={additionalDetails[field]} onChange={handleInputChange} />
+                  </div>
+                ))}
+  
+                <button type="submit" className="inventory-submit-btn">Submit</button>
               </form>
             </div>
           </div>
         )}
       </div>
     </>
-  );
-};
-
-export default InventoryPage;
+  ); };
+  
+  export default InventoryPage;

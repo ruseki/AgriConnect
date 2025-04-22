@@ -47,13 +47,8 @@ UserSchema.pre('validate', async function (next) {
     this.userId = uniqueId;
   }
 
-  if (this.isModified('password')) {
-    const hash = await bcrypt.hash(this.password, 10);
-    this.password = hash;
-  }
-
   next();
-});
+}); 
 
 const User = mongoose.model('User', UserSchema);
 export default User;
