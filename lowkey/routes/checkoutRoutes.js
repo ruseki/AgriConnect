@@ -55,6 +55,7 @@ router.post('/received/:id', authMiddleware, async (req, res) => {
     }
 
     checkout.BuyerStatus = 'Received';
+    checkout.status = 'Success'
     await checkout.save();
 
     res.status(200).json({ message: 'Order marked as Received successfully.', checkout });
