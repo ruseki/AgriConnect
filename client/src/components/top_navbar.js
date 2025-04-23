@@ -4,11 +4,12 @@ import { useAuth } from "./AuthProvider";
 import { Link, useNavigate } from "react-router-dom";
 import "./css/TopNavbar.css";
 
-const TopNavbar = ({ handleOpenSignIn }) => {
+const TopNavbar = ({ handleOpenSignIn, onSearch }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { isAuthenticated, logout, isLoading } = useAuth();
   const navigate = useNavigate();
   const [cartCount, setCartCount] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleDropdownToggle = () => {
     setDropdownOpen(!dropdownOpen);
@@ -31,6 +32,19 @@ const TopNavbar = ({ handleOpenSignIn }) => {
     navigate("/");
   };
 
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+    if (onSearch) {
+      onSearch(event.target.value); 
+    }
+  };
+
+  const handleSearchKeyPress = (event) => {
+    if (event.key === "Enter" && onSearch) {
+      onSearch(searchQuery); 
+    }
+  };
+
   if (isLoading) {
     console.log("TopNavbar - Loading...");
     return null;
@@ -43,10 +57,22 @@ const TopNavbar = ({ handleOpenSignIn }) => {
         <div className="navbar-search">
           <Search className="search-icon" />
           <input
-            type="text"
-            placeholder="Search in AgriConnect..."
-            className="search-input"
-          />
+  type="text"
+  placeholder="Search in AgriConnect..."
+  className="search-input"
+  value={searchQuery}
+  onChange={(e) => {
+    setSearchQuery(e.target.value);
+    if (onSearch) {
+      onSearch(e.target.value); 
+    }
+  }}
+  onKeyDown={(e) => {
+    if (e.key === "Enter" && onSearch) {
+      onSearch(searchQuery); 
+    }
+  }}
+/>
           {!isAuthenticated ? (
             <button className="sign-in-button" onClick={handleOpenSignIn}>
               Sign In
@@ -72,16 +98,10 @@ const TopNavbar = ({ handleOpenSignIn }) => {
                 {dropdownOpen && (
                   <div className="dropdown-menu">
                     <div className="dropdown-section">
-                      <button
-                        className="dropdown-item"
-                        onClick={() => navigate("/profile")}
-                      >
+                      <button className="dropdown-item" onClick={() => navigate("/profile")}>
                         Profile
                       </button>
-                      <button
-                        className="dropdown-item"
-                        onClick={() => navigate("/settings")}
-                      >
+                      <button className="dropdown-item" onClick={() => navigate("/settings")}>
                         Settings
                       </button>
                     </div>
