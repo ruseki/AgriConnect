@@ -155,13 +155,21 @@ router.patch('/mark-as-sold/:id', auth, async (req, res) => {
   }
 });
 
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', auth, upload.single('image'), async (req, res) => {
   try {
     console.log('Incoming PUT request to update a listing. Listing ID:', req.params.id);
     console.log('Incoming Payload:', req.body);
 
     const { productName, quantity, unit, category, condition, details, location, price, color } = req.body;
     const { id } = req.params;
+
+    const existingListing = await Listing.findById(id);
+    if (!existingListing) {
+      console.log('Listing not found. Listing ID:', id);
+      return res.status(404).json({ message: 'Listing not found' });
+    }
+
+    const imageUrl = req.file ? req.file.path : existingListing.imageUrl; // 🔹 Preserve old image if no new one is uploaded
 
     const updatedListing = await Listing.findByIdAndUpdate(
       id,
@@ -175,18 +183,14 @@ router.put('/:id', auth, async (req, res) => {
         location,
         price,
         color,
+        imageUrl, 
       },
       { new: true }
     );
 
-    if (!updatedListing) {
-      console.log('Listing not found. Listing ID:', id);
-      return res.status(404).json({ message: 'Listing not found' });
-    }
-
     console.log('Listing successfully updated:', updatedListing);
-
     res.status(200).json({ message: 'Listing updated successfully', updatedListing });
+
   } catch (error) {
     console.error('Error updating listing:', error.message);
     res.status(500).json({ message: 'Error updating listing', error: error.message });
