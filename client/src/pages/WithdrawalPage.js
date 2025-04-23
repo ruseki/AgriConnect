@@ -118,7 +118,7 @@ const WithdrawalPage = () => {
         {}
         <div className="withdraw-funds-section">
           <div className="withdraw-balance">
-            <p>Current Balance: ₱{balance.toFixed(2)}</p>
+          <p>Current Balance: ₱{balance.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</p>
             <button onClick={() => setShowModal(true)} className="withdraw-btn">
               Withdraw
             </button>
@@ -155,8 +155,8 @@ const WithdrawalPage = () => {
               <h2>Withdraw Funds</h2>
               
               <div className="withdraw-modal-form-group">
-                <label>Available Balance</label>
-                <p>₱{balance.toFixed(2)}</p>
+              <label>Available Balance</label>
+              <p>₱{balance.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</p>
               </div>
 
               <div className="withdraw-modal-form-group">
