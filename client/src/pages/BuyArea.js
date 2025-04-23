@@ -1,5 +1,3 @@
-//BuyArea.js
-
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { User } from 'lucide-react';
@@ -23,6 +21,8 @@ const BuyArea = () => {
   const [recipientId, setRecipientId] = useState(null);
   const [recipientName, setRecipientName] = useState(''); 
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState(""); 
+  
 
   const fetchListings = useCallback(async () => {
     try {
@@ -31,9 +31,18 @@ const BuyArea = () => {
       });
 
       if (response.status === 200) {
-        const allListings = response.data.listings.filter((listing) => {
+        let allListings
+
+        // eto if di dapat makita yung nilist ni seller
+        /* allListings = response.data.listings.filter((listing) => {
           return listing.userId !== userId; 
         });
+        */
+
+        // eto naman if need makita yung nilist ni seller sa buy are
+        allListings = response.data?.listings
+
+        console.log(allListings)
 
         setListings(allListings);
       } else {
@@ -59,6 +68,16 @@ const BuyArea = () => {
   const handleCloseBuyModal = () => {
     setSelectedProduct(null);
     setOpenBuyModal(false);
+  };
+
+  const filteredListings = listings.filter((listing) => {
+    const matchesProduct = listing.productName?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = listing.category?.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesProduct || matchesCategory;
+  });
+
+  const handleSearchUpdate = (searchValue) => {
+    setSearchTerm(searchValue);
   };
 
   const handleAddToCart = async () => {
@@ -116,40 +135,64 @@ const BuyArea = () => {
     setShowMenu(false); 
   };
 
+  const renderSellerSuccessBadge = (successCount) => {
+    let badgeClass = "seller-success-badge";
+    let badgeText = "";
+    
+    if (successCount === 0) {
+      badgeClass += " new-seller";
+      badgeText = "New Seller";
+    } else if (successCount < 5) {
+      badgeClass += " beginner-seller";
+      badgeText = "Beginner";
+    } else if (successCount < 20) {
+      badgeClass += " experienced-seller";
+      badgeText = "Experienced";
+    } else {
+      badgeClass += " trusted-seller";
+      badgeText = "Trusted Seller";
+    }
+    
+    return <span className={badgeClass}>{badgeText}</span>;
+  };
   return (
     <>
-      <TopNavbar />
+      <TopNavbar onSearch={setSearchTerm} /> {}
       <main className="main" onClick={handleClickOutside}>
         <SideBar />
         <div className="main-content">
           <div className="listings-container">
-            {listings.length > 0 ? (
-              listings.map((listing) => (
-<div
-  key={listing._id}
-  className="listing-card"
-  onClick={() => handleOpenBuyModal(listing)}
->
-  <div
-    className="image-placeholder"
-    style={{ backgroundColor: listing.color || '#f1f1f1' }}
-  ></div>
-
-  <div className="listing-content">
-    <h3>{listing.productName}</h3>
-    <p>Category: {listing.category}</p>
-    <p>Price: ₱{listing.price}</p>
-    <p>
-      Available Stocks: {listing.quantity} {listing.unit}
-    </p>
-    <User
-      size={30}
-      className="user-icon"
-      onContextMenu={(e) => handleRightClick(e, listing)}
+            {filteredListings.length > 0 ? ( 
+              filteredListings.map((listing) => (
+                <div
+                  key={listing._id}
+                  className="listing-card"
+                  onClick={() => handleOpenBuyModal(listing)}
+                >
+  <div className="image-placeholder">
+    <img 
+      src={listing.imageUrl ? listing.imageUrl : "default-image.jpg"} 
+      alt={listing.productName} 
+      className="listing-product-image"
     />
   </div>
-</div>
 
+
+                  <div className="listing-content">
+                    <h3>{listing.productName}</h3>
+                    <p>Category: {listing.category}</p>
+                    <p>Price: ₱{listing.price}</p>
+                    <p>
+                      Available Stocks: {listing.quantity} {listing.unit}
+                    </p>
+                    <div className="seller-info">
+
+                      {listing.sellerSuccessCount !== undefined && (
+                        renderSellerSuccessBadge(listing.sellerSuccessCount)
+                      )}
+                    </div>
+                  </div>
+                </div>
               ))
             ) : (
               <p>No products available.</p>
@@ -163,10 +206,10 @@ const BuyArea = () => {
                 <button className="close-modal-btn" onClick={handleCloseBuyModal}>
                   &times;
                 </button>
-                <div
-                  className="image-placeholder-modal"
-                  style={{ backgroundColor: selectedProduct.color || '#f1f1f1' }}
-                ></div>
+                <div 
+  className="image-placeholder-modal" 
+  style={{ backgroundImage: `url(${selectedProduct.imageUrl ? selectedProduct.imageUrl : "default-image.jpg"})` }}
+></div>
                 <div className="product-header">
                   <h2>{selectedProduct.productName}</h2>
                   <User
@@ -203,9 +246,19 @@ const BuyArea = () => {
                     </div>
                   )}
                 </div>
-                <p className="user-info">
-                  User: <strong>{selectedProduct.seller || 'Unknown'}</strong>
-                </p>
+                <div className="seller-details">
+                  <p className="user-info">
+                    User: <strong>{selectedProduct.seller || 'Unknown'}</strong>
+                  </p>
+                  {selectedProduct.sellerSuccessCount !== undefined && (
+                    <div className="seller-success-info">
+                      {renderSellerSuccessBadge(selectedProduct.sellerSuccessCount)}
+                      <span className="success-transactions">
+                        ({selectedProduct.sellerSuccessCount} successful transactions)
+                      </span>
+                    </div>
+                  )}
+                </div>
                 <p>
                   <strong>Price:</strong> ₱{selectedProduct.price}
                 </p>
@@ -269,18 +322,16 @@ const BuyArea = () => {
         </div>
       </main>
 
-      {}
       {showChatbox && (
         <Chatbox
-        senderId={userId} 
-        recipientId={recipientId} 
-        recipientName={recipientName}
-        onClose={() => setShowChatbox(false)}
-      />
-    
+          senderId={userId} 
+          recipientId={recipientId} 
+          recipientName={recipientName}
+          onClose={() => setShowChatbox(false)}
+        />
       )}
     </>
   );
 };
 
-export default BuyArea;
+export default BuyArea; 
