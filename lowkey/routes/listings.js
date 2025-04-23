@@ -4,7 +4,7 @@ import express from 'express';
 import auth from '../middleware/auth.js';
 import { addIdentifier } from '../middleware/list.js';
 import Listing from '../models/Listing.js';
-import upload from '../middleware/upload.js'; // 🔹 Properly import multer config
+import upload from '../middleware/upload.js'; 
 
 const router = express.Router();
 
@@ -169,7 +169,7 @@ router.put('/:id', auth, upload.single('image'), async (req, res) => {
       return res.status(404).json({ message: 'Listing not found' });
     }
 
-    const imageUrl = req.file ? req.file.path : existingListing.imageUrl; // 🔹 Preserve old image if no new one is uploaded
+    const imageUrl = req.file ? req.file.path : existingListing.imageUrl; 
 
     const updatedListing = await Listing.findByIdAndUpdate(
       id,
