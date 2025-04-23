@@ -236,27 +236,15 @@ const InventoryPage = () => {
                 <th>Price</th>
                 <th>Unit</th>
                 <th>Quantity</th>
-                <th>Expiration Date</th>
-                <th>Planting Date</th>
-                <th>Harvesting Date</th>
-                <th>Supply Schedule</th>
                 <th>Stock Threshold</th>
                 <th>Supply Capacity Daily</th>
                 <th>Supply Capacity Weekly</th>
                 <th>Stock Availability</th>
-                <th>Storage Temp</th>
-                <th>Humidity</th>
                 <th>Packaging Type</th>
                 <th>Certification Type</th>
-                <th>Processing Method</th>
                 <th>Packaging Size</th>
-                <th>Preferred Soil</th>
-                <th>Best Climate</th>
-                <th>Batch Number</th>
-                <th>QR Code URL</th>
                 <th>Supplier Info</th>
                 <th>Delivery Options</th>
-                <th>Created At</th>
               </tr>
             </thead>
             <tbody>
@@ -268,27 +256,17 @@ const InventoryPage = () => {
                     <td>{item.price}</td>
                     <td>{item.unit}</td>
                     <td>{item.quantity}</td>
-                    <td>{item.expirationDate}</td>
-                    <td>{item.plantingDate}</td>
-                    <td>{item.harvestingDate}</td>
-                    <td>{item.supplySchedule}</td>
                     <td>{item.stockThreshold}</td>
                     <td>{item.supplyCapacityDaily}</td>
                     <td>{item.supplyCapacityWeekly}</td>
                     <td>{item.stockAvailability}</td>
-                    <td>{item.additionalDetails?.storageTemp}</td>
-                    <td>{item.additionalDetails?.humidity}</td>
                     <td>{item.additionalDetails?.packagingType}</td>
                     <td>{item.additionalDetails?.certificationType}</td>
                     <td>{item.additionalDetails?.processingMethod}</td>
                     <td>{item.additionalDetails?.packagingSize}</td>
-                    <td>{item.additionalDetails?.preferredSoil}</td>
-                    <td>{item.additionalDetails?.bestClimate}</td>
                     <td>{item.additionalDetails?.batchNumber}</td>
-                    <td>{item.additionalDetails?.qrCodeUrl}</td>
                     <td>{item.additionalDetails?.supplierInfo}</td>
                     <td>{item.additionalDetails?.deliveryOptions}</td>
-                    <td>{new Date(item.createdAt).toLocaleDateString()}</td>
                   </tr>
                 ))
               ) : (
