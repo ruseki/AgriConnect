@@ -167,7 +167,7 @@
 .inventory-table th, .inventory-table td {
   padding: 15px;
   border: 1px solid #ddd;
-  text-align: left;
+  text-align: left;                                                                                                                                                                    
 }
 
 .inventory-table th {
@@ -555,7 +555,6 @@
   }
 }
 
-/* High contrast mode support */
 @media (forced-colors: active) {
   .inventory-item {
     border: 2px solid CanvasText;
@@ -585,7 +584,6 @@
   }
 }
 
-/* Price Scheduler Container */
 .price-scheduler-container {
   width: 100%;
   padding: 1.5rem;
@@ -596,7 +594,6 @@
   margin-top: 1.5rem;
 }
 
-/* Slider Bar */
 .price-scheduler-bar {
   position: relative;
   width: 100%;
@@ -607,7 +604,6 @@
   cursor: pointer;
 }
 
-/* Draggable Price Marker */
 .price-marker {
   position: absolute;
   width: 14px;
@@ -621,13 +617,11 @@
   background-color: #388E3C;
 }
 
-/* Active Dragging Effect */
 .dragging {
   opacity: 0.8;
   cursor: grabbing;
 }
 
-/* Price Interval Selection */
 .price-interval-selector {
   display: flex;
   justify-content: center;
@@ -649,7 +643,6 @@
   background: linear-gradient(135deg, #1d4ed8, #27548A);
 }
 
-/* Interval Bookmarks Below Bar Line */
 .price-interval-bookmarks {
   display: flex;
   justify-content: space-evenly;

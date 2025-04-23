@@ -34,7 +34,7 @@
   display: flex;
   flex-direction: column;
   border: 1px solid rgba(0, 0, 0, 0.05);
-  flex-shrink: 0; /* Important for horizontal scrolling! */
+  flex-shrink: 0; 
 }
 
 .listing-card:hover {
@@ -44,9 +44,18 @@
 
 .image-placeholder {
   width: 100%;
-  height: 200px;
-  background-color: #f1f1f1;
-  transition: all 0.3s ease;
+  height: 200px; 
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.listing-product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
 }
 
 .listing-content {
@@ -86,6 +95,8 @@
   font-size: 1.1rem;
 }
 
+
+
 .user-icon {
   position: absolute;
   top: 1.5rem;
@@ -104,7 +115,6 @@
   background-color: rgba(76, 175, 80, 0.2);
 }
 
-/* Context Menu */
 .context-menu {
   position: fixed;
   background-color: white;
@@ -210,12 +220,14 @@
   transform: rotate(90deg);
 }
 
-/* Modal Image */
+
 .image-placeholder-modal {
   width: 100%;
-  height: 250px;
-  background-color: #f1f1f1;
-  border-radius: 16px 16px 0 0;
+  height: 250px; 
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  border-radius: 16px 16px 0 0; 
 }
 
 .product-header {
@@ -302,7 +314,6 @@
   color: #555;
 }
 
-/* Quantity Selector */
 .quantity-selector {
   display: flex;
   align-items: center;
@@ -462,7 +473,6 @@
   cursor: not-allowed;
 }
 
-/* === Responsive Breakpoints === */
 
 /* Tablet view: 768px - 1024px */
 @media (max-width: 1024px) {
@@ -590,4 +600,58 @@
     padding: 0.75rem;
     font-size: 0.95rem;
   }
+}
+
+/* Seller Success Badges */
+.seller-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.seller-success-badge {
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.new-seller {
+  background-color: #e0e0e0;
+  color: #757575;
+}
+
+.beginner-seller {
+  background-color: #bbdefb;
+  color: #1976d2;
+}
+
+.experienced-seller {
+  background-color: #c8e6c9;
+  color: #388e3c;
+}
+
+.trusted-seller {
+  background-color: #ffecb3;
+  color: #ff8f00;
+}
+
+.seller-details {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.seller-success-info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.success-transactions {
+  font-size: 0.8rem;
+  color: #666;
 }
