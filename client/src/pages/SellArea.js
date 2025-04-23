@@ -1,6 +1,6 @@
 // SellArea.js
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import TopNavbar from '../components/top_navbar';
 import SideBar from '../components/side_bar';
 import { Tag, Package, Edit2, Truck } from 'lucide-react';
@@ -26,6 +26,7 @@ const SellArea = () => {
   const [listings, setListings] = useState([]);
   const [editingListing, setEditingListing] = useState(null);
   const [sellerBalance, setSellerBalance] = useState(0);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const locations = [
     'San Antonio Norte, Lupao City, Pangasinan',
@@ -72,7 +73,7 @@ const SellArea = () => {
 
   console.log('Payload Sent to Backend:', payload);
 
-  const fetchListings = async () => {
+  const fetchListings = useCallback(async () => {
     try {
       const response = await fetch('http://localhost:5000/api/listings/user-listings', {
         method: 'GET',
@@ -80,23 +81,23 @@ const SellArea = () => {
           'Authorization': `Bearer ${token}`,
         },
       });
-
+  
       const result = await response.json();
       if (response.ok) {
-        setListings(result.listings); 
+        setListings(result.listings);
       } else {
         console.error('Failed to fetch listings:', result);
       }
     } catch (error) {
       console.error('Error fetching listings:', error);
     }
-  };
-
+  }, [token]); 
+  
   useEffect(() => {
     if (token) {
       fetchListings();
     }
-  }, [token]);
+  }, [token, fetchListings]); 
 
   useEffect(() => {
     const fetchSellerBalance = async () => {
@@ -129,38 +130,47 @@ const SellArea = () => {
     navigate('/withdraw');
   };
 
+  const [identifier, setIdentifier] = useState(""); 
+  
   const handlePublish = async () => {
     if (!token || !userId) {
       alert('Token or User ID is missing. Please log in again.');
       return;
     }
   
-    if (!productName || !location) {
-      alert('Product Name and Location are required.');
+    if (!productName || !location || !selectedImage) { 
+      alert('Product Name, Location, and Image are required.');
+      return;
+    }
+
+    if (!selectedImage) {
+      alert('Image upload is required!');
       return;
     }
   
     try {
+      const formData = new FormData(); 
+      formData.append("identifier", identifier);
+      formData.append("productName", productName);
+      formData.append("quantity", quantity);
+      formData.append("unit", unit);
+      formData.append("category", category);
+      formData.append("condition", condition);
+      formData.append("details", details);
+      formData.append("location", location);
+      formData.append("price", price);
+      formData.append("minimumOrder", minimumOrder);
+      formData.append("productsSold", productsSold);
+      formData.append("userId", userId);
+      formData.append("image", selectedImage); 
+      
+  
       const response = await fetch('http://localhost:5000/api/listings', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, 
         },
-        body: JSON.stringify({
-          productName,
-          quantity,
-          unit,
-          category,
-          condition,
-          details,
-          location,
-          price,
-          color,
-          minimumOrder,
-          productsSold,
-          userId,
-        }),
+        body: formData, 
       });
   
       const result = await response.json();
@@ -169,7 +179,7 @@ const SellArea = () => {
         throw new Error(result.message || 'Failed to create listing');
       }
   
-      alert('Listing published!');
+      alert('Listing published with image!'); 
       handleCloseSellModal();
       fetchListings();
     } catch (error) {
@@ -301,21 +311,26 @@ const SellArea = () => {
   };
 
   const [showConfirmation, setShowConfirmation] = useState(false);
-
+  const [deleteId, setDeleteId] = useState(null); 
+  
   const handleDeleteClick = (id) => {
-    setShowConfirmation(true); 
+    setDeleteId(id); 
+    setShowConfirmation(true);
   };
   
   const handleCancelDelete = () => {
-    setShowConfirmation(false); 
+    setDeleteId(null); 
+    setShowConfirmation(false);
   };
   
-  const handleConfirmDelete = async (id) => {
+  const handleConfirmDelete = async () => {
+    if (!deleteId) return; 
+  
     try {
-      const response = await fetch(`http://localhost:5000/api/listings/delete/${id}`, {
+      const response = await fetch(`http://localhost:5000/api/listings/delete/${deleteId}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${token}`, 
+          Authorization: `Bearer ${token}`,
         },
       });
   
@@ -328,9 +343,10 @@ const SellArea = () => {
   
       alert('Listing successfully deleted!');
       fetchListings(); 
-      setShowConfirmation(false); 
+      setDeleteId(null); 
+      setShowConfirmation(false);
     } catch (error) {
-      console.error('Error deleting listing:', error.message); 
+      console.error('Error deleting listing:', error.message);
       alert('Failed to delete the listing.');
     }
   };
@@ -351,9 +367,12 @@ const SellArea = () => {
             </button>
           </div>
 
-          <button className="sellarea-start-selling-btn" onClick={handleOpenSellModal}>
-            Start Selling!
-          </button>
+          {}
+          {isAuthenticated && (
+            <button className="sellarea-start-selling-btn" onClick={handleOpenSellModal}>
+              Start Selling!
+            </button>
+          )}
           <button className="sellarea-check-orders-btn" onClick={handleCheckOrders}>
             Check Orders
           </button>
@@ -361,18 +380,21 @@ const SellArea = () => {
           <div className="sellarea-item-container">
             {listings.length > 0 ? (
               listings.map((listing) => (
-                <div
-                  key={listing.identifier}
-                  className="sellarea-item-cards"
-                  style={{
-                    backgroundColor: listing.color,
-                  }}
-                >
+                <div key={listing.identifier} className="sellarea-item-cards">
+                  <img
+                    src={listing.imageUrl || 'default-image.jpg'}
+                    alt={listing.productName}
+                    className="sellarea-product-image"
+                  />
+
                   <h3>Product: {listing.productName}</h3>
                   <p>Category: {listing.category}</p>
                   <p>Price: ₱{listing.price}</p>
                   <p>Details: {listing.details}</p>
                   <p>Stocks Availability: {listing.quantity} {listing.unit}</p>
+                  <p>Minimum Order: {listing.minimumOrder}</p>
+                  <p>Condition: {listing.condition}</p>
+                  <p>Location: {listing.location}</p>
                   <p>This listing is {listing.status ? "active" : "inactive"}.</p>
 
                   <button
@@ -389,6 +411,11 @@ const SellArea = () => {
                   <button onClick={() => handleEdit(listing)} className="sellarea-edit-btn">
                     <Edit2 className="sellarea-icon" />
                   </button>
+
+                  {}
+                  <button onClick={() => handleDeleteClick(listing.identifier)} className="delete-btn">
+                    Delete
+                  </button>
                 </div>
               ))
             ) : (
@@ -403,6 +430,7 @@ const SellArea = () => {
                 <h2 className="sellarea-modal-title">
                   {editingListing ? "Edit Listing" : "Create a New Listing"}
                 </h2>
+
                 <div className="input-group">
                   <Tag className="icon" />
                   <select
@@ -420,6 +448,7 @@ const SellArea = () => {
                     ))}
                   </select>
                 </div>
+
                 <div className="input-group">
                   <Package className="icon" />
                   <select
@@ -439,6 +468,17 @@ const SellArea = () => {
                   </select>
                 </div>
                 <div className="input-group">
+  <input
+    type="number"
+    placeholder="Price"
+    value={price}
+    onChange={(e) => setPrice(e.target.value)}
+    className="input-field"
+    required
+  />
+</div>
+
+                <div className="input-group">
                   <input
                     type="number"
                     placeholder="Stocks"
@@ -456,6 +496,7 @@ const SellArea = () => {
                     <option value="cavan">Cavan</option>
                   </select>
                 </div>
+
                 <div className="input-group">
                   <input
                     type="number"
@@ -465,6 +506,7 @@ const SellArea = () => {
                     className="input-field"
                   />
                 </div>
+
                 <div className="input-group">
                   <input
                     type="text"
@@ -474,6 +516,7 @@ const SellArea = () => {
                     className="input-field"
                   />
                 </div>
+
                 <div className="input-group">
                   <textarea
                     placeholder="Details"
@@ -482,6 +525,7 @@ const SellArea = () => {
                     className="input-field h-24"
                   />
                 </div>
+
                 <div className="input-group">
                   <select
                     value={location}
@@ -498,70 +542,44 @@ const SellArea = () => {
                     ))}
                   </select>
                 </div>
+
                 <div className="input-group">
+                  <label htmlFor="productImage" className="input-label">
+                    Upload Product Image
+                  </label>
                   <input
-                    type="number"
-                    placeholder="Price"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="input-field"
+                    type="file"
+                    id="productImage"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      setSelectedImage(file);
+                      console.log("Selected file:", file);
+                    }}
+                    className="input-file"
+                    required
                   />
                 </div>
-                <div className="input-group">
-                  <select
-                    value={color}
-                    onChange={(e) => setColor(e.target.value)}
-                    className="input-select"
-                  >
-                    <option value="red">Red</option>
-                    <option value="green">Green</option>
-                    <option value="blue">Blue</option>
-                    <option value="yellow">Yellow</option>
-                    <option value="orange">Orange</option>
-                    <option value="purple">Purple</option>
-                    <option value="pink">Pink</option>
-                    <option value="white">White</option>
-                    <option value="black">Black</option>
-                  </select>
-                </div>
 
-                <button
-                  className="publish-btn"
-                  onClick={editingListing ? handleEditSubmit : handlePublish}
-                >
+                <button className="publish-btn" onClick={editingListing ? handleEditSubmit : handlePublish}>
                   <Truck className="mr-2" />
                   {editingListing ? "Publish Edit" : "Publish"}
                 </button>
-
-                {editingListing && !showConfirmation && (
-                  <button
-                    className="delete-btn"
-                    onClick={() => handleDeleteClick(editingListing._id)}
-                  >
-                    Delete
-                  </button>
-                )}
-
-                {editingListing && showConfirmation && (
-                  <div className="confirmation-buttons">
-                    <button
-                      className="confirm-delete-btn"
-                      onClick={() => handleConfirmDelete(editingListing._id)}
-                    >
-                      Yes
-                    </button>
-                    <button className="cancel-delete-btn" onClick={handleCancelDelete}>
-                      No
-                    </button>
-                  </div>
-                )}
               </div>
+            </div>
+          )}
+
+          {}
+          {showConfirmation && (
+            <div className="confirmation-popup">
+              <p>Are you sure you want to delete this listing?</p>
+              <button onClick={handleConfirmDelete}>Yes</button>
+              <button onClick={handleCancelDelete}>No</button>
             </div>
           )}
         </div>
       </main>
     </>
-  );
-};
+  ); };
 
-export default SellArea;
+  export default SellArea; 
