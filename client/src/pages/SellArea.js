@@ -102,7 +102,7 @@ const SellArea = () => {
   useEffect(() => {
     const fetchSellerBalance = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/balance`, {
+        const response = await fetch(`http://localhost:5000/api/withdraw/balance`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const result = await response.json();
@@ -295,6 +295,7 @@ const SellArea = () => {
   };
   
   const handleEdit = (listing) => {
+    console.log("Editing Listing:", listing);
     setEditingListing(listing);
     setProductName(listing.productName);
     setQuantity(listing.quantity);
@@ -307,7 +308,63 @@ const SellArea = () => {
     setColor(listing.color);
     setMinimumOrder(listing.minimumOrder);
     setProductsSold(listing.productsSold);
+    setSelectedImage(listing.imageUrl); // 🔹 Make sure the existing image is set
     setOpenSellModal(true);
+  
+    console.log("Existing Image:", listing.imageUrl); // 🔹 Debugging image display
+  };
+
+  const handleEditPublish = async () => {
+    if (!token || !userId || !editingListing) {
+      alert("Token or User ID is missing, or no listing selected for editing.");
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append("productName", productName);
+    formData.append("quantity", quantity);
+    formData.append("unit", unit);
+    formData.append("category", category);
+    formData.append("condition", condition);
+    formData.append("details", details);
+    formData.append("location", location);
+    formData.append("price", price);
+    formData.append("color", color);
+    formData.append("minimumOrder", minimumOrder);
+    formData.append("productsSold", productsSold);
+    formData.append("userId", userId);
+  
+    // 🔹 Correctly set image depending on whether a new one is uploaded
+    if (selectedImage instanceof File) {
+      formData.append("image", selectedImage); // 🔹 Send new image if selected
+    } else if (editingListing.imageUrl && !selectedImage) {
+      formData.append("existingImageUrl", editingListing.imageUrl); // 🔹 Preserve previous image if no new one
+    }
+  
+    console.log("Form Data Before Sending:", [...formData.entries()]); // 🔹 Debugging
+  
+    try {
+      const response = await fetch(`http://localhost:5000/api/listings/${editingListing._id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+  
+      const result = await response.json();
+      console.log("Updated Listing Response:", result);
+  
+      if (response.ok) {
+        alert("Listing updated successfully!");
+        setEditingListing(null); // 🔹 Close edit mode
+        fetchListings(); // 🔹 Refresh listings
+      } else {
+        console.error("Failed to update listing:", result.message);
+      }
+    } catch (error) {
+      console.error("Error updating listing:", error);
+    }
   };
 
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -561,10 +618,10 @@ const SellArea = () => {
                   />
                 </div>
 
-                <button className="publish-btn" onClick={editingListing ? handleEditSubmit : handlePublish}>
-                  <Truck className="mr-2" />
-                  {editingListing ? "Publish Edit" : "Publish"}
-                </button>
+                <button className="publish-btn" onClick={editingListing ? handleEditPublish : handlePublish}>
+  <Truck className="mr-2" />
+  {editingListing ? "Publish Edit" : "Publish"}
+</button>
               </div>
             </div>
           )}
