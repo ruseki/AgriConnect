@@ -49,10 +49,9 @@ const listingSchema = new mongoose.Schema({
     type: Boolean,
     default: true, 
   },
-  color: {
+  imageUrl: {  
     type: String,
-    enum: ['red', 'green', 'blue', 'yellow', 'orange', 'purple', 'pink', 'white', 'black'],
-    default: 'white',
+    required: true,  
   },
   minimumOrder: {
     type: Number,
