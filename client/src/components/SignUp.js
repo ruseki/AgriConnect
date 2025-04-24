@@ -67,16 +67,29 @@ const SignUp = ({ open, handleClose, handleOpenSignIn }) => {
   const validateForm = () => {
     const newErrors = {};
     let isValid = true;
+    const MAX_NAME_LENGTH = 30;
 
     // First name validation
     if (!firstName.trim()) {
       newErrors.firstName = 'First name is required';
       isValid = false;
+    } else if (firstName.length > MAX_NAME_LENGTH) {
+      newErrors.firstName = `First name cannot exceed ${MAX_NAME_LENGTH} characters`;
+      isValid = false;
     }
-
+    
+    // Middle name validation (optional but limit it too)
+    if (middleName.length > MAX_NAME_LENGTH) {
+      newErrors.middleName = `Middle name cannot exceed ${MAX_NAME_LENGTH} characters`;
+      isValid = false;
+    }
+    
     // Last name validation
     if (!lastName.trim()) {
       newErrors.lastName = 'Last name is required';
+      isValid = false;
+    } else if (lastName.length > MAX_NAME_LENGTH) {
+      newErrors.lastName = `Last name cannot exceed ${MAX_NAME_LENGTH} characters`;
       isValid = false;
     }
 
