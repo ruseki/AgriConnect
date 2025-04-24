@@ -7,7 +7,7 @@ import TopNavbar from '../components/top_navbar';
 import SideBar from '../components/side_bar';
 import axios from 'axios';
 import { Snackbar, Alert } from '@mui/material'; 
-import { useParams } from 'react-router-dom'; // Add this import
+import { useParams } from 'react-router-dom';
 import { useAuth } from '../components/AuthProvider'
 
 
@@ -18,6 +18,7 @@ const Profile = () => {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
+  const [bioCharCount, setBioCharCount] = useState(0);
   const [formData, setFormData] = useState({
     firstName: '',
     middleName: '',
@@ -36,6 +37,7 @@ const Profile = () => {
   const [provinces, setProvinces] = useState([]);
   const [cities, setCities] = useState([]);
   const [barangays, setBarangays] = useState([]);
+  const MAX_BIO_LENGTH = 255;
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -74,6 +76,7 @@ const Profile = () => {
           const userData = response.data
           console.log(response.data)
           setUser(userData);
+          const userBio = userData.bio || '';
           setFormData({
             firstName: userData.first_name || '',
             middleName: userData.middle_name || '',
@@ -87,8 +90,9 @@ const Profile = () => {
             cityOrTown: userData.cityOrTown || '',
             barangay: userData.barangay || '',
             phone: userData.phone || '',
-            bio: userData.bio || '',
+            bio: userBio.substring(0, MAX_BIO_LENGTH),
           });
+          setBioCharCount(userBio.length);
         } else {
           console.error('Failed to fetch user data. Status:', response.status);
           console.error('Response data:', response.data);
@@ -151,7 +155,15 @@ const Profile = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    
+    if (name === 'bio') {
+      // Limit bio to 255 characters
+      const truncatedValue = value.substring(0, MAX_BIO_LENGTH);
+      setFormData({ ...formData, [name]: truncatedValue });
+      setBioCharCount(truncatedValue.length);
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
 
     if (name === 'birthDate') {
       const birthDate = new Date(value);
@@ -219,8 +231,6 @@ const Profile = () => {
     dateStyle: 'long',
     timeStyle: 'short',
   });
-
-
 
   return (
     <div className="profile-page">
@@ -347,12 +357,13 @@ const Profile = () => {
                 className="profile-input"
               />
 
-              <label>Bio:</label>
+              <label>Bio: <span className="bio-char-count">{bioCharCount}/{MAX_BIO_LENGTH}</span></label>
               <textarea
                 name="bio"
                 value={formData.bio}
                 onChange={handleInputChange}
                 className="profile-textarea"
+                maxLength={MAX_BIO_LENGTH}
               />
             </div>
 
@@ -363,7 +374,6 @@ const Profile = () => {
             </div>
           </div>
 
-          {}
           <Snackbar
             open={ageWarningOpen}
             autoHideDuration={4000}
