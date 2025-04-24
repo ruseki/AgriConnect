@@ -213,21 +213,105 @@ const forgotPassword = async (req, res) => {
       - Reset Token: ${token}`);
   
       const resetLink = `http://localhost:3000/reset-password?token=${encodeURIComponent(token)}&id=${user._id}`;
+      
+      // HTML email template
+      const htmlContent = `
+        <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              line-height: 1.6;
+              color: #333333;
+            }
+            .container {
+              max-width: 600px;
+              margin: 0 auto;
+              padding: 20px;
+              border: 1px solid #dddddd;
+              border-radius: 5px;
+            }
+            .header {
+              text-align: center;
+              padding-bottom: 15px;
+              border-bottom: 1px solid #eeeeee;
+            }
+            .content {
+              padding: 20px 0;
+            }
+            .button {
+              display: inline-block;
+              padding: 10px 20px;
+              background-color: #4A90E2;
+              color: white;
+              text-decoration: none;
+              border-radius: 5px;
+              margin: 15px 0;
+            }
+            .footer {
+              margin-top: 20px;
+              font-size: 12px;
+              color: #666666;
+              text-align: center;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h2>Password Reset Request</h2>
+            </div>
+            <div class="content">
+              <p>Hello ${user.name || 'Valued User'},</p>
+              <p>We received a request to reset your password. If you didn't make this request, you can safely ignore this email.</p>
+              <p>To reset your password, please click the button below:</p>
+              <p style="text-align: center;">
+                <a href="${resetLink}" class="button">Reset My Password</a>
+              </p>
+              <p>Or copy and paste this link into your browser:</p>
+              <p>${resetLink}</p>
+              <p>This link will expire in 1 hour for security reasons.</p>
+            </div>
+            <div class="footer">
+              <p>This is an automated message, please do not reply to this email.</p>
+              <p>&copy; ${new Date().getFullYear()} AgriConnect. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+      
+      // Plain text version as fallback
+      const textContent = `
+  Hello ${user.name || 'Valued User'},
+  
+  We received a request to reset your password. If you didn't make this request, you can safely ignore this email.
+  
+  To reset your password, please use the following link:
+  ${resetLink}
+  
+  This link will expire in 1 hour for security reasons.
+  
+  This is an automated message, please do not reply to this email.
+  
+  © ${new Date().getFullYear()} AgriConnect. All rights reserved.
+      `;
   
       await sendEmail(
         user.email,
-        'Password Reset Request',
-        `Please use the following link to reset your password: ${resetLink}`
+        'Password Reset Request - AgriConnect',
+        textContent, 
+        htmlContent
       );
   
       return res.status(200).json({
-        message: 'The password reset link has been sent to your email. Please check your spam folder.',
+        message: 'The password reset link has been sent to your email. Please check your inbox.',
       });
     } catch (error) {
       console.error('Error in forgotPassword:', error.message);
       res.status(500).json({ message: 'An error occurred. Please try again later.' });
     }
-};
+  };
 
 const resetPassword = async (req, res) => {
     const { token, userId, newPassword } = req.body;
