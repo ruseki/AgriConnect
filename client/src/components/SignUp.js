@@ -14,6 +14,16 @@ const SignUp = ({ open, handleClose, handleOpenSignIn }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [birthDate, setBirthDate] = useState({ day: '', month: '', year: '' }); 
   const [error, setError] = useState('');
+  
+  // Form validation states
+  const [errors, setErrors] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    birthDate: ''
+  });
 
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
   const months = [
@@ -24,16 +34,132 @@ const SignUp = ({ open, handleClose, handleOpenSignIn }) => {
 
   const handleBirthDateChange = (field, value) => {
     setBirthDate((prev) => ({ ...prev, [field]: value }));
+    
+    // Clear birthDate error when user makes changes
+    if (errors.birthDate) {
+      setErrors(prev => ({ ...prev, birthDate: '' }));
+    }
+  };
+
+  // Validation functions
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  const validatePassword = (password) => {
+    // At least 8 characters, containing at least one uppercase, one lowercase, one number
+    const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    return re.test(password);
+  };
+
+  // Improved function to capitalize all parts of a name
+  const capitalizeNames = (string) => {
+    if (!string) return '';
+    
+    // Split the string by spaces and capitalize each part
+    return string
+      .split(' ')
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+      .join(' ');
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    let isValid = true;
+    const MAX_NAME_LENGTH = 30;
+
+    // First name validation
+    if (!firstName.trim()) {
+      newErrors.firstName = 'First name is required';
+      isValid = false;
+    } else if (firstName.length > MAX_NAME_LENGTH) {
+      newErrors.firstName = `First name cannot exceed ${MAX_NAME_LENGTH} characters`;
+      isValid = false;
+    }
+    
+    // Middle name validation (optional but limit it too)
+    if (middleName.length > MAX_NAME_LENGTH) {
+      newErrors.middleName = `Middle name cannot exceed ${MAX_NAME_LENGTH} characters`;
+      isValid = false;
+    }
+    
+    // Last name validation
+    if (!lastName.trim()) {
+      newErrors.lastName = 'Last name is required';
+      isValid = false;
+    } else if (lastName.length > MAX_NAME_LENGTH) {
+      newErrors.lastName = `Last name cannot exceed ${MAX_NAME_LENGTH} characters`;
+      isValid = false;
+    }
+
+    // Email validation
+    if (!email.trim()) {
+      newErrors.email = 'Email is required';
+      isValid = false;
+    } else if (!validateEmail(email)) {
+      newErrors.email = 'Enter a valid email address';
+      isValid = false;
+    }
+
+    // Password validation
+    if (!password) {
+      newErrors.password = 'Password is required';
+      isValid = false;
+    } else if (!validatePassword(password)) {
+      newErrors.password = 'Password must be at least 8 characters with uppercase, lowercase, and number';
+      isValid = false;
+    }
+
+    // Confirm password validation
+    if (password !== confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+      isValid = false;
+    }
+
+    // Birth date validation
+    if (!birthDate.day || !birthDate.month || !birthDate.year) {
+      newErrors.birthDate = 'Complete birth date is required';
+      isValid = false;
+    } else {
+      // Check if date is valid
+      const dateObj = new Date(`${birthDate.year}-${birthDate.month}-${birthDate.day}`);
+      if (dateObj.toString() === 'Invalid Date' || dateObj.getMonth() + 1 !== parseInt(birthDate.month)) {
+        newErrors.birthDate = 'Invalid date';
+        isValid = false;
+      }
+      
+      // Check if user is at least 18 years old
+      const today = new Date();
+      const age = today.getFullYear() - dateObj.getFullYear();
+      const monthDiff = today.getMonth() - dateObj.getMonth();
+      if (age < 18 || (age === 18 && monthDiff < 0) || 
+          (age === 18 && monthDiff === 0 && today.getDate() < dateObj.getDate())) {
+        newErrors.birthDate = 'You must be at least 18 years old';
+        isValid = false;
+      }
+    }
+
+    setErrors(newErrors);
+    return isValid;
   };
 
   const handleSignUp = async () => {
+    // Reset general error
+    setError('');
+    
+    // Validate form before submission
+    if (!validateForm()) {
+      return;
+    }
+    
     try {
       const formattedBirthDate = new Date(`${birthDate.year}-${birthDate.month}-${birthDate.day}`);
       const response = await axios.post('http://localhost:5000/api/auth/register', {
-        first_name: firstName,
-        middle_name: middleName,
-        last_name: lastName,
-        email,
+        first_name: firstName.trim(),
+        middle_name: middleName.trim(),
+        last_name: lastName.trim(),
+        email: email.trim(),
         password,
         confirm_password: confirmPassword,
         birthDate: formattedBirthDate, 
@@ -45,6 +171,38 @@ const SignUp = ({ open, handleClose, handleOpenSignIn }) => {
       }
     } catch (error) {
       setError(error.response?.data?.message || 'An error occurred');
+    }
+  };
+
+  // Handle input change and clear errors
+  const handleInputChange = (field, value) => {
+    // Clear error when user types
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+    
+    // Update the corresponding state with capitalization for name fields
+    switch (field) {
+      case 'firstName':
+        setFirstName(capitalizeNames(value));
+        break;
+      case 'middleName':
+        setMiddleName(capitalizeNames(value));
+        break;
+      case 'lastName':
+        setLastName(capitalizeNames(value));
+        break;
+      case 'email':
+        setEmail(value.toLowerCase());
+        break;
+      case 'password':
+        setPassword(value);
+        break;
+      case 'confirmPassword':
+        setConfirmPassword(value);
+        break;
+      default:
+        break;
     }
   };
 
@@ -83,7 +241,10 @@ const SignUp = ({ open, handleClose, handleOpenSignIn }) => {
             label="First Name"
             variant="outlined"
             value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            onChange={(e) => handleInputChange('firstName', e.target.value)}
+            error={!!errors.firstName}
+            helperText={errors.firstName}
+            required
           />
           <TextField
             fullWidth
@@ -92,7 +253,7 @@ const SignUp = ({ open, handleClose, handleOpenSignIn }) => {
             label="Middle Name"
             variant="outlined"
             value={middleName}
-            onChange={(e) => setMiddleName(e.target.value)}
+            onChange={(e) => handleInputChange('middleName', e.target.value)}
           />
           <TextField
             fullWidth
@@ -101,7 +262,10 @@ const SignUp = ({ open, handleClose, handleOpenSignIn }) => {
             label="Last Name"
             variant="outlined"
             value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            onChange={(e) => handleInputChange('lastName', e.target.value)}
+            error={!!errors.lastName}
+            helperText={errors.lastName}
+            required
           />
           <TextField
             fullWidth
@@ -110,7 +274,10 @@ const SignUp = ({ open, handleClose, handleOpenSignIn }) => {
             label="Email"
             variant="outlined"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => handleInputChange('email', e.target.value)}
+            error={!!errors.email}
+            helperText={errors.email}
+            required
           />
           <TextField
             fullWidth
@@ -120,7 +287,10 @@ const SignUp = ({ open, handleClose, handleOpenSignIn }) => {
             type="password"
             variant="outlined"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => handleInputChange('password', e.target.value)}
+            error={!!errors.password}
+            helperText={errors.password}
+            required
           />
           <TextField
             fullWidth
@@ -130,15 +300,24 @@ const SignUp = ({ open, handleClose, handleOpenSignIn }) => {
             type="password"
             variant="outlined"
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+            error={!!errors.confirmPassword}
+            helperText={errors.confirmPassword}
+            required
           />
           <Typography variant="body1" sx={{ mt: 2, mb: 1 }}>Birth Date:</Typography>
+          {errors.birthDate && (
+            <Typography variant="body2" color="error" sx={{ mb: 1 }}>
+              {errors.birthDate}
+            </Typography>
+          )}
           <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
             <Select
               value={birthDate.day}
               onChange={(e) => handleBirthDateChange('day', e.target.value)}
               displayEmpty
               fullWidth
+              error={!!errors.birthDate}
             >
               <MenuItem value="" disabled>Day</MenuItem>
               {days.map((day) => (
@@ -150,6 +329,7 @@ const SignUp = ({ open, handleClose, handleOpenSignIn }) => {
               onChange={(e) => handleBirthDateChange('month', e.target.value)}
               displayEmpty
               fullWidth
+              error={!!errors.birthDate}
             >
               <MenuItem value="" disabled>Month</MenuItem>
               {months.map((month, index) => (
@@ -161,6 +341,7 @@ const SignUp = ({ open, handleClose, handleOpenSignIn }) => {
               onChange={(e) => handleBirthDateChange('year', e.target.value)}
               displayEmpty
               fullWidth
+              error={!!errors.birthDate}
             >
               <MenuItem value="" disabled>Year</MenuItem>
               {years.map((year) => (

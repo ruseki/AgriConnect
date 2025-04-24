@@ -470,7 +470,7 @@ const SellArea = () => {
                   </button>
 
                   {}
-                  <button onClick={() => handleDeleteClick(listing.identifier)} className="delete-btn">
+                  <button onClick={() => handleDeleteClick(listing._id)} className="delete-btn">
                     Delete
                   </button>
                 </div>

@@ -19,6 +19,8 @@ import ManageCheckouts from './admin/manageCheckouts';
 import OrderStatus from './pages/OrderStatus'; 
 import SellerOrders from './pages/SellerOrdersArea';
 import WithdrawalPage from './pages/WithdrawalPage'; 
+import ResetPassword from './pages/ResetPassword';
+import ForgotPassword from './pages/ForgotPassword';
 import axios from 'axios';
 
 const App = () => {
@@ -41,6 +43,8 @@ const App = () => {
       <Router>
         <div>
           <Routes>
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/" element={<HomePage />} />
             <Route
               path="/sell-area"
