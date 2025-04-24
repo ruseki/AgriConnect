@@ -120,12 +120,12 @@ const ForgotPassword = () => {
             </button>
           </form>
           
-          <div className="mt-6 text-center">
+         <div className="mt-6 text-center">
             <button
-              onClick={() => navigate('/login')}
+              onClick={() => navigate('/')}
               className="text-green-600 hover:text-green-800 font-medium transition duration-300"
             >
-              ← Back to Login
+              ← Back to Home
             </button>
           </div>
         </div>
