@@ -54,7 +54,7 @@ router.get('/', auth, async (req, res) => {
     console.log('Logged-in User ID:', userId);
 
     const listings = await Listing.find({
-      userId: { $ne: userId },
+      // userId: { $ne: userId },
       status: true, 
       quantity: { $gt: 0 },
     })
@@ -247,7 +247,11 @@ router.delete('/delete/:id', auth, async (req, res) => {
   try {
     const { id } = req.params;
 
+    console.log(id)
+
     const deletedListing = await Listing.findByIdAndDelete(id);
+
+    console.log(deletedListing)
 
     if (!deletedListing) {
       return res.status(404).json({ message: "Listing not found." });

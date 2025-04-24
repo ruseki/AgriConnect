@@ -1,6 +1,7 @@
 //SignIn.js
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box, Button, TextField, Typography, Modal, Backdrop, Fade, IconButton, InputAdornment, Divider } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EmailIcon from '@mui/icons-material/Email';
@@ -14,6 +15,7 @@ const SignIn = ({ open, handleClose, handleOpenSignUp }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate()
 
   const handleSignIn = async () => {
     try {
@@ -240,7 +242,7 @@ const SignIn = ({ open, handleClose, handleOpenSignUp }) => {
                     textDecoration: 'underline',
                   }
                 }}
-                onClick={() => alert('Forgot Password?')}
+                onClick={() => navigate('/forgot-password')}
               >
                 Forgot Password?
               </Typography>
