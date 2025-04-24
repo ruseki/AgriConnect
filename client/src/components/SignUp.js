@@ -53,10 +53,15 @@ const SignUp = ({ open, handleClose, handleOpenSignIn }) => {
     return re.test(password);
   };
 
-  // Function to capitalize first letter of a name
-  const capitalizeFirstLetter = (string) => {
+  // Improved function to capitalize all parts of a name
+  const capitalizeNames = (string) => {
     if (!string) return '';
-    return string.charAt(0).toUpperCase() + string.slice(1);
+    
+    // Split the string by spaces and capitalize each part
+    return string
+      .split(' ')
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+      .join(' ');
   };
 
   const validateForm = () => {
@@ -111,13 +116,13 @@ const SignUp = ({ open, handleClose, handleOpenSignIn }) => {
         isValid = false;
       }
       
-      // Check if user is at least 13 years old
+      // Check if user is at least 18 years old
       const today = new Date();
       const age = today.getFullYear() - dateObj.getFullYear();
       const monthDiff = today.getMonth() - dateObj.getMonth();
-      if (age < 13 || (age === 13 && monthDiff < 0) || 
-          (age === 13 && monthDiff === 0 && today.getDate() < dateObj.getDate())) {
-        newErrors.birthDate = 'You must be at least 13 years old';
+      if (age < 18 || (age === 18 && monthDiff < 0) || 
+          (age === 18 && monthDiff === 0 && today.getDate() < dateObj.getDate())) {
+        newErrors.birthDate = 'You must be at least 18 years old';
         isValid = false;
       }
     }
@@ -166,13 +171,13 @@ const SignUp = ({ open, handleClose, handleOpenSignIn }) => {
     // Update the corresponding state with capitalization for name fields
     switch (field) {
       case 'firstName':
-        setFirstName(capitalizeFirstLetter(value));
+        setFirstName(capitalizeNames(value));
         break;
       case 'middleName':
-        setMiddleName(capitalizeFirstLetter(value));
+        setMiddleName(capitalizeNames(value));
         break;
       case 'lastName':
-        setLastName(capitalizeFirstLetter(value));
+        setLastName(capitalizeNames(value));
         break;
       case 'email':
         setEmail(value.toLowerCase());
