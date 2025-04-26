@@ -91,3 +91,10 @@
   .notify-btn:hover {
     background-color: #d35400;
   }
+  /* Mobile view: <= 768px */
+   @media (max-width: 768px) { 
+   .seller-orders-area-page{
+    margin-left: 100px;
+   flex-direction: column;
+   }
+  }

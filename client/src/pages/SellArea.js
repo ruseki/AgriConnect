@@ -548,9 +548,9 @@ const SellArea = () => {
                     onChange={(e) => setUnit(e.target.value)}
                     className="input-select"
                   >
-                    <option value="sack">Sack</option>
-                    <option value="kilograms">Kilograms</option>
-                    <option value="cavan">Cavan</option>
+                    <option value="sack">Pack</option>
+                    <option value="kilograms">Listing</option>
+                    <option value="cavan">Bundle</option>
                   </select>
                 </div>
 

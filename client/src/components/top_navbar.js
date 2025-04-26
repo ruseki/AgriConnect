@@ -50,12 +50,14 @@ const TopNavbar = ({ handleOpenSignIn, onSearch }) => {
     return null;
   }
 
+  /*<Search className="search-icon" />*/
+
   return (
     <header className="top-navbar">
       <div className="navbar-container">
         <h1 className="navbar-title">AgriConnect</h1>
         <div className="navbar-search">
-          <Search className="search-icon" />
+          
           <input
   type="text"
   placeholder="Search in AgriConnect..."

@@ -4,6 +4,7 @@ import express from 'express';
 import auth from '../middleware/auth.js';
 import User from '../models/User.js';
 import adminMiddleware from '../middleware/adminMiddleware.js'; 
+import { searchUsers } from '../controllers/userController.js';
 
 const router = express.Router();
 
@@ -117,5 +118,7 @@ router.put('/user', auth, async (req, res) => {
     res.status(500).json({ message: 'Error updating user', error: error.message });
   }
 });
+
+router.get('/search/:query', auth, searchUsers);
 
 export default router;

@@ -33,9 +33,6 @@ import sellerOrdersRoutes from './routes/sellerOrdersRoutes.js';
 import withdrawalRoutes from './routes/withdrawalRoutes.js';
 
 
-
-
-
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
@@ -69,22 +66,25 @@ app.use(
 );
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Debugging middleware to log incoming requests
+app.use((req, res, next) => {
+  console.log(`Incoming Request: ${req.method} ${req.url}`);
+  next();
+});
+
+// Route mapping
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingsRoute);
 app.use('/api/cart', cartRoutes);
 app.use('/api/inventory', inventoryRoutes);
-
 app.use('/api/admin', AdminRoutes);
-
-app.use('/api/users', auth, userRoutes); 
-app.use('/api/messages', auth, messageRoutes); 
-app.use('/api/cart', checkoutRoutes);
-app.use('/api/checkout', checkoutRoutes); 
-app.use('/api/withdraw', withdrawalRoutes); 
-
+app.use('/api/users', auth, userRoutes);
+app.use('/api/messages', auth, messageRoutes);
+app.use('/api/checkout', checkoutRoutes);
+app.use('/api/withdraw', withdrawalRoutes);
 app.use('/api/checkout-status', checkoutStatusRoutes);
-/*app.use('/api/seller-orders', sellerOrdersRoutes);*/
 app.use('/api/orders/seller-orders', sellerOrdersRoutes);
+app.use('/api/users', userRoutes);
 
 app.get('/testlamang', (req, res) => {
   res.send('Server is running!');

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, MessageCircle } from 'lucide-react';
+import { Search, UserCircle, X, MessageCircle } from 'lucide-react';
 import { io } from 'socket.io-client';
 import axios from 'axios';
 import './css/Chatbox.css';
@@ -7,35 +7,32 @@ import './css/Chatbox.css';
 const socket = io('http://localhost:5000');
 
 const Chatbox = ({ senderId }) => {
-  const [messages, setMessages] = useState([]); 
-  const [newMessage, setNewMessage] = useState(''); 
-  const [isOpen, setIsOpen] = useState(false); 
-  const [recipients, setRecipients] = useState([]); 
-  const [activeRecipientId, setActiveRecipientId] = useState(null); 
-  const [activeRecipientName, setActiveRecipientName] = useState(''); 
-  const messagesEndRef = useRef(null); 
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  const [recipients, setRecipients] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
+  const [activeRecipientId, setActiveRecipientId] = useState(null);
+  const [activeRecipientName, setActiveRecipientName] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const messagesEndRef = useRef(null);
+
+  const toggleChatbox = () => {
+    setIsOpen((prevState) => !prevState);
+  };
 
   useEffect(() => {
+    if (!isOpen) return;
+
     const fetchConversations = async () => {
       try {
-        const token = localStorage.getItem('authToken'); 
-        const response = await axios.get(
-          `http://localhost:5000/api/messages/${senderId}/conversations`, 
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const token = localStorage.getItem('authToken');
+        const response = await axios.get(`http://localhost:5000/api/messages/${senderId}/conversations`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         if (response.status === 200) {
-          setRecipients(response.data); 
-
-          if (response.data.length > 0) {
-            const firstConversation = response.data[0];
-            setActiveRecipientId(firstConversation.participantId);
-            setActiveRecipientName(
-              firstConversation.latestMessage.senderName || 'User'
-            );
-          }
+          setRecipients(response.data);
         } else {
           console.error('Failed to fetch conversations:', response.data.message);
         }
@@ -44,27 +41,22 @@ const Chatbox = ({ senderId }) => {
       }
     };
 
-    if (isOpen) {
-      fetchConversations();
-    }
+    fetchConversations();
   }, [senderId, isOpen]);
 
   useEffect(() => {
-    const fetchMessages = async () => {
-      if (!activeRecipientId || !senderId) return;
+    if (!activeRecipientId || !senderId) return;
 
+    const fetchMessages = async () => {
       try {
         const token = localStorage.getItem('authToken');
-        const response = await axios.get(
-          `http://localhost:5000/api/messages/${senderId}/${activeRecipientId}`, 
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await axios.get(`http://localhost:5000/api/messages/${senderId}/${activeRecipientId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         if (response.status === 200) {
-          setMessages(response.data); 
-          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); 
+          setMessages(response.data);
+          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         } else {
           console.error('Failed to fetch messages:', response.data.message);
         }
@@ -73,10 +65,8 @@ const Chatbox = ({ senderId }) => {
       }
     };
 
-    if (isOpen && activeRecipientId) {
-      fetchMessages();
-      socket.emit('joinRoom', { senderId, recipientId: activeRecipientId }); 
-    }
+    fetchMessages();
+    socket.emit('joinRoom', { senderId, recipientId: activeRecipientId });
 
     socket.on('receiveMessage', (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
@@ -84,133 +74,96 @@ const Chatbox = ({ senderId }) => {
     });
 
     return () => {
-      socket.off('receiveMessage'); 
-      if (isOpen) {
-        socket.disconnect();
-      }
+      socket.off('receiveMessage');
+      if (!isOpen) socket.disconnect();
     };
   }, [senderId, activeRecipientId, isOpen]);
 
-  const handleSendMessage = async () => {
-    if (newMessage.trim() === '') return;
+  const handleSearch = async (e) => {
+    const query = e.target.value;
+    setSearchTerm(query);
 
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-      alert('You are not authorized. Please log in again.');
-      window.location.href = '/';
+    if (query.trim() === '') {
+      setSearchResults([]);
       return;
     }
 
-    const messageData = {
-      senderId,
-      recipientId: activeRecipientId,
-      content: newMessage,
-      timestamp: new Date(),
-    };
-
     try {
-      const response = await axios.post(
-        'http://localhost:5000/api/messages',
-        messageData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const token = localStorage.getItem('authToken');
+      const response = await axios.get(`http://localhost:5000/api/users/search/${query}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      if (response.status === 201) {
-        socket.emit('sendMessage', messageData); 
-        setMessages((prevMessages) => [...prevMessages, messageData]); 
-        setNewMessage('');
+      if (response.status === 200) {
+        setSearchResults(response.data);
       } else {
-        console.error('Failed to send message:', response.data.message);
-        alert('Failed to send message.');
+        console.error('Failed to search users:', response.data.message);
       }
     } catch (error) {
-      console.error('Error sending message:', error.message);
-      alert('Failed to send message. Please try again.');
+      console.error('Error searching users:', error.message);
     }
   };
 
-  const toggleChat = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleRecipientClick = (recipientId, recipientName) => {
-    setMessages([]);
-    setActiveRecipientId(recipientId);
-    setActiveRecipientName(recipientName);
+  const handleSelectUser = (userId, userName) => {
+    setActiveRecipientId(userId);
+    setActiveRecipientName(userName);
+    setSearchResults([]);
+    setSearchTerm('');
   };
 
   return (
     <div className="chatbox-container">
-      {isOpen ? (
-        <div className="chatbox">
-          <div className="chatbox-sidebar">
-            <h4>Conversations</h4>
-            <ul>
-              {recipients.map((recipient, index) => (
-                <li
-                  key={index}
-                  className={
-                    recipient.participantId === activeRecipientId ? 'active' : ''
-                  }
-                  onClick={() =>
-                    handleRecipientClick(
-                      recipient.participantId,
-                      recipient.latestMessage.senderName || 'User'
-                    )
-                  }
-                >
-                  <p>{recipient.latestMessage.senderName || 'User'}</p>
-                  <small>{recipient.latestMessage.content}</small>
-                </li>
-              ))}
-            </ul>
+      <div className="chatbox-icon" onClick={toggleChatbox}>
+        <MessageCircle size={24} color="white" />
+      </div>
+
+      <div className={`chatbox ${isOpen ? 'open' : ''}`}>
+        <div className="chatbox-sidebar">
+          <div className="chatbox-search">
+            <Search size={18} />
+            <input type="text" placeholder="Search..." value={searchTerm} onChange={handleSearch} />
           </div>
-          <div className="chatbox-main">
-            <div className="chatbox-header">
-              <h4>Chat with {activeRecipientName}</h4>
-              <X size={20} className="chatbox-icon-close" onClick={toggleChat} />
-            </div>
-            <div className="chatbox-body">
-              <div className="chatbox-messages">
-                {messages.map((message, index) => (
-                  <div
-                    key={index}
-                    className={`chatbox-message-bubble ${
-                      message.senderId === senderId ? 'outgoing' : 'incoming'
-                    }`}
-                  >
-                    <p>{message.content}</p>
+          <ul>
+            {searchResults.length > 0 ? (
+              searchResults.map((user) => (
+                <li key={user._id} onClick={() => handleSelectUser(user._id, `${user.first_name} ${user.last_name}`)}>
+                  <UserCircle size={20} />
+                  {`${user.first_name} ${user.last_name}`}
+                </li>
+              ))
+            ) : (
+              recipients.map((recipient) => (
+                <li key={recipient.participantId} onClick={() => setActiveRecipientId(recipient.participantId)}>
+                  <UserCircle size={20} />
+                  {recipient.latestMessage.senderName || 'User'}
+                </li>
+              ))
+            )}
+          </ul>
+        </div>
+
+        <div className="chatbox-main">
+          {activeRecipientId ? (
+            <>
+              <div className="chatbox-header">
+                <UserCircle size={24} />
+                <h4>Chat with {activeRecipientName}</h4>
+                <X onClick={toggleChatbox} />
+              </div>
+              <div className="chatbox-body">
+                {messages.map((msg, index) => (
+                  <div key={index} className={msg.senderId === senderId ? 'outgoing' : 'incoming'}>
+                    {msg.content}
                   </div>
                 ))}
                 <div ref={messagesEndRef}></div>
               </div>
-            </div>
-            <div className="chatbox-footer">
-              <input
-                type="text"
-                placeholder="Type a message..."
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                className="chatbox-message-input"
-              />
-              <button
-                className="chatbox-send-button"
-                onClick={handleSendMessage}
-                disabled={newMessage.trim() === ''}
-              >
-                Send
-              </button>
-            </div>
-          </div>
+            </>
+          ) : (
+            <p>Select a conversation or search for a user</p>
+          )}
         </div>
-      ) : (
-        <div className="chatbox-icon" onClick={toggleChat}>
-          <MessageCircle size={24} color="white" />
-        </div>
-      )}
+      </div>
     </div>
   );
 };
