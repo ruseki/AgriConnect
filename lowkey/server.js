@@ -96,7 +96,6 @@ app.get('/testlamang', (req, res) => {
   res.send('Server is running!');
 });
 
-// ✅ WebSocket updates with fixed CORS
 io.on('connection', (socket) => {
   console.log(`New client connected: ${socket.id}`);
 

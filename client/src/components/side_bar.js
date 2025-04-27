@@ -16,9 +16,8 @@ const Sidebar = ({ handleOpenSignIn }) => {
   const [weather, setWeather] = useState(null);
 
   useEffect(() => {
-    const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
 
-    fetch(`${API_BASE_URL}/api/weather-key`) 
+    fetch("https://backend-service-538405936687.us-central1.run.app/api/weather-key")
       .then(response => response.json())
       .then(data => setApiKey(data.apiKey));
   }, []);
