@@ -247,6 +247,7 @@ const HomePage = () => {
           </div>
         </section>
 
+
         {}
         <section className="featured-products">
           <h2 className="section-title">Fresh From Our Farmers</h2>
