@@ -23,8 +23,9 @@ const ViewProfile = () => {
 
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5000/api/users/${userId}`,
+        const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+        const response = await axios.get(`${API_BASE_URL}/api/users/${userId}`,
           { headers: { Authorization: `Bearer ${token}` } } 
         );
 
@@ -40,8 +41,9 @@ const ViewProfile = () => {
 
     const fetchUserListings = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5000/api/listings/user/${userId}`,
+        const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+        const response = await axios.get(`${API_BASE_URL}/api/listings/user/${userId}`,
           { headers: { Authorization: `Bearer ${token}` } } 
         );
 

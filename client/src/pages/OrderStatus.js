@@ -30,8 +30,9 @@ const OrderStatus = () => {
     const fetchOrdersByStatus = async () => {
       try {
         const token = localStorage.getItem('authToken');
-        const response = await axios.get(
-          `http://localhost:5000/api/checkout-status?status=${status}`,
+        const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+        const response = await axios.get(`${API_BASE_URL}/api/checkout-status?status=${status}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -68,8 +69,9 @@ const OrderStatus = () => {
   
     try {
       const token = localStorage.getItem('authToken');
-      const response = await axios.post(
-        `http://localhost:5000/api/checkout/received/${id}`,
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await axios.post(`${API_BASE_URL}/api/checkout/received/${id}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

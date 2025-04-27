@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import TopNavbar from '../components/top_navbar';
 import SideBar from '../components/side_bar';
 import './css/WithdrawalPage.css';
+import axios from 'axios';
 
 const WithdrawalPage = () => {
   const [balance, setBalance] = useState(0);
@@ -21,13 +22,15 @@ const WithdrawalPage = () => {
     const fetchData = async () => {
       const token = localStorage.getItem('authToken'); 
       try {
-        const balanceResponse = await fetch('http://localhost:5000/api/withdraw/balance', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-  
-        const historyResponse = await fetch('http://localhost:5000/api/withdraw-history', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const balanceResponse = await axios.get(`${API_BASE_URL}/api/withdraw/balance`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const historyResponse = await axios.get(`${API_BASE_URL}/api/withdraw-history`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
   
         console.log('Balance Response:', balanceResponse);
         console.log('History Response:', historyResponse);
@@ -61,7 +64,10 @@ const WithdrawalPage = () => {
   
     const token = localStorage.getItem('authToken');
     try {
-      const response = await fetch('http://localhost:5000/api/withdraw', {
+      
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await fetch(`${API_BASE_URL}/api/withdraw`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +99,7 @@ const WithdrawalPage = () => {
         setAccountName('');
       } else {
         const result = await response.json();
-        alert(`Withdrawal failed: ${result.message}`);
+        alert('Withdrawal failed: ' + result.message);
       }
     } catch (error) {
       console.error('Error processing withdrawal:', error.message);

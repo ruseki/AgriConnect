@@ -155,7 +155,9 @@ const SignUp = ({ open, handleClose, handleOpenSignIn }) => {
     
     try {
       const formattedBirthDate = new Date(`${birthDate.year}-${birthDate.month}-${birthDate.day}`);
-      const response = await axios.post('http://localhost:5000/api/auth/register', {
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await axios.post(`${API_BASE_URL}/api/auth/register`, {
         first_name: firstName.trim(),
         middle_name: middleName.trim(),
         last_name: lastName.trim(),

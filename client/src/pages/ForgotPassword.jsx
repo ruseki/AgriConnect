@@ -19,7 +19,9 @@ const ForgotPassword = () => {
     setMessage('');
     
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/forgot-password', { email });
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await axios.post(`${API_BASE_URL}/api/auth/forgot-password`, { email });
       setMessage(response.data.message);
       setEmail('');
     } catch (error) {

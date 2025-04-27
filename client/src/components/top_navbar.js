@@ -50,7 +50,6 @@ const TopNavbar = ({ handleOpenSignIn, onSearch }) => {
     return null;
   }
 
-  /*<Search className="search-icon" />*/
 
   return (
     <header className="top-navbar">

@@ -16,16 +16,13 @@ const ResetPassword = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Extract token and userId from URL query parameters
   const queryParams = new URLSearchParams(location.search);
   const token = queryParams.get('token');
   const userId = queryParams.get('id');
 
-  // Password validation regex (same as in your backend)
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
 
   useEffect(() => {
-    // You could validate the token here with an API call if needed
     if (!token || !userId) {
       setTokenValid(false);
       setError('Invalid or expired password reset link.');
@@ -33,7 +30,6 @@ const ResetPassword = () => {
   }, [token, userId]);
 
   useEffect(() => {
-    // Calculate password strength
     if (!newPassword) {
       setPasswordStrength(0);
       return;
@@ -52,11 +48,9 @@ const ResetPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Reset messages
     setError('');
     setMessage('');
     
-    // Validate passwords
     if (newPassword !== confirmPassword) {
       return setError('Passwords do not match.');
     }
@@ -68,7 +62,9 @@ const ResetPassword = () => {
     setIsLoading(true);
     
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/reset-password', {
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await axios.post(`${API_BASE_URL}/api/auth/reset-password`, {
         token,
         userId,
         newPassword

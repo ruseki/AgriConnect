@@ -30,7 +30,9 @@ const AdminDashboard = () => {
       }
 
       try {
-        const response = await axios.get('http://localhost:5000/api/admin/users', {
+        const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+        const response = await axios.get(`${API_BASE_URL}/api/admin/users`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUsers(response.data);

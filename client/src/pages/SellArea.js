@@ -7,6 +7,7 @@ import { Tag, Package, Edit2, Truck } from 'lucide-react';
 import { useAuth } from '../components/AuthProvider';
 import './css/SellArea.css';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const SellArea = () => {
   const { isAuthenticated, token, userId } = useAuth();
@@ -75,8 +76,9 @@ const SellArea = () => {
 
   const fetchListings = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/listings/user-listings', {
-        method: 'GET',
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await axios.get(`${API_BASE_URL}/api/listings/user-listings`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -102,7 +104,9 @@ const SellArea = () => {
   useEffect(() => {
     const fetchSellerBalance = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/withdraw/balance`, {
+        const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+        const response = await fetch(`${API_BASE_URL}/api/withdraw/balance`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const result = await response.json();
@@ -165,12 +169,12 @@ const SellArea = () => {
       formData.append("image", selectedImage); 
       
   
-      const response = await fetch('http://localhost:5000/api/listings', {
-        method: 'POST',
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await fetch(`${API_BASE_URL}/api/listings`, formData, {
         headers: {
           Authorization: `Bearer ${token}`, 
         },
-        body: formData, 
       });
   
       const result = await response.json();
@@ -192,8 +196,9 @@ const SellArea = () => {
     try {
       console.log(`Attempting to unlist: /api/listings/${listingIdentifier}/unlist`);
   
-      const response = await fetch(`http://localhost:5000/api/listings/${listingIdentifier}/unlist`, {
-        method: "PUT",
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await axios.put(`${API_BASE_URL}/api/listings/${listingIdentifier}/unlist`, {
         headers: {
           "Authorization": `Bearer ${token}`,
         },
@@ -223,7 +228,9 @@ const SellArea = () => {
     try {
       console.log(`Attempting to relist: /api/listings/${listingIdentifier}/relist`);
   
-      const response = await fetch(`http://localhost:5000/api/listings/${listingIdentifier}/relist`, {
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await fetch(`${API_BASE_URL}/api/listings/${listingIdentifier}/relist`, {
         method: "PUT",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -257,7 +264,9 @@ const SellArea = () => {
     }
   
     try {
-      const response = await fetch(`http://localhost:5000/api/listings/${editingListing._id}`, {
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await fetch(`${API_BASE_URL}/api/listings/${editingListing._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -344,7 +353,9 @@ const SellArea = () => {
     console.log("Form Data Before Sending:", [...formData.entries()]); // 🔹 Debugging
   
     try {
-      const response = await fetch(`http://localhost:5000/api/listings/${editingListing._id}`, {
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await fetch(`${API_BASE_URL}/api/listings/${editingListing._id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -384,7 +395,9 @@ const SellArea = () => {
     if (!deleteId) return; 
   
     try {
-      const response = await fetch(`http://localhost:5000/api/listings/delete/${deleteId}`, {
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await fetch(`${API_BASE_URL}/api/listings/delete/${deleteId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,

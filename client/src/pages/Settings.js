@@ -64,7 +64,9 @@ const Settings = () => {
     const fetchUserData = async () => {
       if (token) {
         try {
-          const response = await axios.get('http://localhost:5000/api/auth/user', {
+          const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+          const response = await axios.get(`${API_BASE_URL}/api/auth/user`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -105,8 +107,9 @@ const Settings = () => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post(
-        'http://localhost:5000/api/auth/change-password',
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await axios.post(`${API_BASE_URL}/auth/change-password`,
         {
           currentPassword: passwordDetails.currentPassword,
           newPassword: passwordDetails.newPassword,
@@ -138,8 +141,9 @@ const Settings = () => {
     setIsLoading(true);
     if (token && email) {
       try {
-        const response = await axios.post(
-          'http://localhost:5000/api/auth/send-verification-email',
+        const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+        const response = await axios.post(`${API_BASE_URL}/api/auth/send-verification-email`,
           { email },
           {
             headers: {
@@ -168,7 +172,9 @@ const Settings = () => {
     try {
       console.log('Sending Verification:', { email, token: verificationCode });
 
-      const response = await axios.post('http://localhost:5000/api/auth/verify-email', {
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await axios.post(`${API_BASE_URL}/api/auth/verify-email`, {
         email,
         token: verificationCode,
       });

@@ -71,6 +71,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get('/', (req, res) => {
+  res.send('Backend is live!');
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingsRoute);
 app.use('/api/cart', cartRoutes);
@@ -124,7 +128,10 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
 
 const start = async () => {
   try {

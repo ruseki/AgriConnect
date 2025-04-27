@@ -13,7 +13,9 @@ const SellerOrdersArea = () => {
 
   const fetchSellerOrders = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/orders/seller-orders', {
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await fetch(`${API_BASE_URL}/api/orders/seller-orders`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,

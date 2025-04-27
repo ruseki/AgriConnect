@@ -28,7 +28,9 @@ const Chatbox = () => {
       }
   
       try {
-        const response = await axios.get("http://localhost:5000/api/auth/me", {
+        const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+        const response = await axios.get(`${API_BASE_URL}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
   
@@ -53,8 +55,9 @@ const Chatbox = () => {
     const fetchConversations = async () => {
       try {
         const token = localStorage.getItem("authToken");
-        const response = await axios.get(
-          `http://localhost:5000/api/messages/${userId}/conversations`,
+        const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+        const response = await axios.get(`${API_BASE_URL}/api/messages/${userId}/conversations`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -77,8 +80,9 @@ const Chatbox = () => {
     const fetchMessages = async () => {
       try {
         const token = localStorage.getItem("authToken");
-        const response = await axios.get(
-          `http://localhost:5000/api/messages/${userId}/${activeRecipientId}`,
+        const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+        const response = await axios.get(`${API_BASE_URL}/api/messages/${userId}/${activeRecipientId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -125,7 +129,9 @@ const Chatbox = () => {
     };
   
     try {
-      const response = await axios.post("http://localhost:5000/api/messages", messageData, {
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await axios.post(`${API_BASE_URL}/api/messages`, messageData, {
         headers: { Authorization: `Bearer ${token}` }, 
       });
   
@@ -151,8 +157,9 @@ const Chatbox = () => {
 
     try {
       const token = localStorage.getItem("authToken");
-      const response = await axios.get(
-        `http://localhost:5000/api/users/search/${query}`,
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await axios.get(`${API_BASE_URL}/api/users/search/${query}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

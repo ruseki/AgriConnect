@@ -23,11 +23,11 @@
   position: relative; 
 }
 
-.profile-icon {
+.profile-profile-icon {
   position: absolute; 
   top: 50%; 
   left: 55%; 
-  transform: translate(-0%, -230%); 
+  transform: translate(-50%, -230%); 
   width: 100px;
   height: 100px;
   border-radius: 50%;

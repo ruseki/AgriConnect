@@ -51,7 +51,9 @@ const Profile = () => {
 
         console.log('Token being used:', token);
 
-        const response = await axios.get('http://localhost:5000/api/auth/user', {
+        const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+        const response = await axios.get(`${API_BASE_URL}/api/auth/user`, {
           headers: { 
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -195,7 +197,9 @@ const Profile = () => {
       console.log('Token:', token); 
       console.log('Formatted Data Sent to Backend:', formattedFormData); 
   
-      const response = await axios.put('http://localhost:5000/api/users/user', formattedFormData, {
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await axios.put(`${API_BASE_URL}/api/users/user`, formattedFormData, {
         headers: { Authorization: `Bearer ${token}` },
       });
   
@@ -240,7 +244,7 @@ const Profile = () => {
         <div className="profile-page-content">
           <div className="profile-banner"></div>
 
-          <div className="profile-icon">
+          <div className="profile-profile-icon">
             {uploadedImage ? (
               <img src={uploadedImage} alt="Uploaded Profile" className="uploaded-image" />
             ) : (

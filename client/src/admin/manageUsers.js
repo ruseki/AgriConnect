@@ -4,6 +4,7 @@ import TopNavbar from '../components/top_navbar';
 import axios from 'axios';
 import './css/manageUsers.css';
 import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 
 const ManageUsers = () => {
   const [searchInput, setSearchInput] = useState('');
@@ -31,7 +32,9 @@ const ManageUsers = () => {
 
     const verifyAdmin = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/admin/verify', {
+        const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+        const response = await axios.get(`${API_BASE_URL}/api/admin/verify`, {
           headers: { Authorization: `Bearer ${token}` },
         });
     
@@ -68,7 +71,9 @@ const ManageUsers = () => {
       setLoading(true); 
 
       try {
-        const response = await axios.get('http://localhost:5000/api/admin/users', {
+        const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+        const response = await axios.get(`${API_BASE_URL}/api/admin/users`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUsers(response.data);
@@ -96,27 +101,21 @@ const ManageUsers = () => {
   };
 
   const toggleEmailVisibility = (userId) => {
-    setShowEmails((prev) => ({
-      ...prev,
-      [userId]: !prev[userId],
+    setShowEmails((prevState) => ({
+      ...prevState,
+      [userId]: !prevState[userId], 
     }));
   };
 
   const formatEmail = (email, isVisible) => {
-    if (isVisible) return email;
-    const [prefix, domain] = email.split('@');
-    const visibleStart = Math.min(2, prefix.length);
-    const visibleEnd = Math.min(2, prefix.length - visibleStart);
-    const hiddenLength = prefix.length - visibleStart - visibleEnd;
-
-    const hiddenPart = '*'.repeat(hiddenLength);
-    return `${prefix.slice(0, visibleStart)}${hiddenPart}${prefix.slice(prefix.length - visibleEnd)}@${domain}`;
+    return isVisible ? email : email.replace(/(.{3}).+(@.+)/, "$1****$2"); 
   };
 
   const handleApproveSeller = async (userId) => {
     try {
-      const response = await axios.patch(
-        `http://localhost:5000/api/users/approve-seller/${userId}`,
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await axios.patch(`${API_BASE_URL}/api/users/approve-seller/${userId}`,
         {
           isSeller: true,
         },
@@ -143,8 +142,9 @@ const ManageUsers = () => {
 
   const handleRemoveSeller = async (userId) => {
     try {
-      const response = await axios.patch(
-        `http://localhost:5000/api/users/remove-seller/${userId}`,
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await axios.patch(`${API_BASE_URL}/api/users/remove-seller/${userId}`,
         {
           isSeller: false,
         },
@@ -228,11 +228,8 @@ const ManageUsers = () => {
                   <tr>
                     <td>{`${filteredUser.first_name} ${filteredUser.last_name}`}</td>
                     <td>
-                      {formatEmail(filteredUser.email, showEmails[filteredUser.userId])}
-                      <button onClick={() => toggleEmailVisibility(filteredUser.userId)}>
-                        {showEmails[filteredUser.userId] ? 'Hide' : 'Show'}
-                      </button>
-                    </td>
+
+</td>
                     <td>
                       <span className={`circle ${filteredUser.isVerified ? 'green' : 'red'}`}></span>
                     </td>
@@ -257,9 +254,9 @@ const ManageUsers = () => {
                       <td>{`${user.first_name} ${user.last_name}`}</td>
                       <td>
                         {formatEmail(user.email, showEmails[user.userId])}
-                        <button onClick={() => toggleEmailVisibility(user.userId)}>
-                          {showEmails[user.userId] ? 'Hide' : 'Show'}
-                        </button>
+                        <button className="toggle-email-btn" onClick={() => toggleEmailVisibility(user.userId)}>
+  {showEmails[user.userId] ? <EyeOff size={20} /> : <Eye size={20} />}
+</button>
                       </td>
                       <td>
                         <span className={`circle ${user.isVerified ? 'green' : 'red'}`}></span>

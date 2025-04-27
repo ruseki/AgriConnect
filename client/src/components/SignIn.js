@@ -19,7 +19,9 @@ const SignIn = ({ open, handleClose, handleOpenSignUp }) => {
 
   const handleSignIn = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', {
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await axios.post(`${API_BASE_URL}/api/auth/login`, {
         email,
         password,
       });

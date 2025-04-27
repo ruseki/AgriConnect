@@ -1,100 +1,152 @@
 /* SellerOrdersArea.css */
 
 .seller-orders-area-page {
-    display: flex;
-    flex-direction: row;
-    min-height: 100vh;
-    background-color: #ffffff;
-    margin-top: 6rem;
-    margin-left: 200px;
-  }
-  
-  .seller-orders-main {
-    padding: 20px;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  
-  .seller-orders-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-  
-  .order-card {
-    padding: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #f9f9f9;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100%;
-  }
-  
-  .order-card p {
-    margin: 0.5rem 0;
-  }
-  
-  .order-card strong {
-    color: #4D7C2E;
-  }
-  
-  .seller-orders-main h1 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    color: #4D7C2E;
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffffff, #eef0f2);
+  margin-top: 6rem;
+  margin-left: 200px;
+  padding: 20px;
+}
+
+.seller-orders-main {
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+.seller-orders-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-top: 20px;
+}
+
+.order-card {
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.order-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.order-card p {
+  margin: 0.5rem 0;
+  font-size: 14px;
+  color: #34495e;
+}
+
+.order-card strong {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+/* Title */
+.seller-orders-main h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+  font-weight: 700;
+}
+
+/* Navigation */
+.seller-orders-navigation {
+  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 12px;
+}
+
+.seller-orders-navigation button {
+  padding: 10px 18px;
+  font-size: 16px;
+  background: linear-gradient(135deg, #5F8B4C, #3C6E3B);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.seller-orders-navigation button.active {
+  background: #2c3e50;
+}
+
+.seller-orders-navigation button:hover {
+  background: #49783D;
+}
+
+/* Status Badge */
+.status-badge {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.status-badge.approved {
+  background: #3498db;
+}
+
+.status-badge.rejected {
+  background: #e74c3c;
+}
+
+.status-badge.pending {
+  background: #f39c12;
+}
+
+.mark-done-btn,
+.notify-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.mark-done-btn {
+  background: linear-gradient(135deg, #3498db, #2c82c9);
+}
+
+.mark-done-btn:hover {
+  background: #2980b9;
+  transform: scale(1.05);
+}
+
+.notify-btn {
+  background: linear-gradient(135deg, #e67e22, #d35400);
+}
+
+.notify-btn:hover {
+  background: #d35400;
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .seller-orders-area-page {
+      margin-left: 100px;
+      flex-direction: column;
   }
 
-  .seller-orders-navigation {
-    margin-bottom: 1.5rem;
-    display: flex;
-    gap: 10px;
+  .seller-orders-container {
+      grid-template-columns: 1fr;
   }
-  
-  .seller-orders-navigation button {
-    padding: 10px 15px;
-    background-color: #4D7C2E;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .seller-orders-navigation button.active {
-    background-color: #2c3e50;
-  }
-  
-  .mark-done-btn {
-    padding: 10px 15px;
-    background-color: #3498db;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .mark-done-btn:hover {
-    background-color: #2980b9;
-  }
-  
-  .notify-btn {
-    padding: 10px 15px;
-    background-color: #e67e22;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .notify-btn:hover {
-    background-color: #d35400;
-  }
-  /* Mobile view: <= 768px */
-   @media (max-width: 768px) { 
-   .seller-orders-area-page{
-    margin-left: 100px;
-   flex-direction: column;
-   }
-  }
+}

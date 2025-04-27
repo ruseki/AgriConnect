@@ -20,8 +20,9 @@ const ManageCheckouts = () => {
     const fetchCheckouts = async () => {
       try {
         const token = localStorage.getItem('authToken'); 
-        const response = await axios.get(
-          `http://localhost:5000/api/checkout/all-checkouts?page=1&limit=20`,
+        const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+        const response = await axios.get(`${API_BASE_URL}/api/checkout/all-checkouts?page=1&limit=20`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -52,8 +53,9 @@ const ManageCheckouts = () => {
 
     try {
       const token = localStorage.getItem('authToken'); 
-      const response = await axios.patch(
-        `http://localhost:5000/api/checkout-status/${checkoutId}`, 
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await axios.patch(`${API_BASE_URL}/api/checkout-status/${checkoutId}`, 
         { status: action, approvalNote: note }, 
         { headers: { Authorization: `Bearer ${token}` } } 
       );

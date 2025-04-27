@@ -26,7 +26,9 @@ const BuyArea = () => {
 
   const fetchListings = useCallback(async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/listings', {
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await axios.get(`${API_BASE_URL}/api/listings`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -82,8 +84,9 @@ const BuyArea = () => {
 
   const handleAddToCart = async () => {
     try {
-      const response = await axios.post(
-        'http://localhost:5000/api/cart/add',
+      const API_BASE_URL = "https://backend-service-538405936687.us-central1.run.app";
+
+      const response = await axios.post(`${API_BASE_URL}/api/cart/add`,
         {
           productId: selectedProduct._id,
           quantity: cartQuantity,
