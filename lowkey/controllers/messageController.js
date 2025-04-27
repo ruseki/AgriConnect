@@ -85,16 +85,31 @@ export const getMessages = async (req, res) => {
   }
 };
 
+
+
 export const sendMessage = async (req, res) => {
   const { senderId, recipientId, content } = req.body;
 
   try {
     const senderObjectId = new mongoose.Types.ObjectId(senderId);
     const recipientObjectId = new mongoose.Types.ObjectId(recipientId);
+    
+    const senderObject = await User.findById(senderObjectId).select("_id");
+    const recipientObject = await User.findById(recipientObjectId).select("_id");
+    
+    console.log("Sender Found:", senderObject);
+    console.log("Recipient Found:", recipientObject);
+
+    console.log("Is senderId a valid ObjectId?", mongoose.Types.ObjectId.isValid(senderId));
+console.log("Is recipientId a valid ObjectId?", mongoose.Types.ObjectId.isValid(recipientId));
+    
+    if (!senderObject || !recipientObject) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
     const newMessage = new Message({
-      senderId: senderObjectId,
-      recipientId: recipientObjectId,
+      senderId: senderObject._id, 
+      recipientId: recipientObject._id, 
       content,
       timestamp: new Date(),
     });
@@ -102,7 +117,7 @@ export const sendMessage = async (req, res) => {
     await newMessage.save();
     res.status(201).json(newMessage);
   } catch (error) {
-    console.error('Error creating message:', error.message);
-    res.status(500).json({ error: 'Failed to send message' });
+    console.error("Error creating message:", error.message);
+    res.status(500).json({ error: "Failed to send message" });
   }
 };
