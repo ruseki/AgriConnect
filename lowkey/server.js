@@ -24,46 +24,45 @@ import cartRoutes from './routes/cartRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import inventoryRoutes from './routes/inventoryRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
-import AdminRoutes from './routes/Admin.js'; 
-import auth from './middleware/auth.js'; 
+import AdminRoutes from './routes/Admin.js';
+import auth from './middleware/auth.js';
 import jwt from 'jsonwebtoken';
 import checkoutRoutes from './routes/checkoutRoutes.js';
 import checkoutStatusRoutes from './routes/checkoutStatus.js';
 import sellerOrdersRoutes from './routes/sellerOrdersRoutes.js';
 import withdrawalRoutes from './routes/withdrawalRoutes.js';
 
-
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST'],
+    origin: ["http://localhost:3000", "https://agriconnect-web.web.app"],
+    methods: ["GET", "POST"],
   },
 });
 
+// ✅ Fixed CORS settings to allow live & local URLs
 const corsOptions = {
-  origin: 'http://localhost:3000',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  origin: ["http://localhost:3000", "https://agriconnect-web.web.app"],
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
   optionsSuccessStatus: 204,
 };
 
 app.use(cors(corsOptions));
 
-app.use(
-  bodyParser.json({
-    verify: (req, res, buf) => {
-      try {
-        JSON.parse(buf);
-      } catch (e) {
-        res.status(400).json({ message: 'Invalid JSON payload' });
-        throw new Error('Invalid JSON');
-      }
-    },
-  })
-);
+app.use(bodyParser.json({
+  verify: (req, res, buf) => {
+    try {
+      JSON.parse(buf);
+    } catch (e) {
+      res.status(400).json({ message: "Invalid JSON payload" });
+      throw new Error("Invalid JSON");
+    }
+  },
+}));
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
@@ -75,6 +74,7 @@ app.get('/', (req, res) => {
   res.send('Backend is live!');
 });
 
+// ✅ Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingsRoute);
 app.use('/api/cart', cartRoutes);
@@ -96,6 +96,7 @@ app.get('/testlamang', (req, res) => {
   res.send('Server is running!');
 });
 
+// ✅ WebSocket updates with fixed CORS
 io.on('connection', (socket) => {
   console.log(`New client connected: ${socket.id}`);
 
@@ -130,7 +131,7 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
 
 const start = async () => {
