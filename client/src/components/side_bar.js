@@ -58,25 +58,37 @@ const Sidebar = ({ handleOpenSignIn }) => {
         <span className="text-sm">Home</span>
       </Link>
 
-      <Link to="/buy-area" className="icon-button">
-        <ShoppingCart className="icon" />
-        <span className="text-sm">Buying</span>
-      </Link>
+      <button className="icon-button" onClick={() => {
+  if (isAuthenticated) {
+    navigate('/buy-area');
+  } else {
+    handleOpenSignIn(); 
+  }
+}}>
+  <ShoppingCart className="icon" />
+  <span className="text-sm">Buying</span>
+</button>
 
       <button className="icon-button" onClick={handleSellingClick}>
         <DollarSign className="icon" />
         <span className="text-sm">Selling</span>
       </button>
 
-      <Link to="/inventory" className="icon-button inventory-button">
-        <Box className="icon" />
-        <span className="text-sm">Inventory</span>
-      </Link>
+      <button className="icon-button inventory-button" onClick={() => {
+  if (isAuthenticated) {
+    navigate('/inventory');
+  } else {
+    handleOpenSignIn(); 
+  }
+}}>
+  <Box className="icon" />
+  <span className="text-sm">Inventory</span>
+</button>
 
       {user?.isAdmin && (
-        <Link to="/manage-users" className="icon-button manage-users-button">
+        <Link to="/admin" className="icon-button manage-users-button">
           <User className="icon" />
-          <span className="text-sm">Manage Users</span>
+          <span className="text-sm">Admin</span>
         </Link>
       )}
     </aside>

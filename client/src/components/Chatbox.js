@@ -174,75 +174,89 @@ const Chatbox = () => {
   };
 
   return (
-    <div className="chatbox-container">
-      <div className={`chatbox ${isOpen ? "open" : ""}`}>
+    <>
+      {/* 🔹 Chatbox Icon to Open */}
+      {!isOpen && (
+        <div className="chatbox-icon" onClick={toggleChatbox}>
+          <MessageCircle size={24} color="white" />
+        </div>
+      )}
   
-        {}
-        {!activeRecipientId ? (
-          <>
-            {}
-            <div className="chatbox-search">
-              <Search size={18} />
-              <input
-                type="text"
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={handleSearch}
-              />
-            </div>
-  
-            {}
-            <ul className="chatbox-conversations">
-              {searchResults.length > 0
-                ? searchResults.map((user) => (
-                    <li key={user._id} onClick={() => handleSelectUser(user._id, `${user.first_name} ${user.last_name}`)}>
-                      <UserCircle size={20} />
-                      {`${user.first_name} ${user.last_name}`}
-                    </li>
-                  ))
-                : recipients.map((recipient) => (
-                    <li key={recipient.participantId} onClick={() => setActiveRecipientId(recipient.participantId)}>
-                      <UserCircle size={20} />
-                      {recipient.latestMessage.senderName || "User"}
-                    </li>
-                  ))}
-            </ul>
-          </>
-        ) : (
-          
-          <>
-            <div className="chatbox-header">
-              <button className="chatbox-back" onClick={() => setActiveRecipientId(null)}>
-                ← Back
-              </button>
-              <UserCircle size={24} />
-              <h4>Chat with {activeRecipientName}</h4>
-            </div>
-  
-            {}
-            <div className="chatbox-body">
-              {messages.map((msg, index) => (
-                <div key={index} className={msg.senderId === userId ? "outgoing" : "incoming"}>
-                  {msg.content}
+      {/* 🔹 Chatbox Container (Appears Only When Open) */}
+      {isOpen && (
+        <div className="chatbox-container">
+          <div className={`chatbox ${isOpen ? "open" : ""}`}>
+            
+            {!activeRecipientId ? (
+              <>
+                {/* 🔹 Search Bar (X button overlays here) */}
+                <div className="chatbox-search">
+                  <Search size={18} />
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={handleSearch}
+                  />
+                  {/* 🔹 Close Button Inside Search Bar */}
+                  <button className="chatbox-close" onClick={toggleChatbox}>✖</button>
                 </div>
-              ))}
-              <div ref={messagesEndRef}></div>
-            </div>
   
-            {}
-            <div className="chatbox-footer">
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type a message..."
-              />
-              <button onClick={sendMessage}>Send</button>
-            </div>
-          </>
-        )}
-      </div>
-    </div>
+                {/* 🔹 Recent Conversations List */}
+                <ul className="chatbox-conversations">
+                  {searchResults.length > 0
+                    ? searchResults.map((user) => (
+                        <li key={user._id} onClick={() => handleSelectUser(user._id, `${user.first_name} ${user.last_name}`)}>
+                          <UserCircle size={20} />
+                          {`${user.first_name} ${user.last_name}`}
+                        </li>
+                      ))
+                    : recipients.map((recipient) => (
+                        <li key={recipient.participantId} onClick={() => setActiveRecipientId(recipient.participantId)}>
+                          <UserCircle size={20} />
+                          {recipient.latestMessage.senderName || "User"}
+                        </li>
+                      ))}
+                </ul>
+              </>
+            ) : (
+              /* 🔹 Show Full-Screen Chat When a Conversation Is Selected */
+              <>
+                <div className="chatbox-header">
+                  <button className="chatbox-back" onClick={() => setActiveRecipientId(null)}>
+                    ← Back
+                  </button>
+                  <UserCircle size={24} />
+                  <h4>Chat with {activeRecipientName}</h4>
+                </div>
+  
+                {/* 🔹 Messages */}
+                <div className="chatbox-body">
+                  {messages.map((msg, index) => (
+                    <div key={index} className={msg.senderId === userId ? "outgoing" : "incoming"}>
+                      {msg.content}
+                    </div>
+                  ))}
+                  <div ref={messagesEndRef}></div>
+                </div>
+  
+                {}
+                <div className="chatbox-footer">
+                  <input
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder="Type a message..."
+                  />
+                  <button onClick={sendMessage}>Send</button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
+
 export default Chatbox; 

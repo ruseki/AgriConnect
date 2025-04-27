@@ -21,7 +21,7 @@ const ManageCheckouts = () => {
       try {
         const token = localStorage.getItem('authToken'); 
         const response = await axios.get(
-          `http://localhost:5000/api/cart/all-checkouts?page=${currentPage}&limit=20`,
+          `http://localhost:5000/api/checkout/all-checkouts?page=1&limit=20`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -146,10 +146,10 @@ const ManageCheckouts = () => {
                         <td>{checkout.bank}</td>
                         <td>{checkout.referenceNumber}</td>
                         <td>
-                          <a href={checkout.proofImage} target="_blank" rel="noreferrer">
-                            View Image
-                          </a>
-                        </td>
+  <a href={checkout.proofImage} target="_blank" rel="noreferrer" className="hyperlink">
+    View Image
+  </a>
+</td>
                         <td>
                           {checkout.submittedAt
                             ? new Date(checkout.submittedAt).toLocaleString()

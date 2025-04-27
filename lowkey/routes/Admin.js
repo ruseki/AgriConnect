@@ -35,9 +35,16 @@ router.get('/users', auth, async (req, res) => {
       return res.status(403).json({ message: 'Access denied. Admins only.' });
     }
 
-    const users = await User.find().select(
-      'userId first_name last_name email isVerified isSeller country province cityOrTown barangay bio'
-    );
+    const { email } = req.query; // Get email from request query
+
+    let users;
+    if (email) {
+      users = await User.find({ email: email.toLowerCase() });
+    } else {
+      users = await User.find().select(
+        'userId first_name last_name email isVerified isSeller country province cityOrTown barangay bio'
+      );
+    }
 
     if (!users.length) {
       return res.status(404).json({ message: 'No users found' });

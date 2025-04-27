@@ -86,15 +86,12 @@ const ManageUsers = () => {
   }, [handleExpiredSession, navigate]);
 
   const handleSearch = () => {
-    const userIdLength = 20;
-
-    if (searchInput.trim().length !== userIdLength) {
-      alert(`Invalid User ID. Please enter a User ID with exactly ${userIdLength} characters.`);
-      setFilteredUser(null);
-      return;
+    const user = users.find((u) => u.email.toLowerCase() === searchInput.trim().toLowerCase());
+    
+    if (!user) {
+      alert('No user found with that email.');
     }
-
-    const user = users.find((u) => u.userId === searchInput.trim());
+  
     setFilteredUser(user || null);
   };
 
@@ -197,13 +194,13 @@ const ManageUsers = () => {
         <SideBar />
         <div className="manage-users-main">
           <button className="back-button" onClick={() => navigate('/admin')}>
-            Admin Panel
+            Back to Dashboard
           </button>
           <h1>Manage Users</h1>
           <div className="search-bar">
             <input
               type="text"
-              placeholder="Search by User ID"
+              placeholder="Search by User Email"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
             />
@@ -211,7 +208,7 @@ const ManageUsers = () => {
           </div>
 
           {filteredUser === null && searchInput.trim().length === 20 && (
-            <p className="no-user-found">No user found with that ID.</p>
+            <p className="no-user-found">No user found with that email.</p>
           )}
 
           <div className="users-table-container">

@@ -46,6 +46,13 @@ const HomePage = () => {
   const imageData = [
     {
       id: 1,
+      title: "Mango",
+      description: "Ripe and sweet Philippine mangoes",
+      url: "https://cdn.pixabay.com/photo/2016/07/22/02/58/mango-1534061_1280.jpg",
+      imageUrl: "https://cdn.pixabay.com/photo/2016/07/22/02/58/mango-1534061_1280.jpg"
+    },
+    {
+      id: 3,
       title: "Banana",
       description: "Fresh and sweet bananas from local farms",
       url: "https://nutritionsource.hsph.harvard.edu/wp-content/uploads/2018/08/bananas-1354785_1920.jpg",
@@ -58,19 +65,13 @@ const HomePage = () => {
       url: "https://cdn.britannica.com/22/75922-050-D3982BD0/flowers-fruits-garden-strawberry-plant-species.jpg",
       imageUrl: "https://cdn.britannica.com/22/75922-050-D3982BD0/flowers-fruits-garden-strawberry-plant-species.jpg"
     },
-    {
-      id: 3,
-      title: "Mango",
-      description: "Ripe and sweet Philippine mangoes",
-      url: "https://www.organics.ph/cdn/shop/products/mango-ripe-250grams-per-piece-fruits-vegetables-fresh-produce-979218.jpg?v=1601479990",
-      imageUrl: "https://www.organics.ph/cdn/shop/products/mango-ripe-250grams-per-piece-fruits-vegetables-fresh-produce-979218.jpg?v=1601479990"
-    },
+
     {
       id: 4,
-      title: "Kabalasa",
+      title: "Kalabasa",
       description: "Fresh local squash",
-      url: "https://palengkego.shop/cdn/shop/products/desi-ppp.jpg?v=1627817750",
-      imageUrl: "https://palengkego.shop/cdn/shop/products/desi-ppp.jpg?v=1627817750"
+      url: "https://cdn.pixabay.com/photo/2017/07/19/15/23/pumpkin-2519423_1280.jpg",
+      imageUrl: "https://cdn.pixabay.com/photo/2017/07/19/15/23/pumpkin-2519423_1280.jpg"
     },
     {
       id: 5,
@@ -90,8 +91,8 @@ const HomePage = () => {
       id: 7,
       title: "Repolyo",
       description: "Fresh cabbage",
-      url: "https://thehouseofgoodies.com/cdn/shop/products/repolyo.jpg?v=1602168415",
-      imageUrl: "https://thehouseofgoodies.com/cdn/shop/products/repolyo.jpg?v=1602168415"
+      url: "https://cdn.pixabay.com/photo/2017/04/27/21/01/kohlrabi-2266665_1280.jpg",
+      imageUrl: "https://cdn.pixabay.com/photo/2017/04/27/21/01/kohlrabi-2266665_1280.jpg"
     },
     {
       id: 8,
@@ -196,7 +197,7 @@ const HomePage = () => {
                   <div 
                     className={`slider-item ${index === currentIndex ? 'active' : ''}`}
                     style={{
-                      transform: `translateX(${(index - currentIndex) * 100}%)`,
+                      transform: `translateX(-${currentIndex * 100}%)`,
                       opacity: index === currentIndex ? 1 : 0.5,
                       zIndex: index === currentIndex ? 2 : 1
                     }}
@@ -282,8 +283,8 @@ const HomePage = () => {
             </div>
             <div className="feature-card">
               <Truck className="feature-icon" />
-              <h3>Fast Delivery</h3>
-              <p>Quick and reliable delivery to your doorstep, with careful handling of your produce.</p>
+              <h3>High Quality, Low Prices</h3>
+              <p>Get farm-fresh goods without breaking the bank.</p>
             </div>
             <div className="feature-card">
               <Shield className="feature-icon" />
@@ -314,8 +315,8 @@ const HomePage = () => {
             </div>
             <div className="step">
               <div className="step-number">3</div>
-              <h3>Fast Delivery</h3>
-              <p>Receive your fresh produce directly from the farm to your doorstep.</p>
+              <h3>Small Fee</h3>
+              <p>Minimal fees, maximum value.</p>
             </div>
             <div className="step">
               <div className="step-number">4</div>

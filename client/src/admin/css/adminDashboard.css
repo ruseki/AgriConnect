@@ -10,8 +10,14 @@
 }
 
 .admin-dashboard {
-  padding: 1rem;
-  color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center; 
+  text-align: center; 
+  margin: 0 auto; 
+  width: 100%; 
+  padding: 2rem 0; 
 }
 
 .admin-dashboard h1 {
@@ -22,9 +28,10 @@
   text-align: left;
   position: relative;
   padding-bottom: 0.5rem;
+
 }
 
-.admin-dashboard h1::after {
+/*.admin-dashboard h1::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -33,7 +40,7 @@
   height: 4px;
   background: #47663B;
   border-radius: 2px;
-}
+}*/
 
 .admin-dashboard p {
   font-size: 1.2rem;

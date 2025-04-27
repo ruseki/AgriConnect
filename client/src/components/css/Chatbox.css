@@ -28,11 +28,12 @@
 .chatbox-search {
   display: flex;
   align-items: center;
-  gap: 10px;
+  position: relative;
   padding: 8px;
   background: #ddd;
   border-radius: 5px;
 }
+
 
 .chatbox-search input {
   flex-grow: 1;
@@ -133,4 +134,35 @@
 
 .chatbox-footer button:hover {
   background: #005bbb;
+}
+
+.chatbox-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px; 
+  height: 50px; 
+  border-radius: 50%; 
+  background-color: green; 
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+  z-index: 9999; 
+}
+
+.chatbox-icon:hover {
+  background-color: #ffd700; 
+}
+
+.chatbox-close {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
 }

@@ -66,7 +66,6 @@ const AdminDashboard = () => {
         <div className="dashboard-main">
           <div className="admin-dashboard">
             <h1>Admin Panel</h1>
-            <p>Admin access confirmed. Welcome!</p>
           </div>
 
           {/* Statistics Section */}
@@ -125,14 +124,11 @@ const AdminDashboard = () => {
             <button className="admin-button" onClick={() => navigate('/manage-users')}>
               Manage Users
             </button>
-            <button className="admin-button" onClick={() => navigate('/manage-tickets')}>
-              Manage Tickets
-            </button>
+
             <button className="admin-button" onClick={() => navigate('/manage-users-checkouts')}>
               Manage User Checkouts
             </button>
-            <button className="admin-button">Manage Listings</button>
-            <button className="admin-button">Site Settings</button>
+
           </div>
         </div>
       </div>

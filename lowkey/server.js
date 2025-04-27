@@ -66,13 +66,11 @@ app.use(
 );
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Debugging middleware to log incoming requests
 app.use((req, res, next) => {
   console.log(`Incoming Request: ${req.method} ${req.url}`);
   next();
 });
 
-// Route mapping
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingsRoute);
 app.use('/api/cart', cartRoutes);

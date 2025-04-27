@@ -8,6 +8,10 @@
   transition: margin-left 0.3s ease;
 }
 
+p {
+  text-align: center;
+}
+
 .mcheckouts-admin-content {
   padding: 1.5rem;
   color: #333;
@@ -23,13 +27,14 @@
   font-size: 2rem;
   margin-bottom: 1.5rem;
   color: #2c3e50;
-  text-align: left;
+  text-align: center;
   font-weight: 700;
   position: relative;
   padding-bottom: 0.75rem;
+
 }
 
-.mcheckouts-title::after {
+/*.mcheckouts-title::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -38,7 +43,7 @@
   height: 4px;
   background: #4caf50;
   border-radius: 2px;
-}
+}*/
 
 .mcheckouts-table-container {
   overflow-x: auto; 
@@ -208,6 +213,16 @@
   max-width: 500px;
   width: 90%;
   animation: modalFadeIn 0.3s ease;
+}
+
+.hyperlink {
+  color: #007bff; /* Standard link color */
+  text-decoration: underline; /* Adds underline like a typical hyperlink */
+  cursor: pointer; /* Ensures it looks clickable */
+}
+
+.hyperlink:hover {
+  color: #0056b3; /* Darker shade on hover */
 }
 
 @keyframes modalFadeIn {
