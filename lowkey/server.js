@@ -86,6 +86,10 @@ app.use('/api/checkout-status', checkoutStatusRoutes);
 app.use('/api/orders/seller-orders', sellerOrdersRoutes);
 app.use('/api/users', userRoutes);
 
+app.get('/api/weather-key', (req, res) => {
+  res.json({ apiKey: process.env.OpenWeatherApp_API_KEY });
+});
+
 app.get('/testlamang', (req, res) => {
   res.send('Server is running!');
 });

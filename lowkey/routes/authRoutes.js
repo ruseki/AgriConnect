@@ -4,6 +4,7 @@ import express from 'express';
 import { login, registerUser, verifyEmail, forgotPassword, resetPassword, resendVerificationCode, sendVerificationEmail, getUser } from '../controllers/authController.js';
 import auth from '../middleware/auth.js';
 import AdminRoutes from './Admin.js';
+import User from '../models/User.js';
 
 const router = express.Router();
 
@@ -17,5 +18,15 @@ router.post('/send-verification-email', auth, sendVerificationEmail);
 router.get('/user', auth, getUser);
 
 router.use('/admin', AdminRoutes);
+
+router.get("/me", auth, async (req, res) => {
+    try {
+      const user = await User.findById(req.user._id).select("-password"); 
+      res.status(200).json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ error: "Failed to fetch user data" });
+    }
+  });
 
 export default router;
