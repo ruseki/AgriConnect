@@ -183,7 +183,7 @@
   font-weight: 600;
   position: sticky;
   top: 0;
-  text-align: center; /**/
+  text-align: center; 
 }
 
 .users-table tr {
@@ -206,8 +206,8 @@
   font-weight: 500;
   transition: all 0.2s ease;
   width: 90px;
-  display: block; /* Change this to block */
-  margin: 4px auto 0; /* Adjust margins for proper spacing */
+  display: block; 
+  margin: 4px auto 0; 
 }
 
 .users-table button:hover {
@@ -341,7 +341,7 @@
   }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 480px) {
   .admin-manage-user-container {
     padding: 1rem;
     margin-top: 5rem;
@@ -366,5 +366,30 @@
   .pagination-controls button {
     padding: 0.6rem 1rem;
     font-size: 0.85rem;
+  }
+  .back-button {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+    margin-bottom: 50px;
+    margin-left: 50px;
+    margin-right: 60px;
+  }
+  
+  .search-bar input {
+    width: 80%;
+    max-width: 300px;
+    margin-left: 60px;
+  }
+  .search-bar button {
+    width: 80%;
+    max-width: 100px;
+    margin-left: 60px;
+  }
+
+  .users-table-container {
+    padding: 1rem;
+    margin-top: 1rem;
+    overflow-x: auto;
+    margin-left: 60px;
   }
 }

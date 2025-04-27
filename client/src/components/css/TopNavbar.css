@@ -262,9 +262,33 @@
   
   .navbar-title {
     font-size: 1.1rem;
+    margin-right: 300px;
+    display: flex;
   }
 
   .search-input {
-    width: 90%;
+    width: 100px;
+    padding: 0.4rem 0.8rem;
+    margin: auto;
+    align-self: baseline;
+    margin-left: 150px;
+    gap: 1.5rem;
+    margin-right: 300px;
+  }
+  
+  .sign-in-button {
+    font-size: 1.0rem;
+    padding: 0.4rem 1rem;
+    margin-left: 300px;
+    align-items: baseline;
+    cursor: pointer;
+  }
+
+  .user-options {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 250px;
+    size: 0.8rem;
   }
 }

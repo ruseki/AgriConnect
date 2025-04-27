@@ -655,3 +655,57 @@
   color: #2c3e50;
   font-weight: 600;
 }
+
+@media screen and (max-width: 480px) {
+  .price-scheduler-container {
+    padding: 1rem;
+  }
+  
+  .price-scheduler-bar {
+    height: 6px;
+  }
+  
+  .price-marker {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .price-interval-selector button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .price-interval-bookmarks span {
+    font-size: 0.8rem;
+  }
+  
+  .inventory-table {
+    font-size: 0.8rem;
+    align-items: center;
+    justify-content: center;
+    margin-left: 50px;
+    margin-right: 50px;
+  }
+
+  .inventory-container {
+    padding: 1rem;
+    max-width: 100%;
+    margin-left: 0;
+    row-gap: 1rem;
+    column-gap: 1rem;
+  }
+
+  .inventory-add-product-btn {
+    width: 100%;
+    max-width: 200px;
+    align-self: center;
+    margin-bottom: 100px;
+    margin-top: 0px;
+  }
+  .inventory-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    margin-left: 100px;
+    margin-right: 40px;
+  }
+}

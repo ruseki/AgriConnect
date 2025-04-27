@@ -58,10 +58,27 @@
   color: #1877f2;
 }
 
-/* Inventory Button - Added */
 .sidebar .inventory-button {
   margin-bottom: 0.5rem;
   margin-top: 3rem;
+}
+
+.weather-widget {
+  background-color: #ffdb58; 
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
+  transition: transform 0.3s ease-in-out; 
+}
+
+.weather-widget h4, .weather-widget p {
+  color: #333; 
+}
+
+.weather-widget:hover {
+  transform: scale(1.02); 
 }
 
 @media (max-width: 1024px) {
